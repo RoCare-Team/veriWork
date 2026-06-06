@@ -1,0 +1,38 @@
+<svg width="640" height="800" viewBox="0 0 640 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="800" fill="url(#hero-bg)"/>
+  <circle cx="520" cy="120" r="180" fill="url(#glow-1)" opacity="0.35"/>
+  <circle cx="80" cy="680" r="220" fill="url(#glow-2)" opacity="0.25"/>
+  <rect x="72" y="180" width="496" height="320" rx="28" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.18)"/>
+  <rect x="104" y="220" width="180" height="12" rx="6" fill="rgba(255,255,255,0.55)"/>
+  <rect x="104" y="252" width="260" height="8" rx="4" fill="rgba(255,255,255,0.28)"/>
+  <rect x="104" y="292" width="432" height="72" rx="16" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.14)"/>
+  <rect x="128" y="316" width="96" height="24" rx="12" fill="#EA7A3B"/>
+  <rect x="236" y="316" width="120" height="24" rx="12" fill="rgba(255,255,255,0.22)"/>
+  <rect x="104" y="388" width="200" height="72" rx="16" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.14)"/>
+  <rect x="324" y="388" width="212" height="72" rx="16" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.14)"/>
+  <rect x="128" y="412" width="64" height="8" rx="4" fill="rgba(255,255,255,0.45)"/>
+  <rect x="128" y="432" width="148" height="8" rx="4" fill="rgba(255,255,255,0.22)"/>
+  <rect x="348" y="412" width="64" height="8" rx="4" fill="rgba(255,255,255,0.45)"/>
+  <rect x="348" y="432" width="160" height="8" rx="4" fill="rgba(255,255,255,0.22)"/>
+  <rect x="72" y="540" width="220" height="140" rx="24" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.14)"/>
+  <rect x="312" y="540" width="256" height="140" rx="24" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.14)"/>
+  <path d="M108 600H252" stroke="rgba(255,255,255,0.35)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M108 640H220" stroke="rgba(255,255,255,0.2)" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="360" cy="610" r="36" fill="#EA7A3B" opacity="0.9"/>
+  <path d="M420 590L520 610L420 630Z" fill="rgba(255,255,255,0.18)"/>
+  <defs>
+    <linearGradient id="hero-bg" x1="0" y1="0" x2="640" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1A3278"/>
+      <stop offset="0.55" stop-color="#1F3C9F"/>
+      <stop offset="1" stop-color="#152B6E"/>
+    </linearGradient>
+    <radialGradient id="glow-1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(520 120) rotate(90) scale(180)">
+      <stop stop-color="#4F7BFF"/>
+      <stop offset="1" stop-color="#1F3C9F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(80 680) rotate(90) scale(220)">
+      <stop stop-color="#EA7A3B"/>
+      <stop offset="1" stop-color="#1F3C9F" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

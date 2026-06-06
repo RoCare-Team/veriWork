@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  --color-vw-primary: #1a3a8f;
+  --color-vw-primary-dark: #152b6e;
+  --color-vw-primary-light: #2747b2;
+  --color-vw-accent: #ea7a3b;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: #ffffff;
+  color: #101828;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
