@@ -26,7 +26,7 @@ function SearchIcon() {
 const KPI = [
   { label: 'Active', value: '1,102' },
   { label: 'In Notice', value: '42' },
-  { label: 'Avg Trust', value: '98.2%' },
+  { label: 'Avg VeriScore', value: '782' },
 ]
 
 function Workforce() {

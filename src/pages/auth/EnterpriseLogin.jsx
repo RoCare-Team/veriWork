@@ -7,6 +7,7 @@ import Input from '../../components/common/Input'
 import Loader from '../../components/common/Loader'
 import { GoogleIcon, MicrosoftIcon } from '../../components/common/Icons'
 import { isValidEmail } from '../../utils/validators'
+import { setEnterpriseSession } from '../../store/enterpriseStore'
 
 function EnterpriseLogin() {
   const navigate = useNavigate()
@@ -33,6 +34,7 @@ function EnterpriseLogin() {
     setIsSubmitting(true)
     await new Promise((resolve) => window.setTimeout(resolve, 1000))
     setIsSubmitting(false)
+    setEnterpriseSession({ email })
     navigate('/enterprise/dashboard')
   }
 
@@ -108,6 +110,16 @@ function EnterpriseLogin() {
               className="font-bold text-[#1a3a8f] no-underline hover:underline"
             >
               Register Now
+            </Link>
+          </p>
+          <p className="m-0">
+            Professional?{' '}
+            <Link to="/employee" className="font-bold text-[#1a3a8f] no-underline hover:underline">
+              Employee Portal
+            </Link>
+            {' · '}
+            <Link to="/" className="font-semibold text-slate-500 no-underline hover:text-[#1a3a8f]">
+              Home
             </Link>
           </p>
           <div className="flex flex-wrap justify-center gap-2">

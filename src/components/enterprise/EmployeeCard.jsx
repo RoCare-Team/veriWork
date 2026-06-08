@@ -1,4 +1,9 @@
-function EmployeeCard({ initials, name, role, department, trustScore, verified }) {
+import { getScoreRating } from '../../utils/employeeScoreUtils'
+
+function EmployeeCard({ initials, name, role, department, employeeScore, trustScore, verified }) {
+  const score = employeeScore ?? trustScore ?? 0
+  const rating = getScoreRating(score)
+
   return (
     <article className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:shadow-md">
       <div className="flex items-start gap-3">
@@ -17,13 +22,13 @@ function EmployeeCard({ initials, name, role, department, trustScore, verified }
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="m-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Trust Score
+              VeriScore
             </p>
             <div className="mt-1 flex items-center gap-1.5">
-              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" className="text-slate-500" aria-hidden="true">
-                <path d="M10 2l7 3v5c0 4-3 7-7 8-4-1-7-4-7-8V5l7-3Z" stroke="currentColor" strokeWidth="1.5" />
-              </svg>
-              <span className="text-sm font-bold text-slate-800">{trustScore}%</span>
+              <span className={`text-lg font-extrabold ${rating.color}`}>{score}</span>
+              <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${rating.bg} ${rating.color}`}>
+                {rating.label}
+              </span>
             </div>
           </div>
           <div>

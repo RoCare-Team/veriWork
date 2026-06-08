@@ -13,6 +13,7 @@ import {
   clearOnboarding,
   saveCompanyProfile,
 } from '../../store/onboardingStore'
+import { setEnterpriseSession } from '../../store/enterpriseStore'
 import {
   ONBOARDING_STEPS,
   COMPANY_DOCUMENTS,
@@ -43,6 +44,7 @@ function ReviewSubmission() {
       saveCompanyProfile({ companyName: basicInfo.companyName.trim() })
     }
     clearOnboarding()
+    setEnterpriseSession({ email: basicInfo.workEmail || basicInfo.companyName })
     setIsSubmitting(false)
     navigate('/enterprise/dashboard?verified=true')
   }

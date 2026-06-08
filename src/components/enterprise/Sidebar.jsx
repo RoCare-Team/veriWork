@@ -1,5 +1,6 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import BrandLogo from '../common/BrandLogo'
+import { clearEnterpriseSession } from '../../store/enterpriseStore'
 
 const NAV_ITEMS = [
   {
@@ -60,6 +61,14 @@ const NAV_ITEMS = [
 ]
 
 function SidebarContent({ onNavigate }) {
+  const navigate = useNavigate()
+
+  const handleSignOut = () => {
+    clearEnterpriseSession()
+    onNavigate?.()
+    navigate('/enterprise/login')
+  }
+
   return (
     <>
       <div className="border-b border-white/10 px-5 py-6">
@@ -89,17 +98,17 @@ function SidebarContent({ onNavigate }) {
       </nav>
 
       <div className="border-t border-white/10 p-4">
-        <NavLink
-          to="/enterprise/login"
-          onClick={onNavigate}
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white/60 transition hover:bg-white/10 hover:text-white"
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white/60 transition hover:bg-white/10 hover:text-white"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path d="M7 10H17M13 6l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M3 4v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
           Sign Out
-        </NavLink>
+        </button>
       </div>
     </>
   )

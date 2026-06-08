@@ -48,9 +48,9 @@ function ShieldIcon() {
 }
 
 const JOIN_REQUESTS = [
-  { initials: 'AM', name: 'Arjun Mehta', role: 'Senior Dev • Engineering', score: 94 },
-  { initials: 'PS', name: 'Priya Sharma', role: 'Product Manager • Product', score: 88 },
-  { initials: 'RK', name: 'Rahul Kumar', role: 'Data Analyst • Analytics', score: 91 },
+  { initials: 'AM', name: 'Arjun Mehta', role: 'Senior Dev • Engineering', employeeScore: 824 },
+  { initials: 'PS', name: 'Priya Sharma', role: 'Product Manager • Product', employeeScore: 798 },
+  { initials: 'RK', name: 'Rahul Kumar', role: 'Data Analyst • Analytics', employeeScore: 771 },
 ]
 
 const FRAUD_ALERTS = [
