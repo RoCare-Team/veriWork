@@ -1,180 +1,198 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import OnboardingLayout from '../../layouts/OnboardingLayout'
 import StepProgress from '../../components/common/StepProgress'
 import SectionTitle from '../../components/common/SectionTitle'
-import Input from '../../components/common/Input'
 import Button from '../../components/common/Button'
 import DocumentUploadCard from '../../components/common/DocumentUploadCard'
+import Loader from '../../components/common/Loader'
 import {
-  BriefcaseIcon,
   BuildingIcon,
   CardIcon,
   DocumentIcon,
   InfoIcon,
 } from '../../components/common/Icons'
+import { enterpriseKeys, fetchOnboarding } from '../../api/enterprise'
+import { ONBOARDING_STEPS } from '../../utils/onboardingConstants'
 import {
-  getOnboardingData,
-  saveRegistration,
-  saveDocument,
-  removeDocument,
-} from '../../store/onboardingStore'
+  getCompanyTypeLabel,
+  getDocumentsForCompanyType,
+  resolveCompanyType,
+} from '../../utils/enterpriseCompanyTypes'
 import {
-  ONBOARDING_STEPS,
-  COMPANY_DOCUMENTS,
-} from '../../utils/onboardingConstants'
+  getEnterpriseDocType,
+  uploadEnterpriseDocument,
+  validateDocumentFile,
+} from '../../lib/uploadDocument'
+import { useToast } from '../../context/ToastContext'
 
 function CompanyVerification() {
   const navigate = useNavigate()
-  const saved = getOnboardingData()
-
-  const [brn, setBrn] = useState(saved.registration.brn)
-  const [taxId, setTaxId] = useState(saved.registration.taxId)
-  const [documents, setDocuments] = useState(saved.documents)
+  const [documents, setDocuments] = useState({})
   const [touched, setTouched] = useState(false)
+  const { toast } = useToast()
+  const [uploadingId, setUploadingId] = useState(null)
+  const [uploadErrors, setUploadErrors] = useState({})
 
-  const requiredDocs = COMPANY_DOCUMENTS.filter((d) => d.required)
-  const allRequiredUploaded = requiredDocs.every((d) => documents[d.id])
-  const isValid = brn.trim() && taxId.trim() && allRequiredUploaded
+  const { data: onboarding, isLoading } = useQuery({
+    queryKey: enterpriseKeys.onboarding,
+    queryFn: fetchOnboarding,
+  })
 
-  const handleUpload = (docId, title) => {
-    const mockName = `${title.replace(/\s+/g, '_').toLowerCase()}.pdf`
-    saveDocument(docId, mockName)
-    setDocuments((prev) => ({ ...prev, [docId]: mockName }))
+  useEffect(() => {
+    if (!onboarding) return
+    setDocuments(onboarding.onboarding?.documents || {})
+  }, [onboarding])
+
+  const companyType = resolveCompanyType(onboarding?.company, onboarding?.onboarding?.basicInfo)
+  const companyDocuments = getDocumentsForCompanyType(companyType)
+
+  const getDocValue = (docId) => {
+    const docType = getEnterpriseDocType(docId)
+    return documents[docId] || documents[docType] || null
+  }
+
+  const requiredDocs = companyDocuments.filter((d) => d.required)
+  const hasDocument = (docId) => Boolean(getDocValue(docId))
+  const allRequiredUploaded = requiredDocs.every((d) => hasDocument(d.id))
+
+  const handleUpload = async (docId, file) => {
+    if (!file) return
+
+    const clientError = validateDocumentFile(file)
+    if (clientError) {
+      setUploadErrors((prev) => ({ ...prev, [docId]: clientError }))
+      return
+    }
+
+    const docType = getEnterpriseDocType(docId)
+    setUploadingId(docId)
+    setUploadErrors((prev) => ({ ...prev, [docId]: null }))
+
+    try {
+      const data = await uploadEnterpriseDocument(docType, file)
+      setDocuments((prev) => ({
+        ...(data.documents || prev),
+        [docId]: data.url,
+        [docType]: data.url,
+      }))
+      toast('Document uploaded successfully', 'success')
+    } catch (err) {
+      const message = err.message || 'Upload failed'
+      setUploadErrors((prev) => ({ ...prev, [docId]: message }))
+      toast(message, 'error')
+    } finally {
+      setUploadingId(null)
+    }
   }
 
   const handleRemove = (docId) => {
-    removeDocument(docId)
+    const docType = getEnterpriseDocType(docId)
     setDocuments((prev) => {
       const next = { ...prev }
       delete next[docId]
+      delete next[docType]
       return next
     })
+    setUploadErrors((prev) => ({ ...prev, [docId]: null }))
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setTouched(true)
-    if (!isValid) return
-    saveRegistration({ brn, taxId })
+    if (!allRequiredUploaded) {
+      toast('Please upload all required documents', 'error')
+      return
+    }
     navigate('/enterprise/review')
   }
 
   const docIcon = (id) => {
-    if (id === 'addressProof') {
-      return <BuildingIcon className="h-5 w-5 text-[#1a3a8f]" />
-    }
-    if (id === 'taxCertificate') {
-      return <CardIcon className="h-5 w-5 text-[#1a3a8f]" />
-    }
+    if (id === 'addressProof') return <BuildingIcon className="h-5 w-5 text-[#1a3a8f]" />
+    if (id === 'taxCertificate') return <CardIcon className="h-5 w-5 text-[#1a3a8f]" />
     return <DocumentIcon className="h-5 w-5 text-[#1a3a8f]" />
   }
+
+  const docDisplay = (docId) => {
+    const val = getDocValue(docId)
+    if (!val) return { fileName: null, fileUrl: null }
+    if (typeof val === 'string') {
+      return { fileName: val.split('/').pop(), fileUrl: val }
+    }
+    return { fileName: String(val), fileUrl: null }
+  }
+
+  if (isLoading) return <Loader variant="fullPage" label="Loading..." />
 
   return (
     <OnboardingLayout
       step={2}
       totalSteps={3}
       steps={ONBOARDING_STEPS}
-      title="Company Verification"
-      subtitle="Complete your business profile to start verifying employees."
+      title="Document Verification"
+      subtitle="Upload required documents for your business verification."
       backTo="/enterprise/register"
       footer={
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <Button
-            variant="ghost"
-            type="button"
-            fullWidth={false}
-            className="sm:min-w-[120px]"
-            onClick={() => navigate('/enterprise/register')}
-          >
+          <Button variant="ghost" type="button" fullWidth={false} className="sm:min-w-[120px]" onClick={() => navigate('/enterprise/register')}>
             Back
           </Button>
-          <Button
-            type="submit"
-            form="verification-form"
-            fullWidth={false}
-            className="sm:min-w-[160px]"
-          >
+          <Button type="submit" form="verification-form" fullWidth={false} className="sm:min-w-[160px]">
             Continue
           </Button>
         </div>
       }
     >
-      <form
-        id="verification-form"
-        className="flex flex-col gap-8"
-        onSubmit={handleSubmit}
-        noValidate
-      >
+      <form id="verification-form" className="flex flex-col gap-8" onSubmit={handleSubmit} noValidate>
         <div className="lg:hidden">
           <StepProgress steps={ONBOARDING_STEPS} currentStep={2} />
         </div>
 
-        <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
-          <SectionTitle>Registration Details</SectionTitle>
-          <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
-            <Input
-              id="brn"
-              label="Business Registration Number (BRN)"
-              placeholder="e.g. 12345678-000"
-              value={brn}
-              onChange={(e) => setBrn(e.target.value)}
-              leftIcon={<BriefcaseIcon className="h-[18px] w-[18px] text-slate-400" />}
-              error={touched && !brn.trim()}
-            />
-            <Input
-              id="tax-id"
-              label="Tax Identification Number / GST"
-              placeholder="Enter your tax ID"
-              value={taxId}
-              onChange={(e) => setTaxId(e.target.value)}
-              leftIcon={<CardIcon className="h-[18px] w-[18px] text-slate-400" />}
-              error={touched && !taxId.trim()}
-            />
-          </div>
-        </section>
-
-        <section>
+        <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:p-7">
           <SectionTitle>Required Documents</SectionTitle>
           <p className="mt-2 text-sm text-slate-500">
-            Upload all mandatory documents. Optional documents speed up verification.
+            Upload mandatory documents for your{' '}
+            <span className="font-semibold text-slate-700">{getCompanyTypeLabel(companyType)}</span>.
+            Optional documents speed up verification.
           </p>
           <div className="mt-5 flex flex-col gap-4">
-            {COMPANY_DOCUMENTS.map((doc) => (
-              <DocumentUploadCard
-                key={doc.id}
-                icon={docIcon(doc.id)}
-                title={doc.title}
-                description={doc.description}
-                required={doc.required}
-                fileName={documents[doc.id]}
-                onUpload={() => handleUpload(doc.id, doc.title)}
-                onRemove={() => handleRemove(doc.id)}
-              />
-            ))}
+            {companyDocuments.map((doc) => {
+              const { fileName, fileUrl } = docDisplay(doc.id)
+              return (
+                <DocumentUploadCard
+                  key={doc.id}
+                  icon={docIcon(doc.id)}
+                  title={doc.title}
+                  description={doc.description}
+                  required={doc.required}
+                  fileName={fileName}
+                  fileUrl={fileUrl}
+                  uploading={uploadingId === doc.id}
+                  error={uploadErrors[doc.id]}
+                  onUpload={(file) => handleUpload(doc.id, file)}
+                  onRemove={() => handleRemove(doc.id)}
+                />
+              )
+            })}
           </div>
+          {touched && !allRequiredUploaded && (
+            <p className="mt-4 text-sm text-red-600">Please upload all required documents before continuing.</p>
+          )}
         </section>
 
-        <div className="flex gap-3 rounded-2xl border border-blue-100 bg-blue-50/60 p-5">
+        <div className="flex gap-3 rounded-3xl border border-blue-100 bg-blue-50/60 p-5">
           <div className="shrink-0 text-[#1a3a8f]">
             <InfoIcon className="h-5 w-5" />
           </div>
           <div>
-            <p className="m-0 text-sm font-bold text-[#1a3a8f]">
-              Verification Timeline
-            </p>
+            <p className="m-0 text-sm font-bold text-[#1a3a8f]">Verification Timeline</p>
             <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
-              Our compliance team typically reviews documents within 24–48
-              business hours. You will receive an email once verified.
+              Our compliance team typically reviews documents within 24–48 business hours. You will receive an email once
+              verified.
             </p>
           </div>
         </div>
-
-        {touched && !isValid && (
-          <p className="text-sm text-red-600" role="alert">
-            Please fill registration details and upload all required documents.
-          </p>
-        )}
 
         <p className="m-0 pb-2 text-center text-xs text-slate-400">
           Already registered?{' '}

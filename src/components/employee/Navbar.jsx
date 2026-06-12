@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { getEmployeeData, getEmployeeProfile } from '../../store/employeeStore'
+import { useAuth } from '../../context/AuthContext'
+import { mediaUrl } from '../../lib/mediaUrl'
 
 function SearchIcon({ className = 'h-[18px] w-[18px]' }) {
   return (
@@ -28,73 +29,39 @@ function BellIcon() {
 }
 
 function EmployeeNavbar({ onMenuClick }) {
-  const { profilePhoto } = getEmployeeData()
-  const profile = getEmployeeProfile()
-  const firstName = profile.name.split(' ')[0]
+  const { profile } = useAuth()
+  const firstName = profile?.name?.split(' ')[0] || 'User'
+  const photo = mediaUrl(profile?.photoUrl)
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 backdrop-blur-md">
       <div className="flex h-16 items-center gap-4 px-4 md:px-6 lg:px-8">
-        <button
-          type="button"
-          onClick={onMenuClick}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-700 transition hover:bg-slate-100 lg:hidden"
-          aria-label="Open menu"
-        >
+        <button type="button" onClick={onMenuClick} className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-700 hover:bg-slate-100 lg:hidden" aria-label="Open menu">
           <MenuIcon />
         </button>
 
         <div className="hidden min-w-0 lg:block">
           <p className="m-0 text-xs font-medium text-slate-400">Good morning, {firstName}</p>
-          <h1 className="m-0 truncate text-lg font-extrabold tracking-tight text-slate-900">
-            {profile.name}
-          </h1>
-        </div>
-
-        <div className="relative mx-auto hidden max-w-md flex-1 md:block">
-          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-            <SearchIcon />
-          </span>
-          <input
-            type="search"
-            placeholder="Search profile, jobs..."
-            className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#1a3a8f] focus:bg-white focus:ring-4 focus:ring-blue-50"
-          />
+          <h1 className="m-0 truncate text-lg font-extrabold text-slate-900">{profile?.name}</h1>
         </div>
 
         <div className="ml-auto flex items-center gap-2">
-          <button
-            type="button"
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100 md:hidden"
-            aria-label="Search"
-          >
-            <SearchIcon />
-          </button>
-
-          <Link
-            to="/employee/activity"
-            className="relative flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100"
-            aria-label="Notifications"
-          >
+          <Link to="/employee/activity" className="relative flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-100" aria-label="Notifications">
             <BellIcon />
             <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
           </Link>
 
           <div className="ml-1 flex items-center gap-2.5 rounded-xl border border-slate-100 bg-slate-50 py-1.5 pl-1.5 pr-3">
-            {profilePhoto ? (
-              <img
-                src={profilePhoto}
-                alt={profile.name}
-                className="h-8 w-8 rounded-lg object-cover"
-              />
+            {photo ? (
+              <img src={photo} alt={profile?.name} className="h-8 w-8 rounded-lg object-cover" />
             ) : (
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#1a3a8f] text-xs font-bold text-white">
-                {profile.initials}
+                {profile?.initials}
               </div>
             )}
             <div className="hidden sm:block">
-              <p className="m-0 text-xs font-bold text-slate-800">{profile.name}</p>
-              <p className="m-0 text-[10px] text-slate-400">{profile.role}</p>
+              <p className="m-0 text-xs font-bold text-slate-800">{profile?.name}</p>
+              <p className="m-0 text-[10px] text-slate-400">{profile?.role}</p>
             </div>
           </div>
         </div>

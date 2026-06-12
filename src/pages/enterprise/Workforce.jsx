@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import EnterpriseLayout from '../../layouts/EnterpriseLayout'
 import PageHeader from '../../components/enterprise/PageHeader'
 import EmployeeCard from '../../components/enterprise/EmployeeCard'
 import Button from '../../components/common/Button'
-import { EMPLOYEES } from '../../utils/enterpriseData'
+import Loader from '../../components/common/Loader'
+import { enterpriseKeys, fetchWorkforce } from '../../api/enterprise'
+import { getInitials } from '../../utils/formatters'
 
 function FilterIcon() {
   return (
@@ -23,28 +26,40 @@ function SearchIcon() {
   )
 }
 
-const KPI = [
-  { label: 'Active', value: '1,102' },
-  { label: 'In Notice', value: '42' },
-  { label: 'Avg VeriScore', value: '782' },
-]
-
 function Workforce() {
   const [query, setQuery] = useState('')
+  const { data, isLoading, error } = useQuery({
+    queryKey: enterpriseKeys.workforce,
+    queryFn: fetchWorkforce,
+  })
 
-  const filtered = EMPLOYEES.filter(
-    (e) =>
-      e.name.toLowerCase().includes(query.toLowerCase()) ||
-      e.role.toLowerCase().includes(query.toLowerCase()) ||
-      e.department.toLowerCase().includes(query.toLowerCase()),
+  const employees = data?.employees || []
+
+  const filtered = useMemo(
+    () =>
+      employees.filter(
+        (e) =>
+          e.name?.toLowerCase().includes(query.toLowerCase()) ||
+          e.role?.toLowerCase().includes(query.toLowerCase()) ||
+          e.department?.toLowerCase().includes(query.toLowerCase()),
+      ),
+    [employees, query],
   )
+
+  const avgScore = useMemo(() => {
+    if (!employees.length) return 0
+    const sum = employees.reduce((acc, e) => acc + (e.employeeScore || 0), 0)
+    return Math.round(sum / employees.length)
+  }, [employees])
+
+  if (isLoading) return <Loader variant="fullPage" label="Loading workforce..." />
 
   return (
     <EnterpriseLayout>
       <div className="px-4 py-5 pb-24 md:px-6 md:py-8 lg:px-8">
         <PageHeader
           title="Workforce"
-          subtitle="Manage 1,284 employees"
+          subtitle={`Manage ${employees.length} employees`}
           action={
             <button
               type="button"
@@ -55,6 +70,8 @@ function Workforce() {
             </button>
           }
         />
+
+        {error && <p className="mb-4 text-sm text-red-600">{error.message}</p>}
 
         <div className="relative mb-5">
           <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
@@ -70,22 +87,33 @@ function Workforce() {
         </div>
 
         <div className="mb-6 grid grid-cols-3 gap-3">
-          {KPI.map((item) => (
-            <div
-              key={item.label}
-              className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm"
-            >
-              <p className="m-0 text-xl font-extrabold text-slate-900 md:text-2xl">
-                {item.value}
-              </p>
-              <p className="mt-1 text-xs font-medium text-slate-500">{item.label}</p>
-            </div>
-          ))}
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
+            <p className="m-0 text-xl font-extrabold text-slate-900 md:text-2xl">{employees.length}</p>
+            <p className="mt-1 text-xs font-medium text-slate-500">Active</p>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
+            <p className="m-0 text-xl font-extrabold text-slate-900 md:text-2xl">
+              {employees.filter((e) => e.status === 'approved').length}
+            </p>
+            <p className="mt-1 text-xs font-medium text-slate-500">Approved</p>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
+            <p className="m-0 text-xl font-extrabold text-slate-900 md:text-2xl">{avgScore}</p>
+            <p className="mt-1 text-xs font-medium text-slate-500">Avg VeriScore</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((emp) => (
-            <EmployeeCard key={emp.id} {...emp} />
+            <EmployeeCard
+              key={emp.id || emp.userId}
+              initials={getInitials(emp.name)}
+              name={emp.name}
+              role={emp.role}
+              department={emp.department}
+              employeeScore={emp.employeeScore}
+              verified={emp.status === 'approved'}
+            />
           ))}
         </div>
       </div>

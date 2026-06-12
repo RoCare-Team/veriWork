@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import EmployeeLayout from '../../layouts/EmployeeLayout'
 import EmployeePageHeader from '../../components/employee/PageHeader'
 import SettingsRow from '../../components/employee/SettingsRow'
 import Toggle from '../../components/employee/Toggle'
+import Loader from '../../components/common/Loader'
 import { ShieldCheckIcon } from '../../components/common/Icons'
-import { getEmployeeData, getEmployeeProfile } from '../../store/employeeStore'
+import { employeeKeys, fetchProfile, fetchSettings } from '../../api/employee'
+import { mediaUrl } from '../../lib/mediaUrl'
 
 function UserIcon() {
   return (
@@ -43,8 +46,20 @@ function LangIcon() {
 }
 
 function EmployeeSettings() {
-  const { profilePhoto } = getEmployeeData()
-  const profile = getEmployeeProfile()
+  const { data: profile, isLoading: profileLoading } = useQuery({
+    queryKey: employeeKeys.profile,
+    queryFn: fetchProfile,
+  })
+  const { data: settings, isLoading: settingsLoading } = useQuery({
+    queryKey: employeeKeys.settings,
+    queryFn: fetchSettings,
+  })
+
+  if (profileLoading || settingsLoading) {
+    return <Loader variant="fullPage" label="Loading settings..." />
+  }
+
+  const photo = mediaUrl(profile?.photoUrl)
 
   return (
     <EmployeeLayout>
@@ -53,73 +68,52 @@ function EmployeeSettings() {
       <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
         <div className="flex items-center gap-4">
           <div className="relative">
-            {profilePhoto ? (
-              <img src={profilePhoto} alt={profile.name} className="h-16 w-16 rounded-full object-cover md:h-20 md:w-20" />
+            {photo ? (
+              <img src={photo} alt={profile?.name} className="h-16 w-16 rounded-full object-cover md:h-20 md:w-20" />
             ) : (
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#1a3a8f] text-xl font-bold text-white md:h-20 md:w-20">
-                {profile.initials}
+                {profile?.initials}
               </div>
             )}
             <span className="absolute bottom-0.5 right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500" />
           </div>
           <div className="flex-1">
-            <p className="m-0 text-lg font-extrabold text-[#1a3a8f] md:text-xl">{profile.name}</p>
-            <p className="m-0 mt-0.5 text-sm text-slate-500 md:text-base">{profile.role}</p>
-            <p className="m-0 mt-1 text-xs text-slate-400">{profile.veriworkId}</p>
-            <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
-              <ShieldCheckIcon className="h-3.5 w-3.5" />
-              VeriScore {profile.employeeScore}
-            </span>
+            <p className="m-0 text-lg font-extrabold text-[#1a3a8f] md:text-xl">{profile?.name}</p>
+            <p className="m-0 mt-0.5 text-sm text-slate-500 md:text-base">{profile?.role}</p>
+            <p className="m-0 mt-1 text-xs text-slate-400">{settings?.veriworkId || profile?.veriworkId}</p>
+            {profile?.employeeScore != null && (
+              <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+                <ShieldCheckIcon className="h-3.5 w-3.5" />
+                VeriScore {profile.employeeScore}
+              </span>
+            )}
           </div>
-          <button
-            type="button"
+          <Link
+            to="/employee/profile-setup"
             className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-[#1a3a8f] transition hover:bg-blue-100"
             aria-label="Edit profile"
           >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-              <path d="M12 3.5l2.5 2.5-8 8H4v-2.5l8-8Z" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M12 3.5l2.5 2.5-8 8H4v-2.5l8-5Z" stroke="currentColor" strokeWidth="1.5" />
             </svg>
-          </button>
+          </Link>
         </div>
       </div>
 
       <section className="mt-8">
         <h2 className="m-0 mb-4 text-sm font-bold text-[#1a3a8f] md:text-base">Account & Security</h2>
         <div className="flex flex-col gap-3">
-          <SettingsRow
-            icon={<UserIcon />}
-            title="Personal Information"
-            subtitle="Name, Email, Phone"
-            to="/employee/professional-id"
-          />
-          <SettingsRow
-            icon={<LockIcon />}
-            title="Privacy & Security"
-            subtitle="Consent, 2FA, Sessions"
-            to="/employee/settings/privacy"
-          />
+          <SettingsRow icon={<UserIcon />} title="Personal Information" subtitle="Name, Email, Phone" to="/employee/professional-id" />
+          <SettingsRow icon={<LockIcon />} title="Privacy & Security" subtitle="Consent, 2FA, Sessions" to="/employee/settings/privacy" />
         </div>
       </section>
 
       <section className="mt-8">
         <h2 className="m-0 mb-4 text-sm font-bold text-[#1a3a8f] md:text-base">Preferences</h2>
         <div className="flex flex-col gap-3">
-          <SettingsRow
-            icon={<BellIcon />}
-            title="Notification Settings"
-            subtitle="Push, Email, Alerts"
-          />
-          <SettingsRow
-            icon={<LangIcon />}
-            title="Language"
-            subtitle="English (US)"
-          />
-          <Toggle
-            id="dark-mode"
-            label="Email Notifications"
-            checked
-            onChange={() => {}}
-          />
+          <SettingsRow icon={<BellIcon />} title="Notification Settings" subtitle="Push, Email, Alerts" />
+          <SettingsRow icon={<LangIcon />} title="Language" subtitle="English (US)" />
+          <Toggle id="email-notifications" label="Email Notifications" checked={settings?.notificationsEnabled ?? true} onChange={() => {}} />
         </div>
       </section>
 

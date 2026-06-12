@@ -1,127 +1,183 @@
 import { Link } from 'react-router-dom'
-import { ShieldCheckIcon } from '../common/Icons'
+import { ShieldCheckIcon, CheckCircleIcon } from '../common/Icons'
 
-function DashboardPreview() {
+function TrustConnectionVisual() {
   return (
     <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
-      <div className="absolute -inset-4 rounded-[28px] bg-gradient-to-br from-[#1a3a8f]/20 to-[#ea7a3b]/15 blur-2xl" />
-      <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-2xl shadow-slate-300/30">
-        <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-4 py-3">
-          <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
-          <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-          <span className="ml-3 text-xs font-medium text-slate-400">app.veriwork.com</span>
+      <div className="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-[#1a3a8f]/15 via-transparent to-[#ea7a3b]/20 blur-3xl" />
+
+      <div className="relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-white/90 p-6 shadow-2xl shadow-slate-300/25 backdrop-blur-sm md:p-8">
+        <div className="mb-6 flex items-center justify-between">
+          <span className="rounded-full bg-[#1a3a8f]/8 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#1a3a8f]">
+            Live connection
+          </span>
+          <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            Trusted link active
+          </span>
         </div>
 
-        <div className="grid gap-0 md:grid-cols-5">
-          <div className="hidden bg-gradient-to-b from-[#152b6e] to-[#1a3a8f] p-4 md:col-span-2 md:block">
-            <div className="mb-6 h-2 w-20 rounded bg-white/30" />
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className={`mb-2 rounded-lg px-3 py-2 ${i === 1 ? 'bg-white/15' : 'bg-white/5'}`}
-              >
-                <div className="h-2 w-24 rounded bg-white/25" />
+        <div className="grid items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-3">
+          {/* Company */}
+          <div className="rounded-2xl border border-[#1a3a8f]/15 bg-gradient-to-br from-[#1a3a8f]/5 to-white p-4">
+            <div className="mb-3 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#1a3a8f] text-sm font-bold text-white">
+                AC
               </div>
-            ))}
+              <div>
+                <p className="m-0 text-sm font-bold text-slate-900">Acme Corp</p>
+                <p className="m-0 text-[11px] font-medium text-slate-500">Employer</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
+                <span className="text-slate-500">Team verified</span>
+                <span className="font-bold text-[#1a3a8f]">94%</span>
+              </div>
+              <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
+                <span className="text-slate-500">Hiring speed</span>
+                <span className="font-bold text-emerald-600">3x faster</span>
+              </div>
+            </div>
           </div>
 
-          <div className="p-5 md:col-span-3 md:p-6">
-            <div className="mb-4 flex items-center justify-between">
+          {/* Connection bridge */}
+          <div className="relative flex flex-col items-center justify-center py-2 md:py-0">
+            <div className="hidden h-px w-full bg-gradient-to-r from-[#1a3a8f]/30 via-[#ea7a3b]/50 to-[#1a3a8f]/30 md:block" />
+            <div className="my-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#ea7a3b]/25 bg-gradient-to-br from-[#ea7a3b]/10 to-[#1a3a8f]/10 shadow-lg shadow-orange-200/30">
+              <ShieldCheckIcon className="h-7 w-7 text-[#1a3a8f]" />
+            </div>
+            <div className="hidden h-px w-full bg-gradient-to-r from-[#1a3a8f]/30 via-[#ea7a3b]/50 to-[#1a3a8f]/30 md:block" />
+            <p className="m-0 mt-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400 md:mt-3">
+              Verified trust
+            </p>
+          </div>
+
+          {/* Professional */}
+          <div className="rounded-2xl border border-[#ea7a3b]/20 bg-gradient-to-br from-[#ea7a3b]/5 to-white p-4">
+            <div className="mb-3 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#ea7a3b] to-[#d9682f] text-sm font-bold text-white">
+                PS
+              </div>
               <div>
-                <div className="h-2.5 w-28 rounded bg-slate-200" />
-                <div className="mt-2 h-2 w-40 rounded bg-slate-100" />
-              </div>
-              <div className="rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-bold text-emerald-700">
-                Verified
+                <p className="m-0 text-sm font-bold text-slate-900">Priya Sharma</p>
+                <p className="m-0 text-[11px] font-medium text-slate-500">Professional</p>
               </div>
             </div>
-
-            <div className="mb-4 grid grid-cols-2 gap-3">
-              {[
-                { label: 'Trust Score', value: '98', color: 'text-[#1a3a8f]' },
-                { label: 'Verified Jobs', value: '12', color: 'text-[#ea7a3b]' },
-              ].map((stat) => (
-                <div key={stat.label} className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
-                  <p className="m-0 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                    {stat.label}
-                  </p>
-                  <p className={`m-0 mt-1 text-xl font-extrabold ${stat.color}`}>{stat.value}</p>
-                </div>
-              ))}
-            </div>
-
             <div className="space-y-2">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-3 rounded-xl border border-slate-100 p-3"
-                >
-                  <div className="h-9 w-9 shrink-0 rounded-full bg-gradient-to-br from-[#2747b2] to-[#1a3a8f]" />
-                  <div className="min-w-0 flex-1">
-                    <div className="h-2 w-24 rounded bg-slate-200" />
-                    <div className="mt-1.5 h-2 w-32 rounded bg-slate-100" />
-                  </div>
-                  <div className="h-5 w-14 rounded-full bg-emerald-50" />
-                </div>
-              ))}
+              <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
+                <span className="text-slate-500">Trust score</span>
+                <span className="font-bold text-[#ea7a3b]">98</span>
+              </div>
+              <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
+                <span className="text-slate-500">Identity</span>
+                <span className="font-bold text-emerald-600">Verified</span>
+              </div>
             </div>
+          </div>
+        </div>
+
+        <div className="mt-6 grid grid-cols-3 gap-2 border-t border-slate-100 pt-5">
+          {[
+            { label: 'Avg. connect', value: '< 2 min' },
+            { label: 'Mutual trust', value: '100%' },
+            { label: 'Fraud blocked', value: '98%' },
+          ].map((item) => (
+            <div key={item.label} className="text-center">
+              <p className="m-0 text-sm font-extrabold text-slate-900">{item.value}</p>
+              <p className="m-0 mt-0.5 text-[10px] font-medium text-slate-500">{item.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="absolute -right-2 -top-3 hidden rounded-2xl border border-emerald-100 bg-white px-4 py-3 shadow-xl md:block lg:-right-6">
+        <div className="flex items-center gap-2">
+          <CheckCircleIcon className="h-5 w-5 text-emerald-500" filled />
+          <div>
+            <p className="m-0 text-xs font-bold text-slate-800">Relationship secured</p>
+            <p className="m-0 text-[11px] text-slate-500">Consent-based sharing</p>
           </div>
         </div>
       </div>
 
-      <div className="absolute -bottom-4 -left-4 hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-xl md:block">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-            <ShieldCheckIcon className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="m-0 text-xs font-bold text-slate-800">Identity verified</p>
-            <p className="m-0 text-[11px] text-slate-500">Aadhaar + Biometric</p>
-          </div>
-        </div>
+      <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-[#1a3a8f]/10 bg-white px-4 py-3 shadow-xl md:block lg:-left-6">
+        <p className="m-0 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Connection time</p>
+        <p className="m-0 text-lg font-extrabold text-[#1a3a8f]">Under 2 minutes</p>
       </div>
     </div>
   )
 }
 
+const TRUST_PILLS = [
+  { icon: ShieldCheckIcon, text: 'Verified identities' },
+  { text: 'Faster hiring' },
+  { text: 'Stronger relationships' },
+]
+
 function LandingHero() {
   return (
-    <section className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-24 lg:pt-36 lg:pb-28">
+    <section
+      id="home"
+      className="relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-28 lg:pt-36 lg:pb-32"
+    >
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            'radial-gradient(circle at 15% 30%, rgba(26,58,143,0.09), transparent 45%), radial-gradient(circle at 85% 10%, rgba(234,122,59,0.12), transparent 40%)',
+            'radial-gradient(circle at 10% 20%, rgba(26,58,143,0.1), transparent 42%), radial-gradient(circle at 90% 8%, rgba(234,122,59,0.14), transparent 38%), radial-gradient(circle at 50% 100%, rgba(26,58,143,0.06), transparent 50%)',
         }}
       />
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.4]"
+        className="pointer-events-none absolute inset-0 opacity-[0.35]"
         style={{
           backgroundImage:
-            'linear-gradient(rgba(26,58,143,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(26,58,143,0.04) 1px, transparent 1px)',
-          backgroundSize: '64px 64px',
+            'linear-gradient(rgba(26,58,143,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(26,58,143,0.035) 1px, transparent 1px)',
+          backgroundSize: '72px 72px',
         }}
       />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 md:px-8 lg:grid-cols-2 lg:gap-16 lg:px-10">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 md:px-8 lg:grid-cols-2 lg:gap-16 lg:px-10">
         <div className="max-w-xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#1a3a8f]/15 bg-[#1a3a8f]/5 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#1a3a8f]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#ea7a3b]" />
-            Workforce trust platform
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#1a3a8f]/15 bg-white/80 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#1a3a8f] shadow-sm backdrop-blur-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ea7a3b] opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#ea7a3b]" />
+            </span>
+            Company ↔ Professional trust platform
           </span>
 
-          <h1 className="m-0 mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight text-slate-900 md:text-5xl lg:text-[56px]">
-            Verify identities.{' '}
+          <h1 className="m-0 mt-7 text-[2rem] font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-4xl md:text-[2.75rem] lg:text-5xl">
+            Connecting Talent{' '}
+            <span className="bg-gradient-to-r from-[#ea7a3b] to-[#d9682f] bg-clip-text text-transparent">
+              Faster
+            </span>
+            ,<br />
+            Building Relationships{' '}
             <span className="bg-gradient-to-r from-[#1a3a8f] to-[#2747b2] bg-clip-text text-transparent">
-              Build trust.
+              Stronger
             </span>
           </h1>
 
-          <p className="m-0 mt-5 text-base leading-relaxed text-slate-600 md:text-lg lg:max-w-lg">
-            VeriWork connects employers and professionals through cryptographically verified
-            identities, job history, and consent-based data sharing — all in one secure platform.
+          <p className="m-0 mt-6 text-base leading-relaxed text-slate-600 md:text-lg lg:max-w-lg">
+            VeriWork bridges employers and professionals with verified trust — so companies hire
+            with confidence and talent joins teams faster, with relationships built to last.
           </p>
+
+          <div className="mt-7 flex flex-wrap gap-2.5">
+            {TRUST_PILLS.map((pill) => (
+              <span
+                key={pill.text}
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/90 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm"
+              >
+                {pill.icon && <pill.icon className="h-3.5 w-3.5 text-[#1a3a8f]" />}
+                {pill.text}
+              </span>
+            ))}
+          </div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
@@ -138,17 +194,12 @@ function LandingHero() {
             </Link>
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-500">
-            <span className="flex items-center gap-2">
-              <ShieldCheckIcon className="h-4 w-4 text-[#1a3a8f]" />
-              ISO 27001 certified
-            </span>
-            <span>No credit card required</span>
-            <span>Setup in minutes</span>
-          </div>
+          <p className="m-0 mt-6 text-sm text-slate-500">
+            Trusted by growing teams · No credit card · Setup in minutes
+          </p>
         </div>
 
-        <DashboardPreview />
+        <TrustConnectionVisual />
       </div>
     </section>
   )

@@ -1,344 +1,117 @@
 import { useMemo } from 'react'
-
 import { Link } from 'react-router-dom'
-
+import { useQuery } from '@tanstack/react-query'
 import EmployeeLayout from '../../layouts/EmployeeLayout'
-
 import EmployeePageHeader from '../../components/employee/PageHeader'
-
 import VerificationProgressCard from '../../components/employee/VerificationProgressCard'
-
 import VerificationStepCard from '../../components/employee/VerificationStepCard'
-
 import VerificationStepBar from '../../components/employee/VerificationStepBar'
-
 import VerificationFlowGuide from '../../components/employee/VerificationFlowGuide'
-
 import SecurityFooter from '../../components/employee/SecurityFooter'
-
 import Button from '../../components/common/Button'
-
+import Loader from '../../components/common/Loader'
 import { LockIcon } from '../../components/common/Icons'
-
 import { VERIFICATION_STEPS } from '../../utils/employeeConstants'
+import { employeeKeys, fetchVerificationStatus } from '../../api/employee'
+import { useAuth } from '../../context/AuthContext'
 
-import {
-
-  getCurrentVerificationStep,
-
-  getEmployeeProfile,
-
-  getEmployeeData,
-
-  getVerificationPercent,
-
-  isProfileSetupComplete,
-
-  isVerificationComplete,
-
-} from '../../store/employeeStore'
-
-
-
-function resolveStepStatus(stepId, profile, currentStep) {
-
+function resolveStepStatus(stepId, status, currentStep) {
   const done = {
-
-    profile: profile.profileSetupComplete,
-
-    aadhaar: profile.aadhaarVerified,
-
-    biometric: profile.biometricVerified,
-
+    profile: status.profileSetupComplete,
+    aadhaar: status.aadhaarVerified,
+    biometric: status.biometricVerified,
   }
-
-
-
   if (done[stepId]) return 'completed'
-
   if (stepId === currentStep) return 'current'
-
-
-
   const order = ['profile', 'aadhaar', 'biometric']
-
-  const stepIndex = order.indexOf(stepId)
-
-  const currentIndex = order.indexOf(currentStep)
-
-  if (stepIndex > currentIndex) return 'locked'
-
+  if (order.indexOf(stepId) > order.indexOf(currentStep)) return 'locked'
   return 'pending'
-
 }
-
-
 
 function IdentityVerification() {
+  const { profile } = useAuth()
+  const { data: status, isLoading, error } = useQuery({
+    queryKey: employeeKeys.verification,
+    queryFn: fetchVerificationStatus,
+  })
 
-  const profile = getEmployeeData()
-
-  const display = getEmployeeProfile()
-
-  const currentStep = getCurrentVerificationStep()
-
-  const complete = isVerificationComplete()
-
-  const percent = getVerificationPercent()
-
-
-
-  const steps = useMemo(
-
-    () =>
-
-      VERIFICATION_STEPS.map((step) => {
-
-        const status = resolveStepStatus(step.id, profile, currentStep)
-
-        const canNavigate = status === 'current' || status === 'pending'
-
-        return {
-
-          ...step,
-
-          status,
-
-          to: canNavigate ? step.to : undefined,
-
-        }
-
-      }),
-
-    [profile, currentStep],
-
-  )
-
-
+  const steps = useMemo(() => {
+    if (!status) return VERIFICATION_STEPS
+    return VERIFICATION_STEPS.map((step) => {
+      const stepStatus = resolveStepStatus(step.id, status, status.currentStep)
+      const canNavigate = stepStatus === 'current' || stepStatus === 'pending'
+      return { ...step, status: stepStatus, to: canNavigate ? step.to : undefined }
+    })
+  }, [status])
 
   const nextRoute = useMemo(() => {
-
-    if (currentStep === 'profile') return '/employee/profile-setup'
-
-    if (currentStep === 'aadhaar') return '/employee/verification/aadhaar'
-
-    if (currentStep === 'biometric') return '/employee/verification/biometric'
-
+    if (!status) return '/employee/profile-setup'
+    if (status.currentStep === 'profile') return '/employee/profile-setup'
+    if (status.currentStep === 'aadhaar') return '/employee/verification/aadhaar'
+    if (status.currentStep === 'biometric') return '/employee/verification/biometric'
     return '/employee/score'
+  }, [status])
 
-  }, [currentStep])
+  if (isLoading) return <Loader variant="fullPage" label="Loading verification..." />
 
-
-
-  const nextLabel = useMemo(() => {
-
-    if (currentStep === 'profile') return 'Complete Profile'
-
-    if (currentStep === 'aadhaar') return 'Verify Aadhaar'
-
-    if (currentStep === 'biometric') return 'Start Biometric Check'
-
-    return 'View Your Employee Score'
-
-  }, [currentStep])
-
-
-
-  if (!isProfileSetupComplete()) {
-
+  if (error) {
     return (
-
-      <EmployeeLayout footer={<SecurityFooter variant="shield" text="Bank-Grade Security Protocol" />}>
-
-        <VerificationStepBar currentStep="profile" className="mb-6" />
-
-        <EmployeePageHeader
-
-          title="Identity Verification"
-
-          subtitle="Complete your profile first to begin verification"
-
-        />
-
-        <VerificationFlowGuide />
-
-        <Link to="/employee/profile-setup" className="mt-6 block no-underline">
-
-          <Button type="button">Create Your Profile</Button>
-
-        </Link>
-
+      <EmployeeLayout>
+        <p className="text-red-600">{error.message || 'Failed to load verification status'}</p>
       </EmployeeLayout>
-
     )
-
   }
 
+  if (!status?.profileSetupComplete) {
+    return (
+      <EmployeeLayout footer={<SecurityFooter variant="shield" text="Bank-Grade Security Protocol" />}>
+        <VerificationStepBar currentStep="profile" className="mb-6" />
+        <EmployeePageHeader title="Identity Verification" subtitle="Complete your profile first" />
+        <VerificationFlowGuide />
+        <Link to="/employee/profile-setup" className="mt-6 block no-underline">
+          <Button type="button">Create Your Profile</Button>
+        </Link>
+      </EmployeeLayout>
+    )
+  }
 
+  const complete = status.isComplete
 
   return (
-
     <EmployeeLayout footer={<SecurityFooter variant="shield" text="Bank-Grade Security Protocol" />}>
+      <VerificationStepBar currentStep={status.currentStep} className="mb-6" />
+      <EmployeePageHeader title="Identity Verification" subtitle={`${profile?.name} · ${profile?.veriworkId}`} />
 
-      <VerificationStepBar currentStep={currentStep} className="mb-6" />
-
-
-
-      <EmployeePageHeader
-
-        title="Identity Verification"
-
-        subtitle={`${display.name} · ${display.veriworkId}`}
-
-      />
-
-
-
-      <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-8 xl:gap-10">
-
+      <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-8">
         <div className="lg:sticky lg:top-24">
-
           <VerificationProgressCard
-
-            percent={percent}
-
-            currentStep={currentStep}
-
-            message={
-
-              complete
-
-                ? 'Your identity is fully verified!'
-
-                : percent >= 66
-
-                  ? 'One step left!'
-
-                  : percent >= 33
-
-                    ? 'Good progress!'
-
-                    : 'Let\'s get started'
-
-            }
-
+            percent={status.verificationPercent}
+            currentStep={status.currentStep}
+            message={complete ? 'Your identity is fully verified!' : 'Keep going!'}
           />
-
-
-
-          <div className="mt-5">
-
-            <VerificationFlowGuide />
-
-          </div>
-
-
-
-          {complete && (
-
-            <div className="mt-4 rounded-2xl border border-green-200 bg-green-50 p-4 text-center md:p-5">
-
-              <p className="m-0 text-sm font-semibold text-green-800 md:text-base">
-
-                All 3 steps complete! Your Professional ID is ready.
-
-              </p>
-
-            </div>
-
-          )}
-
-
-
-          <div className="mt-6 hidden items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50/80 p-4 md:flex lg:mt-8">
-
-            <LockIcon className="mt-0.5 h-5 w-5 shrink-0 text-[#1a3a8f]" />
-
-            <div>
-
-              <p className="m-0 text-sm font-bold text-[#1a3a8f]">Privacy-First Encryption</p>
-
-              <p className="m-0 mt-1 text-xs leading-relaxed text-slate-600 md:text-sm">
-
-                Your data is encrypted end-to-end and never shared without your consent.
-
-              </p>
-
-            </div>
-
-          </div>
-
+          <div className="mt-5"><VerificationFlowGuide /></div>
         </div>
-
-
 
         <div>
-
-          <section>
-
-            <h2 className="m-0 mb-1 text-sm font-bold text-slate-800 md:text-base">
-
-              3 simple steps to verify
-
-            </h2>
-
-            <p className="m-0 mb-4 text-xs text-slate-500 md:text-sm">
-
-              Complete each step in order. Later steps unlock after the previous one is done.
-
-            </p>
-
-            <div className="flex flex-col gap-3 md:gap-4">
-
-              {steps.map((step) => (
-
-                <VerificationStepCard key={step.id} step={step} />
-
-              ))}
-
-            </div>
-
-          </section>
-
-
-
-          <Link to={nextRoute} className="mt-6 block no-underline md:mt-8">
-
-            <Button type="button">{nextLabel}</Button>
-
-          </Link>
-
-
-
-          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50/80 p-4 md:mt-8 md:hidden">
-
-            <LockIcon className="mt-0.5 h-5 w-5 shrink-0 text-[#1a3a8f]" />
-
-            <div>
-
-              <p className="m-0 text-sm font-bold text-[#1a3a8f]">Privacy-First Encryption</p>
-
-              <p className="m-0 mt-1 text-xs leading-relaxed text-slate-600">
-
-                Your data is encrypted end-to-end and never shared without your consent.
-
-              </p>
-
-            </div>
-
+          <h2 className="m-0 mb-4 text-sm font-bold text-slate-800">3 simple steps to verify</h2>
+          <div className="flex flex-col gap-3">
+            {steps.map((step) => (
+              <VerificationStepCard key={step.id} step={step} />
+            ))}
           </div>
-
+          <Link to={nextRoute} className="mt-6 block no-underline">
+            <Button type="button">
+              {complete ? 'View Your Employee Score' : 'Continue Verification'}
+            </Button>
+          </Link>
+          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50/80 p-4">
+            <LockIcon className="mt-0.5 h-5 w-5 shrink-0 text-[#1a3a8f]" />
+            <p className="m-0 text-sm text-slate-600">Your data is encrypted end-to-end.</p>
+          </div>
         </div>
-
       </div>
-
     </EmployeeLayout>
-
   )
-
 }
 
-
-
 export default IdentityVerification
-

@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import BrandLogo from '../common/BrandLogo'
-import { clearEnterpriseSession } from '../../store/enterpriseStore'
+import { useAuth } from '../../context/AuthContext'
 
 const NAV_ITEMS = [
   {
@@ -63,8 +63,10 @@ const NAV_ITEMS = [
 function SidebarContent({ onNavigate }) {
   const navigate = useNavigate()
 
-  const handleSignOut = () => {
-    clearEnterpriseSession()
+  const { logout } = useAuth()
+
+  const handleSignOut = async () => {
+    await logout()
     onNavigate?.()
     navigate('/enterprise/login')
   }

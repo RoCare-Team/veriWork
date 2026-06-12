@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { ShieldLogoIcon } from '../common/Icons'
-import { clearEmployeeSession, isVerificationComplete } from '../../store/employeeStore'
+import { useAuth } from '../../context/AuthContext'
 
 const NAV_ITEMS = [
   {
@@ -84,12 +84,13 @@ const NAV_ITEMS = [
 
 function SidebarContent({ onNavigate }) {
   const navigate = useNavigate()
-  const verified = isVerificationComplete()
+  const { profile, logout } = useAuth()
+  const verified = profile?.isVerified === true
 
-  const handleSignOut = () => {
-    clearEmployeeSession()
+  const handleSignOut = async () => {
+    await logout()
     onNavigate?.()
-    navigate('/employee')
+    navigate('/employee/login')
   }
 
   return (

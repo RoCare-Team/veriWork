@@ -1,11 +1,19 @@
-import { useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import EmployeeLayout from '../../layouts/EmployeeLayout'
 import EmployeePageHeader from '../../components/employee/PageHeader'
 import VaultCategoryCard from '../../components/employee/VaultCategoryCard'
+import Loader from '../../components/common/Loader'
 import { ShieldCheckIcon, DocumentIcon } from '../../components/common/Icons'
-import { isVerificationComplete } from '../../store/employeeStore'
-import { VAULT_STORAGE, VAULT_CATEGORIES, RECENT_DOCUMENTS } from '../../utils/employeePortalData'
+import { employeeKeys, fetchVault, uploadVaultDocument } from '../../api/employee'
+
+const CATEGORIES = [
+  { id: 'identity', label: 'Identity', icon: 'id', color: 'blue' },
+  { id: 'education', label: 'Education', icon: 'education', color: 'purple' },
+  { id: 'experience', label: 'Experience', icon: 'briefcase', color: 'green' },
+  { id: 'financial', label: 'Financial', icon: 'wallet', color: 'orange' },
+]
 
 function PlusIcon() {
   return (
@@ -15,37 +23,86 @@ function PlusIcon() {
   )
 }
 
-function DocumentVault() {
-  const navigate = useNavigate()
+function formatSize(bytes) {
+  if (!bytes) return ''
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
 
-  useEffect(() => {
-    if (!isVerificationComplete()) {
-      navigate('/employee/verification', { replace: true })
-    }
-  }, [navigate])
+function DocumentVault() {
+  const queryClient = useQueryClient()
+  const fileRef = useRef(null)
+  const [uploadCategory, setUploadCategory] = useState('identity')
+  const [uploadError, setUploadError] = useState('')
+
+  const { data: vault = [], isLoading, error } = useQuery({
+    queryKey: employeeKeys.vault,
+    queryFn: fetchVault,
+  })
+
+  const uploadMutation = useMutation({
+    mutationFn: ({ file, category }) =>
+      uploadVaultDocument({
+        category,
+        name: file.name,
+        file,
+        size: formatSize(file.size),
+      }),
+    onSuccess: () => {
+      setUploadError('')
+      queryClient.invalidateQueries({ queryKey: employeeKeys.vault })
+    },
+    onError: (err) => setUploadError(err.message || 'Upload failed'),
+  })
+
+  const categories = useMemo(
+    () =>
+      CATEGORIES.map((cat) => ({
+        ...cat,
+        files: vault.filter((d) => d.category === cat.id).length,
+      })),
+    [vault],
+  )
+
+  const recentDocs = useMemo(
+    () =>
+      [...vault]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 5),
+    [vault],
+  )
+
+  const totalDocs = vault.length
+  const verifiedCount = vault.filter((d) => d.status === 'verified').length
+  const storagePercent = totalDocs > 0 ? Math.min(100, Math.round((totalDocs / 20) * 100)) : 0
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    uploadMutation.mutate({ file, category: uploadCategory })
+    e.target.value = ''
+  }
+
+  if (isLoading) return <Loader variant="fullPage" label="Loading vault..." />
 
   return (
     <EmployeeLayout>
-      <EmployeePageHeader
-        title="Document Vault"
-        subtitle="Securely store and manage your verified documents"
-      />
+      <EmployeePageHeader title="Document Vault" subtitle="Securely store and manage your verified documents" />
+      {error && <p className="mb-4 text-sm text-red-600">{error.message}</p>}
 
       <div className="rounded-3xl bg-gradient-to-br from-[#1a3a8f] via-[#2747b2] to-[#152b6e] p-5 text-white shadow-xl shadow-blue-900/20 md:p-6 lg:p-7">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <p className="m-0 text-sm text-white/70 md:text-base">Vault Storage</p>
             <p className="m-0 mt-1 text-2xl font-extrabold md:text-3xl">
-              {VAULT_STORAGE.used} <span className="text-lg font-semibold text-white/60">of {VAULT_STORAGE.total} used</span>
+              {totalDocs} <span className="text-lg font-semibold text-white/60">documents</span>
             </p>
             <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/20">
-              <div
-                className="h-full rounded-full bg-green-400 transition-all"
-                style={{ width: `${VAULT_STORAGE.percent}%` }}
-              />
+              <div className="h-full rounded-full bg-green-400 transition-all" style={{ width: `${storagePercent}%` }} />
             </div>
             <div className="mt-2 flex justify-between text-xs text-white/65 md:text-sm">
-              <span>{VAULT_STORAGE.percent}% Used</span>
+              <span>{verifiedCount} verified</span>
               <span>Encrypted & Secure</span>
             </div>
           </div>
@@ -58,7 +115,7 @@ function DocumentVault() {
       <section className="mt-8">
         <h2 className="m-0 mb-4 text-sm font-bold text-slate-800 md:text-base">Categories</h2>
         <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
-          {VAULT_CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <VaultCategoryCard key={cat.id} category={cat} />
           ))}
         </div>
@@ -67,47 +124,69 @@ function DocumentVault() {
       <section className="mt-8">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="m-0 text-sm font-bold text-slate-800 md:text-base">Recent Documents</h2>
-          <button type="button" className="text-sm font-semibold text-[#1a3a8f] hover:underline">
-            View All
-          </button>
         </div>
-
         <div className="flex flex-col gap-3">
-          {RECENT_DOCUMENTS.map((doc) => (
-            <div
-              key={doc.id}
-              className="flex items-center gap-3.5 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm md:p-5"
-            >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#1a3a8f]">
-                <DocumentIcon className="h-5 w-5" />
+          {recentDocs.length > 0 ? (
+            recentDocs.map((doc) => (
+              <div
+                key={doc._id}
+                className="flex items-center gap-3.5 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm md:p-5"
+              >
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#1a3a8f]">
+                  <DocumentIcon className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="m-0 truncate text-sm font-bold text-slate-900 md:text-base">{doc.name}</p>
+                  <p className="m-0 mt-0.5 text-xs text-slate-500 md:text-sm">
+                    {doc.size || doc.category} &bull; {new Date(doc.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <span
+                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                    doc.status === 'verified' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'
+                  }`}
+                >
+                  {doc.status === 'verified' ? 'Verified' : 'Pending'}
+                </span>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="m-0 truncate text-sm font-bold text-slate-900 md:text-base">{doc.name}</p>
-                <p className="m-0 mt-0.5 text-xs text-slate-500 md:text-sm">
-                  {doc.size} &bull; {doc.date}
-                </p>
-              </div>
-              <span className="shrink-0 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
-                Verified
-              </span>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
+              No documents uploaded yet
+            </p>
+          )}
         </div>
       </section>
 
-      <div className="mt-8 flex justify-end lg:mt-10">
+      <div className="mt-8 flex flex-col items-end gap-3 lg:mt-10">
+        <select
+          value={uploadCategory}
+          onChange={(e) => setUploadCategory(e.target.value)}
+          className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+        >
+          {CATEGORIES.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.label}
+            </option>
+          ))}
+        </select>
+        {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#1a3a8f] px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/20 transition hover:bg-[#152b6e] md:px-6 md:text-base">
-          <input type="file" className="sr-only" accept=".pdf,.jpg,.jpeg,.png" />
+          <input
+            ref={fileRef}
+            type="file"
+            className="sr-only"
+            accept=".pdf,.jpg,.jpeg,.png"
+            onChange={handleFileChange}
+            disabled={uploadMutation.isPending}
+          />
           <PlusIcon />
-          Upload File
+          {uploadMutation.isPending ? 'Uploading...' : 'Upload File'}
         </label>
       </div>
 
       <div className="mt-4 text-center lg:hidden">
-        <Link
-          to="/employee/job-history/add"
-          className="text-sm font-semibold text-[#1a3a8f] no-underline hover:underline"
-        >
+        <Link to="/employee/job-history/add" className="text-sm font-semibold text-[#1a3a8f] no-underline hover:underline">
           Upload experience documents →
         </Link>
       </div>

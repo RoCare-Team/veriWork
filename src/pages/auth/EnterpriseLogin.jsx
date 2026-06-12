@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
 import AuthLayout from '../../layouts/AuthLayout'
 import BrandLogo from '../../components/common/BrandLogo'
 import Button from '../../components/common/Button'
@@ -7,35 +8,45 @@ import Input from '../../components/common/Input'
 import Loader from '../../components/common/Loader'
 import { GoogleIcon, MicrosoftIcon } from '../../components/common/Icons'
 import { isValidEmail } from '../../utils/validators'
-import { setEnterpriseSession } from '../../store/enterpriseStore'
+import { loginEnterprise } from '../../api/auth'
+import { useAuth } from '../../context/AuthContext'
+import { getEnterpriseHomeRoute } from '../../utils/enterpriseApproval'
+import { useToast } from '../../context/ToastContext'
 
 function EnterpriseLogin() {
   const navigate = useNavigate()
+  const { loginEnterprise: setSession } = useAuth()
   const [isBooting, setIsBooting] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [touched, setTouched] = useState(false)
+  const { toast } = useToast()
 
   useEffect(() => {
     const timer = window.setTimeout(() => setIsBooting(false), 700)
     return () => window.clearTimeout(timer)
   }, [])
 
-  const hasError = useMemo(() => {
-    if (!touched) return false
-    return !isValidEmail(email)
-  }, [email, touched])
+  const hasError = useMemo(() => touched && !isValidEmail(email), [email, touched])
 
-  const handleSubmit = async (event) => {
+  const loginMutation = useMutation({
+    mutationFn: () => loginEnterprise(email.trim(), password),
+    onSuccess: (data) => {
+      toast('Welcome back!', 'success')
+      setSession(data)
+      navigate(getEnterpriseHomeRoute(data.company))
+    },
+    onError: (err) => toast(err.message || 'Login failed', 'error'),
+  })
+
+  const handleSubmit = (event) => {
     event.preventDefault()
     setTouched(true)
-    if (!isValidEmail(email)) return
-
-    setIsSubmitting(true)
-    await new Promise((resolve) => window.setTimeout(resolve, 1000))
-    setIsSubmitting(false)
-    setEnterpriseSession({ email })
-    navigate('/enterprise/dashboard')
+    if (!isValidEmail(email) || !password) {
+      toast('Enter a valid email and password', 'error')
+      return
+    }
+    loginMutation.mutate()
   }
 
   if (isBooting) {
@@ -58,85 +69,62 @@ function EnterpriseLogin() {
           </p>
         </section>
 
-        <form className="flex flex-col" onSubmit={handleSubmit} noValidate>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
           <Input
             id="work-email"
             label="Work Email"
             type="email"
-            placeholder="name@company.com"
+            placeholder="hr@technova.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             onBlur={() => setTouched(true)}
             leftIcon={<span className="text-sm font-semibold text-slate-400">@</span>}
             error={hasError}
-            aria-invalid={hasError}
             autoComplete="email"
-            disabled={isSubmitting}
+            disabled={loginMutation.isPending}
+          />
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={loginMutation.isPending}
+            autoComplete="current-password"
           />
           {hasError && (
-            <p className="mt-1.5 text-[13px] text-red-600" role="alert">
+            <p className="m-0 text-[13px] text-red-600" role="alert">
               Enter a valid company email address.
             </p>
           )}
 
-          <Button type="submit" className="mt-4" disabled={isSubmitting}>
-            {isSubmitting ? 'Signing you in...' : 'Continue to Dashboard'}
+          <Button type="submit" disabled={loginMutation.isPending || !password}>
+            {loginMutation.isPending ? 'Signing you in...' : 'Continue to Dashboard'}
           </Button>
         </form>
 
-        <div className="relative text-center">
-          <span className="absolute inset-x-0 top-1/2 border-t border-slate-200" />
-          <span className="relative bg-white px-4 text-xs font-semibold tracking-widest text-slate-400">
-            OR
-          </span>
-        </div>
-
-        <section className="flex flex-col gap-3">
-          <Button variant="secondary" type="button" disabled={isSubmitting}>
-            <GoogleIcon />
-            Continue with Google
-          </Button>
-          <Button variant="secondary" type="button" disabled={isSubmitting}>
-            <MicrosoftIcon />
-            Continue with Microsoft
-          </Button>
-        </section>
+        <p className="m-0 text-center text-xs text-slate-400">
+          Test: hr@technova.com / VeriWork@123
+        </p>
 
         <footer className="flex flex-col items-center gap-3 border-t border-slate-100 pt-6 text-center text-[13px] text-slate-500">
           <p className="m-0">
             New company?{' '}
-            <Link
-              to="/enterprise/register"
-              className="font-bold text-[#1a3a8f] no-underline hover:underline"
-            >
+            <Link to="/enterprise/register" className="font-bold text-[#1a3a8f] no-underline hover:underline">
               Register Now
             </Link>
           </p>
           <p className="m-0">
             Professional?{' '}
-            <Link to="/employee" className="font-bold text-[#1a3a8f] no-underline hover:underline">
+            <Link to="/employee/login" className="font-bold text-[#1a3a8f] no-underline hover:underline">
               Employee Portal
             </Link>
-            {' · '}
-            <Link to="/" className="font-semibold text-slate-500 no-underline hover:text-[#1a3a8f]">
-              Home
-            </Link>
           </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {['ISO 27001', '256-bit SSL'].map((badge) => (
-              <span
-                key={badge}
-                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600"
-              >
-                {badge}
-              </span>
-            ))}
-          </div>
-          <small className="text-slate-400">v2.4.0 Build 882</small>
         </footer>
       </div>
 
-      {isSubmitting && <Loader variant="overlay" label="Authenticating..." />}
+      {loginMutation.isPending && <Loader variant="overlay" label="Authenticating..." />}
     </AuthLayout>
   )
 }

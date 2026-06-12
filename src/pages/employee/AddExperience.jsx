@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import EmployeeLayout from '../../layouts/EmployeeLayout'
 import EmployeePageHeader from '../../components/employee/PageHeader'
 import SectionTitle from '../../components/common/SectionTitle'
@@ -9,7 +10,7 @@ import Button from '../../components/common/Button'
 import Loader from '../../components/common/Loader'
 import ExperienceDocumentCard from '../../components/employee/ExperienceDocumentCard'
 import { BuildingIcon, BriefcaseIcon, CardIcon } from '../../components/common/Icons'
-import { addJobExperience, isVerificationComplete } from '../../store/employeeStore'
+import { createJob, employeeKeys, uploadJobDocument } from '../../api/employee'
 import { EMPLOYMENT_TYPES, EXPERIENCE_DOCUMENTS } from '../../utils/addExperienceConstants'
 
 function CalendarIcon({ className = 'h-[18px] w-[18px]' }) {
@@ -70,23 +71,47 @@ const INITIAL_FORM = {
 
 function AddExperience() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [form, setForm] = useState(INITIAL_FORM)
   const [documents, setDocuments] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState('')
 
-  useEffect(() => {
-    if (!isVerificationComplete()) {
-      navigate('/employee/verification', { replace: true })
-    }
-  }, [navigate])
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const job = await createJob({
+        title: form.role.trim(),
+        company: form.companyName.trim(),
+        employmentType: form.employmentType,
+        salaryBand: form.salaryBand,
+        joiningDate: form.joiningDate,
+        exitDate: form.isPresent ? undefined : form.exitDate,
+        isPresent: form.isPresent,
+        companyEmail: form.companyEmail.trim(),
+        hrEmail: form.hrEmail.trim(),
+        description: form.description.trim(),
+      })
+      const jobId = job._id || job.id
+      const files = Object.values(documents).filter(Boolean)
+      for (const file of files) {
+        await uploadJobDocument(jobId, file)
+      }
+      return job
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: employeeKeys.jobs })
+      queryClient.invalidateQueries({ queryKey: employeeKeys.score })
+      navigate('/employee/job-history')
+    },
+    onError: (err) => setError(err.message || 'Failed to add job'),
+  })
 
   const update = (field) => (e) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleUpload = (docId, fileName) => {
-    setDocuments((prev) => ({ ...prev, [docId]: fileName }))
+  const handleUpload = (docId, file) => {
+    setDocuments((prev) => ({ ...prev, [docId]: file }))
   }
 
   const isValid =
@@ -96,16 +121,13 @@ function AddExperience() {
     (form.isPresent || form.exitDate.trim()) &&
     form.companyEmail.trim()
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     if (!isValid) return
-
-    setIsSubmitting(true)
-    await new Promise((resolve) => window.setTimeout(resolve, 1500))
-    addJobExperience(form)
-    setIsSubmitting(false)
-    navigate('/employee/job-history')
+    mutation.mutate()
   }
+
+  const isSubmitting = mutation.isPending
 
   return (
     <EmployeeLayout>
@@ -113,6 +135,8 @@ function AddExperience() {
         title="Add Job Detail"
         subtitle="Add employment details for verification"
       />
+
+      {error && <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
       <form className="flex flex-col gap-8 md:gap-10" onSubmit={handleSubmit} noValidate>
         <section>
@@ -228,7 +252,7 @@ function AddExperience() {
               <ExperienceDocumentCard
                 key={doc.id}
                 doc={doc}
-                fileName={documents[doc.id]}
+                fileName={documents[doc.id]?.name}
                 onUpload={handleUpload}
               />
             ))}

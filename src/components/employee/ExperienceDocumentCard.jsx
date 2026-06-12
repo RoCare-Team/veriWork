@@ -66,7 +66,7 @@ function ExperienceDocumentCard({ doc, fileName, onUpload }) {
           accept=".pdf,.jpg,.jpeg,.png"
           onChange={(e) => {
             const file = e.target.files?.[0]
-            if (file) onUpload(doc.id, file.name)
+            if (file) onUpload(doc.id, file)
           }}
         />
         <PlusCircleIcon uploaded={uploaded} />

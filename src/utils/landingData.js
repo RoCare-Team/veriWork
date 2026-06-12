@@ -147,6 +147,7 @@ export const LANDING_FOOTER_LINKS = {
     { label: 'Security', href: '#security' },
     { label: 'Employer Portal', to: '/enterprise/login' },
     { label: 'Employee Portal', to: '/employee' },
+    { label: 'Admin Console', to: '/admin/login' },
   ],
   company: [
     { label: 'About', href: '#' },

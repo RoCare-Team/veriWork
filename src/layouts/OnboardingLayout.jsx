@@ -27,12 +27,12 @@ function OnboardingLayout({
   footer,
 }) {
   return (
-    <div className="min-h-screen bg-white lg:grid lg:grid-cols-[minmax(320px,380px)_1fr] xl:grid-cols-[minmax(360px,420px)_1fr]">
+    <div className="min-h-screen bg-slate-50 lg:grid lg:grid-cols-[minmax(320px,380px)_1fr] xl:grid-cols-[minmax(360px,420px)_1fr]">
       {/* Mobile header */}
-      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 lg:hidden">
+      <div className="flex items-center justify-between border-b border-slate-100 bg-white px-5 py-4 lg:hidden">
         <Link
           to={backTo}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-slate-700 transition hover:bg-slate-100"
+          className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-700 transition hover:bg-slate-100"
           aria-label="Go back"
         >
           <BackIcon />
@@ -42,10 +42,10 @@ function OnboardingLayout({
         </span>
       </div>
 
-      {/* Desktop sidebar — matches login hero */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#152b6e] via-[#1a3a8f] to-[#2747b2] lg:flex lg:flex-col lg:justify-between lg:p-10 xl:p-12">
+      {/* Desktop sidebar */}
+      <aside className="relative m-0 hidden overflow-hidden rounded-none bg-gradient-to-br from-[#152b6e] via-[#1a3a8f] to-[#2747b2] lg:m-4 lg:flex lg:flex-col lg:justify-between lg:rounded-3xl lg:p-10 xl:m-5 xl:rounded-[2rem] xl:p-12">
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
+          className="pointer-events-none absolute inset-0 rounded-3xl opacity-[0.05]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px)',
@@ -69,10 +69,7 @@ function OnboardingLayout({
         <div className="relative z-10">
           <p className="text-sm leading-relaxed text-white/60">
             Need help? Contact{' '}
-            <a
-              href="mailto:support@veriwork.com"
-              className="font-semibold text-white/90 underline"
-            >
+            <a href="mailto:support@veriwork.com" className="font-semibold text-white/90 underline">
               support@veriwork.com
             </a>
           </p>
@@ -80,13 +77,13 @@ function OnboardingLayout({
       </aside>
 
       {/* Main content */}
-      <div className="flex min-h-screen flex-col">
-        <header className="hidden border-b border-slate-100 px-8 py-6 lg:block xl:px-12 xl:py-8">
-          <div className="flex items-start justify-between gap-4">
+      <div className="flex min-h-screen flex-col lg:min-h-0 lg:py-4 lg:pr-4 xl:py-5 xl:pr-5">
+        <header className="hidden rounded-3xl border border-slate-100 bg-white py-6 pl-10 pr-8 shadow-sm lg:block xl:pl-14 xl:pr-12 xl:py-8">
+          <div className="mx-auto flex w-full max-w-4xl items-start justify-between gap-4">
             <div>
               <Link
                 to={backTo}
-                className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-[#1a3a8f]"
+                className="mb-4 inline-flex items-center gap-1.5 rounded-xl px-2 py-1 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-[#1a3a8f]"
               >
                 <BackIcon />
                 Back
@@ -95,7 +92,7 @@ function OnboardingLayout({
                 {title}
               </h1>
               {subtitle && (
-                <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-500 md:text-[15px]">
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500 md:text-[15px]">
                   {subtitle}
                 </p>
               )}
@@ -107,24 +104,18 @@ function OnboardingLayout({
         </header>
 
         {/* Mobile title */}
-        <div className="border-b border-slate-100 px-5 py-5 lg:hidden">
-          <h1 className="m-0 text-xl font-extrabold tracking-tight text-slate-900">
-            {title}
-          </h1>
-          {subtitle && (
-            <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
-              {subtitle}
-            </p>
-          )}
+        <div className="border-b border-slate-100 bg-white px-5 py-5 lg:hidden">
+          <h1 className="m-0 text-xl font-extrabold tracking-tight text-slate-900">{title}</h1>
+          {subtitle && <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{subtitle}</p>}
         </div>
 
-        <main className="flex-1 overflow-y-auto px-5 py-6 sm:px-8 md:py-8 xl:px-12">
-          <div className="mx-auto w-full max-w-3xl">{children}</div>
+        <main className="flex-1 overflow-y-auto px-5 py-6 sm:pl-8 sm:pr-6 md:py-8 lg:pl-10 lg:pr-6 xl:pl-14 xl:pr-8">
+          <div className="w-full max-w-4xl">{children}</div>
         </main>
 
         {footer && (
-          <footer className="border-t border-slate-100 bg-white px-5 py-4 sm:px-8 xl:px-12">
-            <div className="mx-auto w-full max-w-3xl">{footer}</div>
+          <footer className="rounded-3xl border border-slate-100 bg-white px-5 py-4 shadow-sm sm:pl-8 sm:pr-6 lg:ml-0 lg:pl-10 lg:pr-6 xl:pl-14 xl:pr-8">
+            <div className="w-full max-w-4xl">{footer}</div>
           </footer>
         )}
       </div>

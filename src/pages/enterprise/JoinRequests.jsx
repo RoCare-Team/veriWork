@@ -1,38 +1,51 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import EnterpriseLayout from '../../layouts/EnterpriseLayout'
 import PageHeader from '../../components/enterprise/PageHeader'
 import CandidateRequestCard from '../../components/enterprise/CandidateRequestCard'
-import { JOIN_REQUESTS } from '../../utils/enterpriseData'
-
-const TABS = [
-  { id: 'new', label: 'New', count: 4 },
-  { id: 'review', label: 'In Review', count: 0 },
-  { id: 'history', label: 'History', count: 0 },
-]
+import Loader from '../../components/common/Loader'
+import { enterpriseKeys, fetchJoinRequests, updateJoinRequest } from '../../api/enterprise'
+import { getInitials } from '../../utils/formatters'
 
 function JoinRequests() {
+  const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState('new')
   const [query, setQuery] = useState('')
-  const [requests, setRequests] = useState(JOIN_REQUESTS)
 
-  const filtered = requests.filter((r) =>
-    r.name.toLowerCase().includes(query.toLowerCase()),
+  const { data: requests = [], isLoading, error } = useQuery({
+    queryKey: enterpriseKeys.joinRequests,
+    queryFn: fetchJoinRequests,
+  })
+
+  const actionMutation = useMutation({
+    mutationFn: ({ id, status }) => updateJoinRequest(id, status),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: enterpriseKeys.joinRequests }),
+  })
+
+  const pending = useMemo(() => requests.filter((r) => r.status === 'pending'), [requests])
+  const history = useMemo(
+    () => requests.filter((r) => r.status === 'approved' || r.status === 'rejected'),
+    [requests],
   )
 
-  const handleApprove = (id) => {
-    setRequests((prev) => prev.filter((r) => r.id !== id))
-  }
+  const filtered = useMemo(() => {
+    const list = activeTab === 'history' ? history : pending
+    return list.filter((r) => r.name?.toLowerCase().includes(query.toLowerCase()))
+  }, [activeTab, history, pending, query])
 
-  const handleReject = (id) => {
-    setRequests((prev) => prev.filter((r) => r.id !== id))
-  }
+  const tabs = [
+    { id: 'new', label: 'New', count: pending.length },
+    { id: 'history', label: 'History', count: history.length },
+  ]
+
+  if (isLoading) return <Loader variant="fullPage" label="Loading join requests..." />
 
   return (
     <EnterpriseLayout>
       <div className="px-4 py-5 md:px-6 md:py-8 lg:px-8">
         <PageHeader
           title="Join Requests"
-          subtitle={`${requests.length} pending verification`}
+          subtitle={`${pending.length} pending verification`}
           badge={
             <span className="rounded-full bg-green-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-green-700">
               Live
@@ -40,22 +53,20 @@ function JoinRequests() {
           }
         />
 
+        {error && <p className="mb-4 text-sm text-red-600">{error.message}</p>}
+
         <div className="mb-5 flex rounded-2xl bg-slate-100 p-1">
-          {TABS.map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 rounded-xl py-2.5 text-sm font-semibold transition ${
-                activeTab === tab.id
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-700'
+                activeTab === tab.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
               }`}
             >
               {tab.label}
-              {tab.id === 'new' && requests.length > 0 && (
-                <span className="ml-1 text-slate-400">({requests.length})</span>
-              )}
+              {tab.count > 0 && <span className="ml-1 text-slate-400">({tab.count})</span>}
             </button>
           ))}
         </div>
@@ -76,15 +87,6 @@ function JoinRequests() {
               className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-50"
             />
           </div>
-          <button
-            type="button"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-            aria-label="Filter"
-          >
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path d="M3 5h14M5 10h10M8 15h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-          </button>
         </div>
 
         {activeTab === 'new' ? (
@@ -92,28 +94,45 @@ function JoinRequests() {
             {filtered.length > 0 ? (
               filtered.map((req) => (
                 <CandidateRequestCard
-                  key={req.id}
-                  {...req}
-                  onApprove={() => handleApprove(req.id)}
-                  onReject={() => handleReject(req.id)}
+                  key={req._id}
+                  name={req.name}
+                  role={req.role}
+                  department={req.department}
+                  employeeScore={req.employeeScore}
+                  joiningDate={req.joiningDate}
+                  salaryBand={req.salaryBand}
+                  documents={req.documents || []}
+                  avatar={req.avatar || getInitials(req.name)}
+                  onApprove={() => actionMutation.mutate({ id: req._id, status: 'approved' })}
+                  onReject={() => actionMutation.mutate({ id: req._id, status: 'rejected' })}
                 />
               ))
             ) : (
               <div className="col-span-full rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center">
-                <p className="m-0 text-sm font-semibold text-slate-600">
-                  No pending join requests
-                </p>
-                <p className="mt-1 text-xs text-slate-400">
-                  All candidates have been reviewed.
-                </p>
+                <p className="m-0 text-sm font-semibold text-slate-600">No pending join requests</p>
+                <p className="mt-1 text-xs text-slate-400">All candidates have been reviewed.</p>
               </div>
             )}
           </div>
+        ) : filtered.length > 0 ? (
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+            {filtered.map((req) => (
+              <CandidateRequestCard
+                key={req._id}
+                name={req.name}
+                role={req.role}
+                department={req.department}
+                employeeScore={req.employeeScore}
+                joiningDate={req.joiningDate}
+                salaryBand={req.salaryBand}
+                documents={req.documents || []}
+                avatar={req.avatar || getInitials(req.name)}
+              />
+            ))}
+          </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center">
-            <p className="m-0 text-sm text-slate-500">
-              {activeTab === 'review' ? 'No requests in review.' : 'No history yet.'}
-            </p>
+            <p className="m-0 text-sm text-slate-500">No history yet.</p>
           </div>
         )}
       </div>

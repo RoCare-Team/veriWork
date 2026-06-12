@@ -4,11 +4,17 @@ import EnterpriseLogin from '../pages/auth/EnterpriseLogin'
 import BusinessBasicInfo from '../pages/auth/BusinessBasicInfo'
 import CompanyVerification from '../pages/auth/CompanyVerification'
 import ReviewSubmission from '../pages/auth/ReviewSubmission'
+import PendingApproval from '../pages/enterprise/PendingApproval'
+import ApplicationRejected from '../pages/enterprise/ApplicationRejected'
 import Dashboard from '../pages/enterprise/Dashboard'
 import Workforce from '../pages/enterprise/Workforce'
 import JoinRequests from '../pages/enterprise/JoinRequests'
 import QROnboarding from '../pages/enterprise/QROnboarding'
 import Settings from '../pages/enterprise/Settings'
+import AdminLogin from '../pages/admin/AdminLogin'
+import AdminDashboard from '../pages/admin/AdminDashboard'
+import AdminCompanies from '../pages/admin/AdminCompanies'
+import AdminCompanyReview from '../pages/admin/AdminCompanyReview'
 import EmployeeWelcome from '../pages/employee/EmployeeWelcome'
 import EmployeeLogin from '../pages/employee/EmployeeLogin'
 import ProfileSetup from '../pages/employee/ProfileSetup'
@@ -25,10 +31,13 @@ import EmployeeSettings from '../pages/employee/EmployeeSettings'
 import PrivacySecurity from '../pages/employee/PrivacySecurity'
 import Support from '../pages/employee/Support'
 import {
+  AdminGuestGuard,
+  AdminPortalGuard,
   EmployeeGuestGuard,
   EmployeePortalGuard,
+  EnterpriseApprovedGuard,
+  EnterpriseAuthGuard,
   EnterpriseGuestGuard,
-  EnterprisePortalGuard,
 } from './guards'
 
 function AppRoutes() {
@@ -37,17 +46,38 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Home />} />
 
-        {/* Enterprise — auth & onboarding (guest) */}
+        {/* Admin */}
+        <Route element={<AdminGuestGuard />}>
+          <Route path="/admin/login" element={<AdminLogin />} />
+        </Route>
+        <Route element={<AdminPortalGuard />}>
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/companies/approved" element={<AdminCompanies status="approved" />} />
+          <Route path="/admin/companies/rejected" element={<AdminCompanies status="rejected" />} />
+          <Route path="/admin/companies/all" element={<AdminCompanies status="all" />} />
+          <Route path="/admin/companies/:id" element={<AdminCompanyReview />} />
+          <Route path="/admin/companies" element={<AdminCompanies status="submitted" />} />
+          <Route path="/admin/enterprise-approvals" element={<Navigate to="/admin/companies" replace />} />
+        </Route>
+
+        {/* Enterprise — guest */}
         <Route element={<EnterpriseGuestGuard />}>
           <Route path="/enterprise/login" element={<EnterpriseLogin />} />
         </Route>
         <Route path="/enterprise/register" element={<BusinessBasicInfo />} />
-        <Route path="/enterprise/verify" element={<CompanyVerification />} />
-        <Route path="/enterprise/verification" element={<Navigate to="/enterprise/verify" replace />} />
-        <Route path="/enterprise/review" element={<ReviewSubmission />} />
 
-        {/* Enterprise — portal (protected) */}
-        <Route element={<EnterprisePortalGuard />}>
+        {/* Enterprise — authenticated (onboarding + approval status) */}
+        <Route element={<EnterpriseAuthGuard />}>
+          <Route path="/enterprise/verify" element={<CompanyVerification />} />
+          <Route path="/enterprise/verification" element={<Navigate to="/enterprise/verify" replace />} />
+          <Route path="/enterprise/review" element={<ReviewSubmission />} />
+          <Route path="/enterprise/pending-approval" element={<PendingApproval />} />
+          <Route path="/enterprise/rejected" element={<ApplicationRejected />} />
+          <Route path="/enterprise/application-rejected" element={<Navigate to="/enterprise/rejected" replace />} />
+        </Route>
+
+        {/* Enterprise — approved only (dashboard) */}
+        <Route element={<EnterpriseApprovedGuard />}>
           <Route path="/enterprise/dashboard" element={<Dashboard />} />
           <Route path="/enterprise/workforce" element={<Workforce />} />
           <Route path="/enterprise/join-requests" element={<JoinRequests />} />
@@ -55,13 +85,13 @@ function AppRoutes() {
           <Route path="/enterprise/settings" element={<Settings />} />
         </Route>
 
-        {/* Employee — welcome & login (guest) */}
+        {/* Employee — guest */}
         <Route element={<EmployeeGuestGuard />}>
           <Route path="/employee" element={<EmployeeWelcome />} />
           <Route path="/employee/login" element={<EmployeeLogin />} />
         </Route>
 
-        {/* Employee — portal (protected) */}
+        {/* Employee — portal */}
         <Route element={<EmployeePortalGuard />}>
           <Route path="/employee/profile-setup" element={<ProfileSetup />} />
           <Route path="/employee/verification" element={<IdentityVerification />} />

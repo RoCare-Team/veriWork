@@ -43,21 +43,22 @@ export const COMPANY_DOCUMENTS = [
   },
 ]
 
+/** API values for POST /auth/enterprise/register */
 export const INDUSTRY_OPTIONS = [
-  'Technology & IT',
-  'Healthcare',
-  'Finance & Banking',
-  'Manufacturing',
-  'Retail & E-commerce',
-  'Education',
-  'Consulting',
-  'Other',
+  { value: 'Technology', label: 'Technology & IT' },
+  { value: 'Healthcare', label: 'Healthcare' },
+  { value: 'Finance', label: 'Finance & Banking' },
+  { value: 'Manufacturing', label: 'Manufacturing' },
+  { value: 'Retail', label: 'Retail & E-commerce' },
+  { value: 'Education', label: 'Education' },
+  { value: 'Consulting', label: 'Consulting' },
+  { value: 'Other', label: 'Other' },
 ]
 
 export const COMPANY_SIZE_OPTIONS = [
-  '1–50 employees',
-  '51–200 employees',
-  '201–500 employees',
-  '501–1000 employees',
-  '1000+ employees',
+  { value: '1-50', label: '1–50 employees' },
+  { value: '50-200', label: '51–200 employees' },
+  { value: '200-500', label: '201–500 employees' },
+  { value: '500-1000', label: '501–1000 employees' },
+  { value: '1000+', label: '1000+ employees' },
 ]

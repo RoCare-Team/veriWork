@@ -1,0 +1,77 @@
+import { API } from '../constants/routes'
+import { api } from '../lib/api'
+
+export const employeeKeys = {
+  profile: ['employee', 'profile'],
+  score: ['employee', 'score'],
+  verification: ['employee', 'verification'],
+  jobs: ['employee', 'jobs'],
+  activity: ['employee', 'activity'],
+  vault: ['employee', 'vault'],
+  settings: ['employee', 'settings'],
+}
+
+export function fetchProfile() {
+  return api(API.EMPLOYEE.PROFILE)
+}
+
+export function updateProfile(body) {
+  return api(API.EMPLOYEE.PROFILE, { method: 'PATCH', body })
+}
+
+export function fetchScore() {
+  return api(API.EMPLOYEE.SCORE)
+}
+
+export function fetchVerificationStatus() {
+  return api(API.EMPLOYEE.VERIFICATION_STATUS)
+}
+
+export function verifyAadhaar(method = 'digilocker') {
+  return api(API.EMPLOYEE.VERIFICATION_AADHAAR, { method: 'POST', body: { method } })
+}
+
+export function verifyBiometric(photoFile) {
+  const form = new FormData()
+  if (photoFile) form.append('photo', photoFile)
+  return api(API.EMPLOYEE.VERIFICATION_BIOMETRIC, { method: 'POST', body: form })
+}
+
+export function fetchJobs() {
+  return api(API.EMPLOYEE.JOBS)
+}
+
+export function createJob(body) {
+  return api(API.EMPLOYEE.JOBS, { method: 'POST', body })
+}
+
+export function uploadJobDocument(jobId, file) {
+  const form = new FormData()
+  form.append('document', file)
+  return api(API.EMPLOYEE.JOB_DOCUMENTS(jobId), { method: 'POST', body: form })
+}
+
+export function fetchActivity() {
+  return api(API.EMPLOYEE.ACTIVITY)
+}
+
+export function updateActivity(id, status) {
+  return api(API.EMPLOYEE.ACTIVITY_ACTION(id), { method: 'PATCH', body: { status } })
+}
+
+export function fetchVault() {
+  return api(API.EMPLOYEE.VAULT)
+}
+
+export function uploadVaultDocument({ category, name, file, size }) {
+  const form = new FormData()
+  form.append('category', category)
+  form.append('name', name)
+  if (file) form.append('document', file)
+  if (size) form.append('size', size)
+  return api(API.EMPLOYEE.VAULT, { method: 'POST', body: form })
+}
+
+export function fetchSettings() {
+  return api(API.EMPLOYEE.SETTINGS)
+}
