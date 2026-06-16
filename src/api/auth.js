@@ -14,6 +14,14 @@ export function verifyEmployeeOtp(phone, code) {
   })
 }
 
+export function loginEmployeeGoogle(idToken) {
+  return api(API.AUTH.EMPLOYEE_GOOGLE, {
+    method: 'POST',
+    body: { idToken },
+    auth: false,
+  })
+}
+
 export function loginEnterprise(email, password) {
   return api(API.AUTH.ENTERPRISE_LOGIN, {
     method: 'POST',

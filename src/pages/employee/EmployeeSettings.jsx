@@ -1,12 +1,14 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import EmployeeLayout from '../../layouts/EmployeeLayout'
 import EmployeePageHeader from '../../components/employee/PageHeader'
 import SettingsRow from '../../components/employee/SettingsRow'
 import Toggle from '../../components/employee/Toggle'
 import Loader from '../../components/common/Loader'
 import { ShieldCheckIcon } from '../../components/common/Icons'
-import { employeeKeys, fetchProfile, fetchSettings } from '../../api/employee'
+import { employeeKeys, fetchProfile, fetchSettings, updateSettings } from '../../api/employee'
+import { useToast } from '../../context/ToastContext'
 import { mediaUrl } from '../../lib/mediaUrl'
 
 function UserIcon() {
@@ -46,6 +48,8 @@ function LangIcon() {
 }
 
 function EmployeeSettings() {
+  const queryClient = useQueryClient()
+  const { toast } = useToast()
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: employeeKeys.profile,
     queryFn: fetchProfile,
@@ -54,12 +58,42 @@ function EmployeeSettings() {
     queryKey: employeeKeys.settings,
     queryFn: fetchSettings,
   })
+  const [language, setLanguage] = useState('en-US')
+
+  const patchMutation = useMutation({
+    mutationFn: updateSettings,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: employeeKeys.settings })
+      toast('Settings updated', 'success')
+    },
+    onError: (err) => toast(err.message || 'Failed to update settings', 'error'),
+  })
+
+  const handleToggle = (field) => (checked) => {
+    if (!settings) return
+    patchMutation.mutate({
+      notificationsEnabled: field === 'notificationsEnabled' ? checked : settings.notificationsEnabled,
+      publicProfileEnabled: field === 'publicProfileEnabled' ? checked : settings.publicProfileEnabled,
+      language: settings.language || language,
+    })
+  }
+
+  const handleLanguageChange = (nextLanguage) => {
+    setLanguage(nextLanguage)
+    if (!settings) return
+    patchMutation.mutate({
+      notificationsEnabled: settings.notificationsEnabled ?? true,
+      publicProfileEnabled: settings.publicProfileEnabled ?? true,
+      language: nextLanguage,
+    })
+  }
 
   if (profileLoading || settingsLoading) {
     return <Loader variant="fullPage" label="Loading settings..." />
   }
 
   const photo = mediaUrl(profile?.photoUrl)
+  const currentLanguage = settings?.language || language
 
   return (
     <EmployeeLayout>
@@ -111,9 +145,40 @@ function EmployeeSettings() {
       <section className="mt-8">
         <h2 className="m-0 mb-4 text-sm font-bold text-[#1a3a8f] md:text-base">Preferences</h2>
         <div className="flex flex-col gap-3">
-          <SettingsRow icon={<BellIcon />} title="Notification Settings" subtitle="Push, Email, Alerts" />
-          <SettingsRow icon={<LangIcon />} title="Language" subtitle="English (US)" />
-          <Toggle id="email-notifications" label="Email Notifications" checked={settings?.notificationsEnabled ?? true} onChange={() => {}} />
+          <Toggle
+            id="notifications-enabled"
+            icon={<BellIcon />}
+            label="Notification Settings"
+            checked={settings?.notificationsEnabled ?? true}
+            onChange={handleToggle('notificationsEnabled')}
+          />
+          <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-4 shadow-sm md:p-5">
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
+                <LangIcon />
+              </div>
+              <div>
+                <p className="m-0 text-sm font-bold text-slate-900 md:text-base">Language</p>
+                <p className="m-0 mt-0.5 text-xs text-slate-500 md:text-sm">Preferred app language</p>
+              </div>
+            </div>
+            <select
+              value={currentLanguage}
+              onChange={(e) => handleLanguageChange(e.target.value)}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            >
+              <option value="en-US">English (US)</option>
+              <option value="en-IN">English (India)</option>
+              <option value="hi-IN">Hindi</option>
+            </select>
+          </div>
+          <Toggle
+            id="public-profile-enabled"
+            label="Public Profile Visibility"
+            icon={<UserIcon />}
+            checked={settings?.publicProfileEnabled ?? true}
+            onChange={handleToggle('publicProfileEnabled')}
+          />
         </div>
       </section>
 

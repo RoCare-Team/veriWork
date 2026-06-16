@@ -1,10 +1,11 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import BrandLogo from '../common/BrandLogo'
 import { useAuth } from '../../context/AuthContext'
+import { COMPANY_ROUTES } from '../../constants/companyRoutes'
 
 const NAV_ITEMS = [
   {
-    to: '/enterprise/dashboard',
+    to: COMPANY_ROUTES.DASHBOARD,
     label: 'Dashboard',
     end: true,
     icon: (
@@ -13,6 +14,47 @@ const NAV_ITEMS = [
         <rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
         <rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
         <rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+    ),
+  },
+  {
+    to: COMPANY_ROUTES.TEAM,
+    label: 'Team Management',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <circle cx="7" cy="7" r="3" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M2 17c0-3 2.5-5 5-5s5 2 5 5" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="14" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M11 17c0-2.5 2-4 4.5-4" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+    ),
+  },
+  {
+    to: COMPANY_ROUTES.ACCESS_REQUESTS,
+    label: 'Access Requests',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M10 2l7 3v5c0 4-3 7-7 8-4-1-7-4-7-8V5l7-3Z" stroke="currentColor" strokeWidth="1.5" />
+        <rect x="8.5" y="9" width="3" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+      </svg>
+    ),
+  },
+  {
+    to: COMPANY_ROUTES.VERIFICATION,
+    label: 'Verification',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M10 2.5l6.5 2.6v4.9c0 3.7-2.8 6.6-6.5 7.5-3.7-.9-6.5-3.8-6.5-7.5V5.1L10 2.5Z" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M7.5 10l1.8 1.8 3.7-3.6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    to: COMPANY_ROUTES.INSIGHTS,
+    label: 'Company Insights',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M3 17V9M8 17V3M13 17v-6M18 17v-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
   },

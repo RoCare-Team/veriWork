@@ -38,10 +38,10 @@ function EnterpriseNavbar({ onMenuClick, companyName = 'Acme Technologies Pvt. L
         </button>
 
         <div className="hidden min-w-0 lg:block">
-          <p className="m-0 text-xs font-medium text-slate-400">Good morning, HR Team</p>
-          <h1 className="m-0 truncate text-lg font-extrabold tracking-tight text-slate-900">
+          {/* <p className="m-0 text-xs font-medium text-slate-400">Good morning, HR Team</p> */}
+          {/* <h1 className="m-0 truncate text-lg font-extrabold tracking-tight text-slate-900">
             {companyName}
-          </h1>
+          </h1> */}
         </div>
 
         <div className="relative mx-auto hidden max-w-md flex-1 md:block">

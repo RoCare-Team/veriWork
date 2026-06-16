@@ -22,18 +22,25 @@ function mapJob(job) {
     duration: job.duration,
     type: job.employmentType || job.type,
     status: job.status,
+    statusLabel: job.statusLabel,
   }
 }
 
 function JobHistory() {
-  const { data: jobs = [], isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: employeeKeys.jobs,
     queryFn: fetchJobs,
   })
 
-  const mapped = jobs.map(mapJob)
-  const verifiedCount = mapped.filter((j) => j.status === 'verified').length
-  const progress = mapped.length > 0 ? (verifiedCount / mapped.length) * 100 : 0
+  const summary = data?.summary || {}
+  const jobs = (data?.jobs || data || []).map?.(mapJob) ?? []
+  const mapped = Array.isArray(data?.jobs) ? data.jobs.map(mapJob) : Array.isArray(data) ? data.map(mapJob) : []
+  const list = mapped.length ? mapped : jobs
+
+  const totalRoles = summary.totalRoles ?? list.length
+  const verifiedCount = summary.verifiedCount ?? list.filter((j) => j.status === 'verified').length
+  const verifiedLabel = summary.verifiedLabel || `${verifiedCount}/${totalRoles || list.length || 0}`
+  const progress = totalRoles > 0 ? (verifiedCount / totalRoles) * 100 : 0
 
   if (isLoading) return <Loader variant="fullPage" label="Loading job history..." />
 
@@ -49,25 +56,38 @@ function JobHistory() {
         }
       />
 
-      {error && <p className="mb-4 text-sm text-red-600">{error.message}</p>}
+      {error && (
+        <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error.message}</p>
+      )}
 
       <div className="flex items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-[#1a3a8f] to-[#2747b2] p-5 text-white shadow-lg">
         <div>
           <p className="m-0 text-xs text-white/70">Your Records</p>
-          <p className="m-0 mt-1 text-2xl font-extrabold">{mapped.length} role{mapped.length !== 1 ? 's' : ''}</p>
+          <p className="m-0 mt-1 text-2xl font-extrabold">
+            {totalRoles} role{totalRoles !== 1 ? 's' : ''}
+          </p>
         </div>
         <div className="relative flex h-16 w-16 items-center justify-center">
           <svg className="h-full w-full -rotate-90" viewBox="0 0 64 64" aria-hidden="true">
             <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="5" />
-            <circle cx="32" cy="32" r="26" fill="none" stroke="#4ade80" strokeWidth="5" strokeDasharray={163.36} strokeDashoffset={163.36 * (1 - progress / 100)} />
+            <circle
+              cx="32"
+              cy="32"
+              r="26"
+              fill="none"
+              stroke="#4ade80"
+              strokeWidth="5"
+              strokeDasharray={163.36}
+              strokeDashoffset={163.36 * (1 - progress / 100)}
+            />
           </svg>
-          <span className="absolute text-sm font-bold">{verifiedCount}/{mapped.length}</span>
+          <span className="absolute text-sm font-bold">{verifiedLabel}</span>
         </div>
       </div>
 
-      {mapped.length > 0 ? (
+      {list.length > 0 ? (
         <div className="mt-6 grid grid-cols-1 gap-3 lg:grid-cols-2">
-          {mapped.map((job) => (
+          {list.map((job) => (
             <JobHistoryCard key={job.id} job={job} />
           ))}
         </div>

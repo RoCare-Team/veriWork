@@ -33,6 +33,7 @@ function AadhaarVerification() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: employeeKeys.verification })
       queryClient.invalidateQueries({ queryKey: employeeKeys.profile })
+      queryClient.invalidateQueries({ queryKey: employeeKeys.score })
       navigate('/employee/verification/biometric')
     },
     onError: (err) => setError(err.message || 'Verification failed'),

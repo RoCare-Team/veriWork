@@ -1,8 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import EmployeeAuthLayout from '../../layouts/EmployeeAuthLayout'
 import EmployeeBrandHeader from '../../components/employee/EmployeeBrandHeader'
-import SocialLoginButton from '../../components/employee/SocialLoginButton'
-import { GoogleIcon } from '../../components/common/Icons'
+import GoogleSignInButton from '../../components/employee/GoogleSignInButton'
 
 function VerifiedCheckIcon({ className = 'h-16 w-16' }) {
   return (
@@ -38,12 +37,10 @@ function EmployeeWelcome() {
 
         <div>
           <p className="m-0 mb-3 text-sm font-bold text-slate-800 md:text-base">Get Started</p>
-          <SocialLoginButton icon={<GoogleIcon />} onClick={() => navigate('/employee/login')}>
-            Continue with Google
-          </SocialLoginButton>
+          <GoogleSignInButton />
           <button
             type="button"
-            onClick={() => navigate('/employee/login')}
+            onClick={() => navigate('/employee/otp')}
             className="mt-3 w-full rounded-2xl border border-slate-200 bg-white py-3.5 text-sm font-semibold text-[#1a3a8f] transition hover:bg-slate-50 md:text-base"
           >
             Sign in with Phone OTP
@@ -51,11 +48,6 @@ function EmployeeWelcome() {
         </div>
 
         <p className="m-0 text-center text-sm text-slate-500 lg:text-left">
-          Already verified?{' '}
-          <Link to="/employee/login" className="font-bold text-[#1a3a8f] no-underline hover:underline">
-            Sign in directly
-          </Link>
-          {' · '}
           Employer?{' '}
           <Link to="/enterprise/login" className="font-bold text-[#1a3a8f] no-underline hover:underline">
             Enterprise Portal

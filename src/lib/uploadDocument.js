@@ -27,6 +27,27 @@ export function getEnterpriseDocType(docId) {
   return ENTERPRISE_DOC_TYPES[docId] || docId
 }
 
+const IMAGE_MIME_TYPES = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
+const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp']
+
+export function validateImageFile(file) {
+  if (!file) return 'No file selected'
+
+  if (file.size > MAX_FILE_SIZE) {
+    return 'Image must be 10MB or smaller'
+  }
+
+  const name = file.name.toLowerCase()
+  const hasAllowedExtension = IMAGE_EXTENSIONS.some((ext) => name.endsWith(ext))
+  const hasAllowedMime = IMAGE_MIME_TYPES.has(file.type)
+
+  if (!hasAllowedMime && !hasAllowedExtension) {
+    return 'Only image files (JPG, PNG, WEBP) are allowed'
+  }
+
+  return null
+}
+
 export function validateDocumentFile(file) {
   if (!file) return 'No file selected'
 
@@ -79,5 +100,41 @@ export async function uploadEnterpriseDocument(docType, file) {
   return {
     url: json.data?.url,
     documents: json.data?.documents,
+  }
+}
+
+export async function uploadEmployeeProfilePhoto(file) {
+  const validationError = validateImageFile(file)
+  if (validationError) {
+    throw new Error(validationError)
+  }
+
+  const token = getAccessToken()
+  if (!token) {
+    throw new Error('Not authenticated. Please sign in again.')
+  }
+
+  const form = new FormData()
+  form.append('photo', file)
+
+  const res = await fetch(`${API_URL}/employee/profile/photo`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: form,
+  })
+
+  const json = await res.json().catch(() => ({}))
+
+  if (!res.ok || json.success === false) {
+    const detailMsg = Array.isArray(json.details)
+      ? json.details.map((d) => (typeof d === 'string' ? d : d.message)).filter(Boolean).join('. ')
+      : ''
+    throw new Error(detailMsg || json.message || `Upload failed (${res.status})`)
+  }
+
+  return {
+    url: json.data?.url || json.data?.photoUrl,
   }
 }

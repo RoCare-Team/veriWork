@@ -41,8 +41,8 @@ function EmployeeNavbar({ onMenuClick }) {
         </button>
 
         <div className="hidden min-w-0 lg:block">
-          <p className="m-0 text-xs font-medium text-slate-400">Good morning, {firstName}</p>
-          <h1 className="m-0 truncate text-lg font-extrabold text-slate-900">{profile?.name}</h1>
+          {/* <p className="m-0 text-xs font-medium text-slate-400">Good morning, {firstName}</p> */}
+          {/* <h1 className="m-0 truncate text-lg font-extrabold text-slate-900">{profile?.name}</h1> */}
         </div>
 
         <div className="ml-auto flex items-center gap-2">

@@ -4,6 +4,7 @@ export const API = {
   AUTH: {
     EMPLOYEE_OTP_SEND: '/auth/employee/otp/send',
     EMPLOYEE_OTP_VERIFY: '/auth/employee/otp/verify',
+    EMPLOYEE_GOOGLE: '/auth/employee/google',
     ENTERPRISE_LOGIN: '/auth/enterprise/login',
     ENTERPRISE_REGISTER: '/auth/enterprise/register',
     ADMIN_LOGIN: '/auth/admin/login',
@@ -21,6 +22,8 @@ export const API = {
 
   EMPLOYEE: {
     PROFILE: '/employee/profile',
+    PROFILE_SETUP: '/employee/profile/setup',
+    PROFILE_PHOTO: '/employee/profile/photo',
     SCORE: '/employee/score',
     VERIFICATION_STATUS: '/employee/verification/status',
     VERIFICATION_AADHAAR: '/employee/verification/aadhaar',
@@ -31,6 +34,30 @@ export const API = {
     ACTIVITY_ACTION: (id) => `/employee/activity/${id}`,
     VAULT: '/employee/vault',
     SETTINGS: '/employee/settings',
+    PROFESSIONAL_ID: '/employee/professional-id',
+    INVITATIONS: '/employee/invitations',
+    INVITATION_ACCEPT: (id) => `/employee/invitations/${id}/accept`,
+    INVITATION_REJECT: (id) => `/employee/invitations/${id}/reject`,
+    ACCESS_REQUESTS: '/employee/access-requests',
+    ACCESS_REQUEST_APPROVE: (id) => `/employee/access-request/${id}/approve`,
+    ACCESS_REQUEST_REJECT: (id) => `/employee/access-request/${id}/reject`,
+  },
+
+  COMPANY: {
+    TEAM: '/company/team',
+    TEAM_DEPARTMENT: (department) => `/company/team/${encodeURIComponent(department)}`,
+    INVITE_EMPLOYEE: '/company/invite-employee',
+    EMPLOYEE_PROFILE: (employeeId) => `/company/employees/${employeeId}/profile`,
+    ACCESS_REQUEST: '/company/access-request',
+    ACCESS_REQUESTS: '/company/access-requests',
+    INSIGHTS: '/company/insights',
+    VERIFICATION_REQUEST: '/company/verification-request',
+    VERIFICATION_REQUESTS_OUTGOING: '/company/verification-requests/outgoing',
+    VERIFICATION_REQUESTS_INCOMING: '/company/verification-requests/incoming',
+    VERIFICATION_REQUEST_APPROVE: (id) => `/company/verification-requests/${id}/approve`,
+    VERIFICATION_REQUEST_REJECT: (id) => `/company/verification-requests/${id}/reject`,
+    VERIFICATION_REQUEST_COMPLETE_EMAIL: (id) => `/company/verification-requests/${id}/complete-email`,
+    AUDIT_LOGS: '/company/audit-logs',
   },
 
   ENTERPRISE: {

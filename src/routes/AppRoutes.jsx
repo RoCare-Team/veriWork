@@ -11,12 +11,18 @@ import Workforce from '../pages/enterprise/Workforce'
 import JoinRequests from '../pages/enterprise/JoinRequests'
 import QROnboarding from '../pages/enterprise/QROnboarding'
 import Settings from '../pages/enterprise/Settings'
+import TeamManagement from '../pages/enterprise/TeamManagement'
+import DepartmentDetails from '../pages/enterprise/DepartmentDetails'
+import AccessRequests from '../pages/enterprise/AccessRequests'
+import CompanyInsights from '../pages/enterprise/CompanyInsights'
+import EmploymentVerification from '../pages/enterprise/EmploymentVerification'
+import AuditLogs from '../pages/enterprise/AuditLogs'
 import AdminLogin from '../pages/admin/AdminLogin'
 import AdminDashboard from '../pages/admin/AdminDashboard'
 import AdminCompanies from '../pages/admin/AdminCompanies'
 import AdminCompanyReview from '../pages/admin/AdminCompanyReview'
 import EmployeeWelcome from '../pages/employee/EmployeeWelcome'
-import EmployeeLogin from '../pages/employee/EmployeeLogin'
+import EmployeeOtp from '../pages/employee/EmployeeOtp'
 import ProfileSetup from '../pages/employee/ProfileSetup'
 import IdentityVerification from '../pages/employee/IdentityVerification'
 import AadhaarVerification from '../pages/employee/AadhaarVerification'
@@ -27,6 +33,8 @@ import JobHistory from '../pages/employee/JobHistory'
 import AddExperience from '../pages/employee/AddExperience'
 import DocumentVault from '../pages/employee/DocumentVault'
 import Activity from '../pages/employee/Activity'
+import EmployeeInvitations from '../pages/employee/EmployeeInvitations'
+import EmployeeAccessConsent from '../pages/employee/EmployeeAccessConsent'
 import EmployeeSettings from '../pages/employee/EmployeeSettings'
 import PrivacySecurity from '../pages/employee/PrivacySecurity'
 import Support from '../pages/employee/Support'
@@ -79,6 +87,16 @@ function AppRoutes() {
         {/* Enterprise — approved only (dashboard) */}
         <Route element={<EnterpriseApprovedGuard />}>
           <Route path="/enterprise/dashboard" element={<Dashboard />} />
+          <Route path="/company/team" element={<TeamManagement />} />
+          <Route path="/company/team/:department" element={<DepartmentDetails />} />
+          <Route path="/company/access-requests" element={<AccessRequests />} />
+          <Route path="/company/verification" element={<EmploymentVerification />} />
+          <Route path="/company/insights" element={<CompanyInsights />} />
+          <Route path="/company/audit-logs" element={<AuditLogs />} />
+          <Route path="/enterprise/team" element={<TeamManagement />} />
+          <Route path="/enterprise/team/:department" element={<DepartmentDetails />} />
+          <Route path="/enterprise/access-requests" element={<AccessRequests />} />
+          <Route path="/enterprise/insights" element={<CompanyInsights />} />
           <Route path="/enterprise/workforce" element={<Workforce />} />
           <Route path="/enterprise/join-requests" element={<JoinRequests />} />
           <Route path="/enterprise/qr-onboarding" element={<QROnboarding />} />
@@ -88,7 +106,8 @@ function AppRoutes() {
         {/* Employee — guest */}
         <Route element={<EmployeeGuestGuard />}>
           <Route path="/employee" element={<EmployeeWelcome />} />
-          <Route path="/employee/login" element={<EmployeeLogin />} />
+          <Route path="/employee/otp" element={<EmployeeOtp />} />
+          <Route path="/employee/login" element={<Navigate to="/employee/otp" replace />} />
         </Route>
 
         {/* Employee — portal */}
@@ -102,6 +121,9 @@ function AppRoutes() {
           <Route path="/employee/job-history" element={<JobHistory />} />
           <Route path="/employee/job-history/add" element={<AddExperience />} />
           <Route path="/employee/vault" element={<DocumentVault />} />
+          <Route path="/employee/invitations" element={<EmployeeInvitations />} />
+          <Route path="/employee/access-requests" element={<EmployeeAccessConsent />} />
+          <Route path="/employee/access-consent" element={<Navigate to="/employee/access-requests" replace />} />
           <Route path="/employee/activity" element={<Activity />} />
           <Route path="/employee/settings" element={<EmployeeSettings />} />
           <Route path="/employee/settings/privacy" element={<PrivacySecurity />} />

@@ -34,7 +34,7 @@ function JobHistoryCard({ job }) {
 
       <div className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-3">
         <span className={`h-2 w-2 rounded-full ${status.dot}`} />
-        <span className={`text-xs font-semibold ${status.text}`}>{status.label}</span>
+        <span className={`text-xs font-semibold ${status.text}`}>{job.statusLabel || status.label}</span>
       </div>
     </article>
   )

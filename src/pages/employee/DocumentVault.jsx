@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import EmployeeLayout from '../../layouts/EmployeeLayout'
@@ -7,12 +7,13 @@ import VaultCategoryCard from '../../components/employee/VaultCategoryCard'
 import Loader from '../../components/common/Loader'
 import { ShieldCheckIcon, DocumentIcon } from '../../components/common/Icons'
 import { employeeKeys, fetchVault, uploadVaultDocument } from '../../api/employee'
+import { mapVaultCategories } from '../../utils/employeeApiUtils'
 
-const CATEGORIES = [
-  { id: 'identity', label: 'Identity', icon: 'id', color: 'blue' },
-  { id: 'education', label: 'Education', icon: 'education', color: 'purple' },
-  { id: 'experience', label: 'Experience', icon: 'briefcase', color: 'green' },
-  { id: 'financial', label: 'Financial', icon: 'wallet', color: 'orange' },
+const FALLBACK_CATEGORIES = [
+  { id: 'identity', label: 'Identity', icon: 'id', color: 'blue', files: 0 },
+  { id: 'education', label: 'Education', icon: 'education', color: 'purple', files: 0 },
+  { id: 'experience', label: 'Experience', icon: 'briefcase', color: 'green', files: 0 },
+  { id: 'financial', label: 'Financial', icon: 'wallet', color: 'orange', files: 0 },
 ]
 
 function PlusIcon() {
@@ -32,11 +33,10 @@ function formatSize(bytes) {
 
 function DocumentVault() {
   const queryClient = useQueryClient()
-  const fileRef = useRef(null)
   const [uploadCategory, setUploadCategory] = useState('identity')
   const [uploadError, setUploadError] = useState('')
 
-  const { data: vault = [], isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: employeeKeys.vault,
     queryFn: fetchVault,
   })
@@ -56,25 +56,26 @@ function DocumentVault() {
     onError: (err) => setUploadError(err.message || 'Upload failed'),
   })
 
-  const categories = useMemo(
-    () =>
-      CATEGORIES.map((cat) => ({
-        ...cat,
-        files: vault.filter((d) => d.category === cat.id).length,
-      })),
-    [vault],
-  )
+  const items = data?.items || []
+  const categories = useMemo(() => {
+    if (Array.isArray(data?.categories) && data.categories.length) return mapVaultCategories(data.categories)
+    if (!items.length) return FALLBACK_CATEGORIES
+    return FALLBACK_CATEGORIES.map((cat) => ({
+      ...cat,
+      files: items.filter((d) => d.category === cat.id).length,
+    }))
+  }, [data?.categories, items])
 
   const recentDocs = useMemo(
     () =>
-      [...vault]
+      [...(data?.recentDocuments || items)]
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 5),
-    [vault],
+    [data?.recentDocuments, items],
   )
 
-  const totalDocs = vault.length
-  const verifiedCount = vault.filter((d) => d.status === 'verified').length
+  const totalDocs = data?.summary?.totalDocuments ?? items.length
+  const verifiedCount = data?.summary?.verifiedCount ?? items.filter((d) => d.status === 'verified').length
   const storagePercent = totalDocs > 0 ? Math.min(100, Math.round((totalDocs / 20) * 100)) : 0
 
   const handleFileChange = (e) => {
@@ -164,7 +165,7 @@ function DocumentVault() {
           onChange={(e) => setUploadCategory(e.target.value)}
           className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
         >
-          {CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.label}
             </option>
@@ -173,7 +174,6 @@ function DocumentVault() {
         {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#1a3a8f] px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/20 transition hover:bg-[#152b6e] md:px-6 md:text-base">
           <input
-            ref={fileRef}
             type="file"
             className="sr-only"
             accept=".pdf,.jpg,.jpeg,.png"

@@ -7,6 +7,14 @@ export const enterpriseKeys = {
   workforce: ['enterprise', 'workforce'],
   joinRequests: ['enterprise', 'join-requests'],
   qr: ['enterprise', 'qr'],
+  team: ['company', 'team'],
+  teamDepartment: (department) => ['company', 'team', department],
+  accessRequests: (filters) => ['company', 'access-requests', filters],
+  insights: ['company', 'insights'],
+  employeeProfile: (id) => ['company', 'employee-profile', id],
+  verificationOutgoing: ['company', 'verification', 'outgoing'],
+  verificationIncoming: ['company', 'verification', 'incoming'],
+  auditLogs: (filters) => ['company', 'audit-logs', filters],
 }
 
 export function fetchOnboarding() {
@@ -53,4 +61,67 @@ export function fetchQrOnboarding() {
 
 export function createQrOnboarding(label) {
   return api(API.ENTERPRISE.QR_ONBOARDING, { method: 'POST', body: { label } })
+}
+
+export function fetchTeam() {
+  return api(API.COMPANY.TEAM)
+}
+
+export function fetchTeamDepartment(department) {
+  return api(API.COMPANY.TEAM_DEPARTMENT(department))
+}
+
+export function inviteEmployee(body) {
+  return api(API.COMPANY.INVITE_EMPLOYEE, { method: 'POST', body })
+}
+
+export function fetchAccessRequests({ status = 'all', page = 1, limit = 20 } = {}) {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+  if (status && status !== 'all') {
+    const apiStatus = status === 'accepted' ? 'approved' : status
+    params.set('status', apiStatus)
+  }
+  return api(`${API.COMPANY.ACCESS_REQUESTS}?${params}`)
+}
+
+export function createAccessRequest(body) {
+  return api(API.COMPANY.ACCESS_REQUEST, { method: 'POST', body })
+}
+
+export function fetchInsights() {
+  return api(API.COMPANY.INSIGHTS)
+}
+
+export function fetchEmployeeProfile(employeeId) {
+  return api(API.COMPANY.EMPLOYEE_PROFILE(employeeId))
+}
+
+export function createVerificationRequest(body) {
+  return api(API.COMPANY.VERIFICATION_REQUEST, { method: 'POST', body })
+}
+
+export function fetchVerificationOutgoing() {
+  return api(API.COMPANY.VERIFICATION_REQUESTS_OUTGOING)
+}
+
+export function fetchVerificationIncoming() {
+  return api(API.COMPANY.VERIFICATION_REQUESTS_INCOMING)
+}
+
+export function approveVerificationRequest(id) {
+  return api(API.COMPANY.VERIFICATION_REQUEST_APPROVE(id), { method: 'POST' })
+}
+
+export function rejectVerificationRequest(id) {
+  return api(API.COMPANY.VERIFICATION_REQUEST_REJECT(id), { method: 'POST' })
+}
+
+export function completeEmailVerification(id, body) {
+  return api(API.COMPANY.VERIFICATION_REQUEST_COMPLETE_EMAIL(id), { method: 'POST', body })
+}
+
+export function fetchAuditLogs({ action = '', page = 1, limit = 20 } = {}) {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+  if (action) params.set('action', action)
+  return api(`${API.COMPANY.AUDIT_LOGS}?${params}`)
 }

@@ -54,7 +54,8 @@ function ProfessionalIdCard({ profile, photoUrl }) {
 
           <BuildingIcon className="h-3.5 w-3.5" />
 
-          {profile.company} &bull; {profile.experience}
+          {profile.company}
+          {profile.experience ? ` • ${profile.experience}` : ''}
 
         </p>
 
@@ -66,7 +67,7 @@ function ProfessionalIdCard({ profile, photoUrl }) {
 
         <div>
 
-          <p className="m-0 text-2xl font-extrabold md:text-3xl">{profile.employeeScore}</p>
+          <p className="m-0 text-2xl font-extrabold md:text-3xl">{profile.employeeScore ?? profile.trustScore}</p>
 
           <p className="m-0 mt-0.5 text-[11px] text-white/65">VeriScore</p>
 
@@ -74,7 +75,10 @@ function ProfessionalIdCard({ profile, photoUrl }) {
 
         <div>
 
-          <p className="m-0 text-2xl font-extrabold">{profile.verifiedJobs}</p>
+          <p className="m-0 text-2xl font-extrabold">
+            {profile.verifiedJobsCount ?? profile.verifiedJobs ?? 0}
+            {profile.totalJobsCount != null ? `/${profile.totalJobsCount}` : ''}
+          </p>
 
           <p className="m-0 mt-0.5 text-[11px] text-white/65">Verified Jobs</p>
 

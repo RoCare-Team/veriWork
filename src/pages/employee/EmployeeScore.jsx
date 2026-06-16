@@ -6,7 +6,6 @@ import EmployeeScoreGauge from '../../components/employee/EmployeeScoreGauge'
 import Button from '../../components/common/Button'
 import Loader from '../../components/common/Loader'
 import { employeeKeys, fetchScore } from '../../api/employee'
-import { useAuth } from '../../context/AuthContext'
 import { SCORE_MAX, SCORE_MIN } from '../../utils/employeeScoreUtils'
 
 function FactorRow({ factor }) {
@@ -28,7 +27,6 @@ function FactorRow({ factor }) {
 }
 
 function EmployeeScore() {
-  const { profile } = useAuth()
   const { data, isLoading, error } = useQuery({
     queryKey: employeeKeys.score,
     queryFn: fetchScore,
@@ -39,7 +37,21 @@ function EmployeeScore() {
   if (error) {
     return (
       <EmployeeLayout>
-        <p className="text-red-600">{error.message || 'Failed to load score'}</p>
+        <EmployeePageHeader title="Employee Score" subtitle="Unable to load score data" />
+        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error.message || 'Failed to load score'}
+        </p>
+      </EmployeeLayout>
+    )
+  }
+
+  if (!data) {
+    return (
+      <EmployeeLayout>
+        <EmployeePageHeader title="Employee Score" subtitle="No score data available yet" />
+        <p className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-500">
+          Complete profile verification and add job history to generate your score.
+        </p>
       </EmployeeLayout>
     )
   }
@@ -58,10 +70,16 @@ function EmployeeScore() {
 
         <div className="mt-6 space-y-4 lg:col-span-3 lg:mt-0">
           <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-slate-600">
-            Employers use your VeriScore ({profile?.employeeScore ?? data.employeeScore}) for hiring and workforce decisions.
+            Employers use your VeriScore ({data.employeeScore}) for hiring and workforce decisions.
           </div>
           <h2 className="m-0 text-sm font-bold text-slate-800">Score breakdown</h2>
-          {data.factors?.map((f) => <FactorRow key={f.id} factor={f} />)}
+          {data.factors?.length ? (
+            data.factors.map((f) => <FactorRow key={f.id || f.label} factor={f} />)
+          ) : (
+            <p className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
+              No score factors available yet.
+            </p>
+          )}
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link to="/employee/job-history/add" className="flex-1 no-underline"><Button type="button">Add job to improve score</Button></Link>
             <Link to="/employee/professional-id" className="flex-1 no-underline"><Button type="button" variant="secondary">Professional ID</Button></Link>

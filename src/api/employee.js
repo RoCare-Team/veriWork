@@ -3,12 +3,15 @@ import { api } from '../lib/api'
 
 export const employeeKeys = {
   profile: ['employee', 'profile'],
+  professionalId: ['employee', 'professional-id'],
   score: ['employee', 'score'],
   verification: ['employee', 'verification'],
   jobs: ['employee', 'jobs'],
-  activity: ['employee', 'activity'],
+  activity: (filter = 'all') => ['employee', 'activity', filter],
   vault: ['employee', 'vault'],
   settings: ['employee', 'settings'],
+  invitations: ['employee', 'invitations'],
+  accessRequests: ['employee', 'access-requests'],
 }
 
 export function fetchProfile() {
@@ -51,8 +54,11 @@ export function uploadJobDocument(jobId, file) {
   return api(API.EMPLOYEE.JOB_DOCUMENTS(jobId), { method: 'POST', body: form })
 }
 
-export function fetchActivity() {
-  return api(API.EMPLOYEE.ACTIVITY)
+export function fetchActivity(filter = 'all') {
+  const params = new URLSearchParams()
+  if (filter && filter !== 'all') params.set('filter', filter)
+  const qs = params.toString()
+  return api(qs ? `${API.EMPLOYEE.ACTIVITY}?${qs}` : API.EMPLOYEE.ACTIVITY)
 }
 
 export function updateActivity(id, status) {
@@ -74,4 +80,36 @@ export function uploadVaultDocument({ category, name, file, size }) {
 
 export function fetchSettings() {
   return api(API.EMPLOYEE.SETTINGS)
+}
+
+export function updateSettings(body) {
+  return api(API.EMPLOYEE.SETTINGS, { method: 'PATCH', body })
+}
+
+export function fetchProfessionalId() {
+  return api(API.EMPLOYEE.PROFESSIONAL_ID)
+}
+
+export function fetchInvitations() {
+  return api(API.EMPLOYEE.INVITATIONS)
+}
+
+export function acceptInvitation(id) {
+  return api(API.EMPLOYEE.INVITATION_ACCEPT(id), { method: 'POST' })
+}
+
+export function rejectInvitation(id) {
+  return api(API.EMPLOYEE.INVITATION_REJECT(id), { method: 'POST' })
+}
+
+export function fetchEmployeeAccessRequests() {
+  return api(API.EMPLOYEE.ACCESS_REQUESTS)
+}
+
+export function approveAccessRequest(id) {
+  return api(API.EMPLOYEE.ACCESS_REQUEST_APPROVE(id), { method: 'POST' })
+}
+
+export function rejectAccessRequest(id) {
+  return api(API.EMPLOYEE.ACCESS_REQUEST_REJECT(id), { method: 'POST' })
 }

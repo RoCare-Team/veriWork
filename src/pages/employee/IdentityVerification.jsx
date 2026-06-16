@@ -11,22 +11,9 @@ import SecurityFooter from '../../components/employee/SecurityFooter'
 import Button from '../../components/common/Button'
 import Loader from '../../components/common/Loader'
 import { LockIcon } from '../../components/common/Icons'
-import { VERIFICATION_STEPS } from '../../utils/employeeConstants'
 import { employeeKeys, fetchVerificationStatus } from '../../api/employee'
 import { useAuth } from '../../context/AuthContext'
-
-function resolveStepStatus(stepId, status, currentStep) {
-  const done = {
-    profile: status.profileSetupComplete,
-    aadhaar: status.aadhaarVerified,
-    biometric: status.biometricVerified,
-  }
-  if (done[stepId]) return 'completed'
-  if (stepId === currentStep) return 'current'
-  const order = ['profile', 'aadhaar', 'biometric']
-  if (order.indexOf(stepId) > order.indexOf(currentStep)) return 'locked'
-  return 'pending'
-}
+import { getVerificationNextRoute, mapVerificationSteps } from '../../utils/employeeApiUtils'
 
 function IdentityVerification() {
   const { profile } = useAuth()
@@ -35,34 +22,29 @@ function IdentityVerification() {
     queryFn: fetchVerificationStatus,
   })
 
-  const steps = useMemo(() => {
-    if (!status) return VERIFICATION_STEPS
-    return VERIFICATION_STEPS.map((step) => {
-      const stepStatus = resolveStepStatus(step.id, status, status.currentStep)
-      const canNavigate = stepStatus === 'current' || stepStatus === 'pending'
-      return { ...step, status: stepStatus, to: canNavigate ? step.to : undefined }
-    })
-  }, [status])
+  const steps = useMemo(
+    () => mapVerificationSteps(status?.steps, status?.currentStep),
+    [status],
+  )
 
-  const nextRoute = useMemo(() => {
-    if (!status) return '/employee/profile-setup'
-    if (status.currentStep === 'profile') return '/employee/profile-setup'
-    if (status.currentStep === 'aadhaar') return '/employee/verification/aadhaar'
-    if (status.currentStep === 'biometric') return '/employee/verification/biometric'
-    return '/employee/score'
-  }, [status])
+  const nextRoute = useMemo(() => getVerificationNextRoute(status), [status])
+
+  const profileIncomplete =
+    status?.profileSetupComplete === false ||
+    (status?.currentStep === 'profile' && !status?.isComplete)
 
   if (isLoading) return <Loader variant="fullPage" label="Loading verification..." />
 
   if (error) {
     return (
-      <EmployeeLayout>
-        <p className="text-red-600">{error.message || 'Failed to load verification status'}</p>
+      <EmployeeLayout footer={<SecurityFooter variant="shield" text="Bank-Grade Security Protocol" />}>
+        <EmployeePageHeader title="Identity Verification" subtitle="Unable to load status" />
+        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error.message}</p>
       </EmployeeLayout>
     )
   }
 
-  if (!status?.profileSetupComplete) {
+  if (profileIncomplete) {
     return (
       <EmployeeLayout footer={<SecurityFooter variant="shield" text="Bank-Grade Security Protocol" />}>
         <VerificationStepBar currentStep="profile" className="mb-6" />
@@ -80,12 +62,15 @@ function IdentityVerification() {
   return (
     <EmployeeLayout footer={<SecurityFooter variant="shield" text="Bank-Grade Security Protocol" />}>
       <VerificationStepBar currentStep={status.currentStep} className="mb-6" />
-      <EmployeePageHeader title="Identity Verification" subtitle={`${profile?.name} · ${profile?.veriworkId}`} />
+      <EmployeePageHeader
+        title="Identity Verification"
+        subtitle={`${profile?.name || 'Your account'} · ${profile?.veriworkId || ''}`}
+      />
 
       <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-8">
         <div className="lg:sticky lg:top-24">
           <VerificationProgressCard
-            percent={status.verificationPercent}
+            percent={status.verificationPercent ?? 0}
             currentStep={status.currentStep}
             message={complete ? 'Your identity is fully verified!' : 'Keep going!'}
           />
@@ -94,11 +79,17 @@ function IdentityVerification() {
 
         <div>
           <h2 className="m-0 mb-4 text-sm font-bold text-slate-800">3 simple steps to verify</h2>
-          <div className="flex flex-col gap-3">
-            {steps.map((step) => (
-              <VerificationStepCard key={step.id} step={step} />
-            ))}
-          </div>
+          {steps.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              {steps.map((step) => (
+                <VerificationStepCard key={step.id} step={step} />
+              ))}
+            </div>
+          ) : (
+            <p className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
+              No verification steps available
+            </p>
+          )}
           <Link to={nextRoute} className="mt-6 block no-underline">
             <Button type="button">
               {complete ? 'View Your Employee Score' : 'Continue Verification'}

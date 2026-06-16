@@ -30,6 +30,7 @@ function BiometricLiveness() {
       queryClient.invalidateQueries({ queryKey: employeeKeys.verification })
       queryClient.invalidateQueries({ queryKey: employeeKeys.profile })
       queryClient.invalidateQueries({ queryKey: employeeKeys.score })
+      queryClient.invalidateQueries({ queryKey: employeeKeys.professionalId })
       if (profile) {
         updateProfileState({
           ...profile,
