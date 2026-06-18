@@ -12,6 +12,7 @@ export const employeeKeys = {
   settings: ['employee', 'settings'],
   invitations: ['employee', 'invitations'],
   accessRequests: ['employee', 'access-requests'],
+  endorsements: ['employee', 'endorsements'],
 }
 
 export function fetchProfile() {
@@ -112,4 +113,12 @@ export function approveAccessRequest(id) {
 
 export function rejectAccessRequest(id) {
   return api(API.EMPLOYEE.ACCESS_REQUEST_REJECT(id), { method: 'POST' })
+}
+
+export function fetchEndorsements() {
+  return api(API.EMPLOYEE.ENDORSEMENTS)
+}
+
+export function createEndorsement(body) {
+  return api(API.EMPLOYEE.ENDORSE, { method: 'POST', body })
 }

@@ -24,13 +24,25 @@ function StatusBadge({ status }) {
 function AccessRequestCard({ request, onApprove, onReject, isPending }) {
   const id = request._id || request.id
   const canAct = request.status === 'pending'
+  const typeLabel = request.requestTypeLabel || formatRequestType(request.requestType)
+  const isFullProfile = request.requestType === 'full_profile_access'
 
   return (
     <article className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm md:p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="m-0 text-base font-bold text-slate-900">{request.companyName}</h3>
-          <p className="m-0 mt-1 text-sm text-slate-600">{formatRequestType(request.requestType)}</p>
+          <p className={`m-0 mt-1 text-sm ${isFullProfile ? 'font-semibold text-[#1a3a8f]' : 'text-slate-600'}`}>
+            {typeLabel}
+          </p>
+          {isFullProfile && (
+            <p className="m-0 mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              This company will see your complete profile, documents, and verification data.
+            </p>
+          )}
+          {request.message && (
+            <p className="m-0 mt-2 rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-700">{request.message}</p>
+          )}
           <p className="m-0 mt-2 text-xs text-slate-400">
             Requested {formatAccessDate(request.requestedAt || request.createdAt)}
           </p>

@@ -41,14 +41,26 @@ export const API = {
     ACCESS_REQUESTS: '/employee/access-requests',
     ACCESS_REQUEST_APPROVE: (id) => `/employee/access-request/${id}/approve`,
     ACCESS_REQUEST_REJECT: (id) => `/employee/access-request/${id}/reject`,
+    ENDORSEMENTS: '/employee/endorsements',
+    ENDORSE: '/employee/endorse',
+  },
+
+  PUBLIC: {
+    EMPLOYEE_INVITATION: (token) => `/public/employee-invitation/${encodeURIComponent(token)}`,
+    EMPLOYMENT_VERIFICATION: (token) => `/public/employment-verification/${encodeURIComponent(token)}`,
   },
 
   COMPANY: {
     TEAM: '/company/team',
-    TEAM_DEPARTMENT: (department) => `/company/team/${encodeURIComponent(department)}`,
+    TEAM_DEPARTMENT: (department) => `/company/team/department/${encodeURIComponent(department)}`,
     INVITE_EMPLOYEE: '/company/invite-employee',
+    INVITATIONS_PENDING: '/company/invitations/pending',
     EMPLOYEE_PROFILE: (employeeId) => `/company/employees/${employeeId}/profile`,
+    EMPLOYEE_DOCUMENTS: (employeeId) => `/company/employees/${employeeId}/documents`,
+    EMPLOYEE_ACCESS_STATUS: (employeeId) => `/company/employees/${employeeId}/access-status`,
+    EMPLOYEE_REVOKE_ACCESS: (employeeId) => `/company/employees/${employeeId}/revoke-access`,
     ACCESS_REQUEST: '/company/access-request',
+    ACCESS_REQUEST_TYPES: '/company/access-request-types',
     ACCESS_REQUESTS: '/company/access-requests',
     INSIGHTS: '/company/insights',
     VERIFICATION_REQUEST: '/company/verification-request',

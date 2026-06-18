@@ -13,6 +13,7 @@ import QROnboarding from '../pages/enterprise/QROnboarding'
 import Settings from '../pages/enterprise/Settings'
 import TeamManagement from '../pages/enterprise/TeamManagement'
 import DepartmentDetails from '../pages/enterprise/DepartmentDetails'
+import EmployeeProfilePage from '../pages/enterprise/EmployeeProfilePage'
 import AccessRequests from '../pages/enterprise/AccessRequests'
 import CompanyInsights from '../pages/enterprise/CompanyInsights'
 import EmploymentVerification from '../pages/enterprise/EmploymentVerification'
@@ -22,6 +23,7 @@ import AdminDashboard from '../pages/admin/AdminDashboard'
 import AdminCompanies from '../pages/admin/AdminCompanies'
 import AdminCompanyReview from '../pages/admin/AdminCompanyReview'
 import EmployeeWelcome from '../pages/employee/EmployeeWelcome'
+import EmployeeJoin from '../pages/employee/EmployeeJoin'
 import EmployeeOtp from '../pages/employee/EmployeeOtp'
 import ProfileSetup from '../pages/employee/ProfileSetup'
 import IdentityVerification from '../pages/employee/IdentityVerification'
@@ -53,6 +55,9 @@ function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+
+        {/* Public employee join — no auth */}
+        <Route path="/employee/join" element={<EmployeeJoin />} />
 
         {/* Admin */}
         <Route element={<AdminGuestGuard />}>
@@ -87,14 +92,20 @@ function AppRoutes() {
         {/* Enterprise — approved only (dashboard) */}
         <Route element={<EnterpriseApprovedGuard />}>
           <Route path="/enterprise/dashboard" element={<Dashboard />} />
-          <Route path="/company/team" element={<TeamManagement />} />
-          <Route path="/company/team/:department" element={<DepartmentDetails />} />
+          <Route path="/company/team">
+            <Route index element={<TeamManagement />} />
+            <Route path="department/:department" element={<DepartmentDetails />} />
+            <Route path=":employeeId" element={<EmployeeProfilePage />} />
+          </Route>
           <Route path="/company/access-requests" element={<AccessRequests />} />
           <Route path="/company/verification" element={<EmploymentVerification />} />
           <Route path="/company/insights" element={<CompanyInsights />} />
           <Route path="/company/audit-logs" element={<AuditLogs />} />
-          <Route path="/enterprise/team" element={<TeamManagement />} />
-          <Route path="/enterprise/team/:department" element={<DepartmentDetails />} />
+          <Route path="/enterprise/team">
+            <Route index element={<TeamManagement />} />
+            <Route path="department/:department" element={<DepartmentDetails />} />
+            <Route path=":employeeId" element={<EmployeeProfilePage />} />
+          </Route>
           <Route path="/enterprise/access-requests" element={<AccessRequests />} />
           <Route path="/enterprise/insights" element={<CompanyInsights />} />
           <Route path="/enterprise/workforce" element={<Workforce />} />
@@ -113,6 +124,7 @@ function AppRoutes() {
         {/* Employee — portal */}
         <Route element={<EmployeePortalGuard />}>
           <Route path="/employee/profile-setup" element={<ProfileSetup />} />
+          <Route path="/employee/dashboard" element={<Navigate to="/employee/score" replace />} />
           <Route path="/employee/verification" element={<IdentityVerification />} />
           <Route path="/employee/verification/aadhaar" element={<AadhaarVerification />} />
           <Route path="/employee/verification/biometric" element={<BiometricLiveness />} />

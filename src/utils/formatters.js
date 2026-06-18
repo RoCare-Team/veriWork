@@ -23,6 +23,22 @@ export function formatAccessDate(value) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
+export function formatRelativeInviteDate(value) {
+  if (!value) return 'Recently'
+  const d = new Date(value)
+  if (Number.isNaN(d.getTime())) return 'Recently'
+  const diffMs = Date.now() - d.getTime()
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  if (days <= 0) return 'Invited today'
+  if (days === 1) return 'Invited 1 day ago'
+  if (days < 7) return `Invited ${days} days ago`
+  if (days < 30) {
+    const weeks = Math.floor(days / 7)
+    return weeks === 1 ? 'Invited 1 week ago' : `Invited ${weeks} weeks ago`
+  }
+  return `Invited ${formatAccessDate(value)}`
+}
+
 export function formatChartMonth(value) {
   if (!value) return ''
   if (/^[A-Za-z]{3}\s\d{4}$/.test(value)) return value

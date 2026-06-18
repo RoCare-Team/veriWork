@@ -14,6 +14,7 @@ import {
 import { useToast } from '../../context/ToastContext'
 
 const ACCESS_REQUEST_TYPES = [
+  { value: 'full_profile_access', label: 'Full Profile Access Request' },
   { value: 'profile_access', label: 'Profile Access (documents & history)' },
   { value: 'verification_data', label: 'Verification Data' },
   { value: 'background_check', label: 'Background Check' },
@@ -23,7 +24,7 @@ function EmployeeProfileDrawer({ employeeId, onClose }) {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const [verifyJob, setVerifyJob] = useState(null)
-  const [requestType, setRequestType] = useState('profile_access')
+  const [requestType, setRequestType] = useState('full_profile_access')
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: enterpriseKeys.employeeProfile(employeeId),

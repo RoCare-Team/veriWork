@@ -8,10 +8,14 @@ export const enterpriseKeys = {
   joinRequests: ['enterprise', 'join-requests'],
   qr: ['enterprise', 'qr'],
   team: ['company', 'team'],
+  invitationsPending: ['company', 'invitations', 'pending'],
   teamDepartment: (department) => ['company', 'team', department],
   accessRequests: (filters) => ['company', 'access-requests', filters],
   insights: ['company', 'insights'],
   employeeProfile: (id) => ['company', 'employee-profile', id],
+  employeeDocuments: (id) => ['company', 'employee-documents', id],
+  employeeAccessStatus: (id) => ['company', 'employee-access-status', id],
+  accessRequestTypes: ['company', 'access-request-types'],
   verificationOutgoing: ['company', 'verification', 'outgoing'],
   verificationIncoming: ['company', 'verification', 'incoming'],
   auditLogs: (filters) => ['company', 'audit-logs', filters],
@@ -75,6 +79,10 @@ export function inviteEmployee(body) {
   return api(API.COMPANY.INVITE_EMPLOYEE, { method: 'POST', body })
 }
 
+export function fetchPendingInvitations() {
+  return api(API.COMPANY.INVITATIONS_PENDING)
+}
+
 export function fetchAccessRequests({ status = 'all', page = 1, limit = 20 } = {}) {
   const params = new URLSearchParams({ page: String(page), limit: String(limit) })
   if (status && status !== 'all') {
@@ -88,12 +96,35 @@ export function createAccessRequest(body) {
   return api(API.COMPANY.ACCESS_REQUEST, { method: 'POST', body })
 }
 
+export function fetchAccessRequestTypes() {
+  return api(API.COMPANY.ACCESS_REQUEST_TYPES)
+}
+
 export function fetchInsights() {
   return api(API.COMPANY.INSIGHTS)
 }
 
-export function fetchEmployeeProfile(employeeId) {
-  return api(API.COMPANY.EMPLOYEE_PROFILE(employeeId))
+export async function fetchEmployeeProfile(employeeId) {
+  try {
+    return await api(API.COMPANY.EMPLOYEE_PROFILE(employeeId))
+  } catch (err) {
+    if (err?.status === 404 && err?.message === 'Route not found') {
+      console.error('Use: GET /api/company/employees/:employeeId/profile')
+    }
+    throw err
+  }
+}
+
+export function revokeEmployeeAccess(employeeId, body = {}) {
+  return api(API.COMPANY.EMPLOYEE_REVOKE_ACCESS(employeeId), { method: 'POST', body })
+}
+
+export function fetchEmployeeDocuments(employeeId) {
+  return api(API.COMPANY.EMPLOYEE_DOCUMENTS(employeeId))
+}
+
+export function fetchEmployeeAccessStatus(employeeId) {
+  return api(API.COMPANY.EMPLOYEE_ACCESS_STATUS(employeeId))
 }
 
 export function createVerificationRequest(body) {

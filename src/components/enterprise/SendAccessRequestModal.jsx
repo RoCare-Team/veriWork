@@ -1,22 +1,50 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import Button from '../common/Button'
 import Loader from '../common/Loader'
-import { createAccessRequest } from '../../api/enterprise'
+import { createAccessRequest, enterpriseKeys, fetchAccessRequestTypes } from '../../api/enterprise'
 import { useToast } from '../../context/ToastContext'
 
-const REQUEST_TYPES = [
-  { value: 'profile_access', label: 'Profile Access' },
-  { value: 'background_check', label: 'Background Check' },
-  { value: 'verification_data', label: 'Verification Data' },
+const FALLBACK_TYPES = [
+  { value: 'profile_access', label: 'Profile Access', description: 'View basic profile and employment history' },
+  { value: 'background_check', label: 'Background Check', description: 'Access vault documents for background verification' },
+  { value: 'verification_data', label: 'Verification Data', description: 'View trust score breakdown and verification status' },
+  {
+    value: 'full_profile_access',
+    label: 'Get Full Profile Access',
+    description: 'Complete access to profile, documents, and verification data',
+  },
 ]
 
-function SendAccessRequestModal({ employeeId, employeeUserId, employeeName, onClose }) {
-  const navigate = useNavigate()
+function SendAccessRequestModal({
+  employeeId,
+  employeeUserId,
+  employeeName,
+  defaultRequestType = 'full_profile_access',
+  onClose,
+  onSuccess,
+}) {
   const { toast } = useToast()
-  const [requestType, setRequestType] = useState('profile_access')
+  const [requestType, setRequestType] = useState(defaultRequestType)
   const [message, setMessage] = useState('')
+
+  const typesQuery = useQuery({
+    queryKey: enterpriseKeys.accessRequestTypes,
+    queryFn: fetchAccessRequestTypes,
+  })
+
+  const typeOptions = Array.isArray(typesQuery.data) && typesQuery.data.length
+    ? typesQuery.data
+    : FALLBACK_TYPES
+
+  useEffect(() => {
+    if (!typeOptions.some((t) => t.value === requestType)) {
+      const preferred = typeOptions.find((t) => t.value === defaultRequestType) || typeOptions[0]
+      if (preferred) setRequestType(preferred.value)
+    }
+  }, [typeOptions, defaultRequestType, requestType])
+
+  const selectedType = typeOptions.find((t) => t.value === requestType)
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -26,20 +54,28 @@ function SendAccessRequestModal({ employeeId, employeeUserId, employeeName, onCl
         ...(message.trim() ? { message: message.trim() } : {}),
       }),
     onSuccess: () => {
-      toast('Access request sent successfully', 'success')
+      toast('Access request sent. Waiting for employee consent.', 'success')
+      onSuccess?.()
       onClose()
-      navigate('/company/access-requests')
     },
-    onError: (err) => toast(err.message || 'Failed to send request', 'error'),
+    onError: (err) => {
+      if (err?.status === 409) {
+        toast('Pending request already exists', 'error')
+        onSuccess?.()
+        onClose()
+        return
+      }
+      toast(err.message || 'Failed to send request', 'error')
+    },
   })
 
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center sm:p-4">
       <button type="button" className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} aria-label="Close" />
       <div className="relative z-10 w-full max-w-md rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl">
-        <h3 className="m-0 text-lg font-extrabold text-slate-900">Send Access Request</h3>
+        <h3 className="m-0 text-lg font-extrabold text-slate-900">Request Access</h3>
         <p className="mt-1 text-sm text-slate-500">
-          Request access to {employeeName}&apos;s profile data.
+          Request access to {employeeName}&apos;s data.
         </p>
 
         <div className="mt-5 flex flex-col gap-4">
@@ -51,15 +87,25 @@ function SendAccessRequestModal({ employeeId, employeeUserId, employeeName, onCl
               id="request-type"
               value={requestType}
               onChange={(e) => setRequestType(e.target.value)}
-              disabled={mutation.isPending}
+              disabled={mutation.isPending || typesQuery.isLoading}
               className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100"
             >
-              {REQUEST_TYPES.map((opt) => (
+              {typeOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
+                  {opt.value === 'full_profile_access' ? ' ★ All access' : ''}
                 </option>
               ))}
             </select>
+            {requestType === 'full_profile_access' && (
+              <p className="m-0 flex items-center gap-2 text-xs font-semibold text-[#1a3a8f]">
+                <span className="rounded-full bg-[#1a3a8f]/10 px-2 py-0.5 text-[10px] font-bold uppercase">Recommended</span>
+                Unlocks profile, documents, and verification in one request.
+              </p>
+            )}
+            {selectedType?.description && requestType !== 'full_profile_access' && (
+              <p className="m-0 text-xs text-slate-500">{selectedType.description}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-2">
@@ -87,7 +133,9 @@ function SendAccessRequestModal({ employeeId, employeeUserId, employeeName, onCl
           </Button>
         </div>
 
-        {mutation.isPending && <Loader variant="overlay" label="Sending request..." />}
+        {(mutation.isPending || typesQuery.isLoading) && (
+          <Loader variant="overlay" label={mutation.isPending ? 'Sending request...' : 'Loading options...'} />
+        )}
       </div>
     </div>
   )

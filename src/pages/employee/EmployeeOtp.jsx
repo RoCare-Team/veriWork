@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import EmployeeAuthLayout from '../../layouts/EmployeeAuthLayout'
 import Button from '../../components/common/Button'
@@ -11,6 +11,7 @@ import { sendEmployeeOtp, verifyEmployeeOtp } from '../../api/auth'
 import { useAuth } from '../../context/AuthContext'
 import { normalizePhone } from '../../lib/api'
 import { useToast } from '../../context/ToastContext'
+import { hasInvitationSession } from '../../utils/invitationSession'
 
 function formatPhone(value) {
   const digits = value.replace(/\D/g, '').slice(0, 10)
@@ -20,6 +21,8 @@ function formatPhone(value) {
 
 function EmployeeOtp() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const fromJoin = searchParams.get('from') === 'join'
   const { loginEmployee } = useAuth()
   const { toast } = useToast()
   const [countryCode, setCountryCode] = useState('+91')
@@ -58,6 +61,10 @@ function EmployeeOtp() {
       setError('')
       loginEmployee(data)
       toast('Phone verified successfully', 'success')
+      if (fromJoin || hasInvitationSession()) {
+        navigate('/employee/profile-setup')
+        return
+      }
       navigate(data.homeRoute || '/employee/profile-setup')
     },
     onError: (err) => setError(err.message || 'Invalid OTP'),

@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import EmployeeLayout from '../../layouts/EmployeeLayout'
 import EmployeePageHeader from '../../components/employee/PageHeader'
 import Loader from '../../components/common/Loader'
@@ -60,6 +61,7 @@ function InvitationCard({ invitation, onAccept, onReject, isPending }) {
 }
 
 function EmployeeInvitations() {
+  const navigate = useNavigate()
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
@@ -72,9 +74,14 @@ function EmployeeInvitations() {
 
   const acceptMutation = useMutation({
     mutationFn: acceptInvitation,
-    onSuccess: () => {
-      toast('Invitation accepted', 'success')
+    onSuccess: (data, id) => {
+      const inv = invitations.find(
+        (item) => (item.invitationId || item._id || item.id) === id,
+      )
+      const companyName = data?.companyName || inv?.companyName || 'the company'
+      toast(`You joined ${companyName}`, 'success')
       queryClient.invalidateQueries({ queryKey: employeeKeys.invitations })
+      navigate('/employee/dashboard')
     },
     onError: (err) => toast(err.message || 'Failed to accept invitation', 'error'),
   })

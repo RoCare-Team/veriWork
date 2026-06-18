@@ -35,8 +35,8 @@ export function getAccessRequestStatusStyle(status) {
 
 export function getInvitationStatusStyle(status) {
   const map = {
-    pending: { bg: 'bg-amber-50', color: 'text-amber-700', label: 'Pending' },
-    pending_registration: { bg: 'bg-blue-50', color: 'text-blue-700', label: 'Pending Registration' },
+    pending: { bg: 'bg-blue-50', color: 'text-blue-700', label: 'Invitation Sent' },
+    pending_registration: { bg: 'bg-slate-100', color: 'text-slate-600', label: 'Pending Registration' },
     accepted: { bg: 'bg-green-50', color: 'text-green-700', label: 'Accepted' },
     rejected: { bg: 'bg-red-50', color: 'text-red-700', label: 'Rejected' },
   }
@@ -44,6 +44,13 @@ export function getInvitationStatusStyle(status) {
 }
 
 export function formatRequestType(type) {
+  const labels = {
+    profile_access: 'Profile Access',
+    background_check: 'Background Check',
+    verification_data: 'Verification Data',
+    full_profile_access: 'Get Full Profile Access',
+  }
+  if (labels[type]) return labels[type]
   if (!type) return '—'
   return type
     .split('_')
@@ -73,7 +80,15 @@ export function getVerificationStatusStyle(status) {
 /** Resolve employee user id from various API field names */
 export function resolveEmployeeId(emp) {
   if (!emp) return null
-  return emp.employeeId || emp.userId || emp.employeeUserId || emp.id || emp._id || null
+  return emp.employeeId || emp.id || emp.userId || emp.employeeUserId || emp._id || null
+}
+
+export function getEmployeeProfilePath(emp) {
+  if (!emp) return null
+  if (emp.profilePath) return emp.profilePath
+  const id = resolveEmployeeId(emp)
+  if (!id) return null
+  return `/company/team/${encodeURIComponent(id)}`
 }
 
 export function getEmployeeName(emp) {
@@ -104,7 +119,52 @@ export function flattenTeamEmployees(departments) {
   return (departments || []).flatMap((dept) =>
     (dept.employees || []).map((emp) => ({
       ...emp,
-      department: dept.name,
+      department: emp.department || dept.name,
     })),
   )
+}
+
+/** Employees from GET /company/team — top-level array or nested under departments */
+export function extractTeamEmployees(data) {
+  if (!data) return []
+  if (Array.isArray(data.employees) && data.employees.length) return data.employees
+  const departments = data.departments || (Array.isArray(data) ? data : [])
+  return flattenTeamEmployees(departments)
+}
+
+/** Team card access button from API access flags + optional accessButton field */
+export function resolveEmployeeAccessButton(employee) {
+  if (!employee) return 'request_access'
+
+  if (employee.accessButton === 'pending') return 'pending'
+  if (employee.accessButton === 'remove_access') return 'remove_access'
+  if (employee.accessButton === 'request_access') return 'request_access'
+
+  const access = employee.access || {}
+  const hasFull =
+    access.fullProfileAccess === true ||
+    access.full_profile_access === true ||
+    access.hasAllAccess === true
+
+  if (hasFull) return 'remove_access'
+
+  const hasAny =
+    access.hasAnyAccess === true ||
+    access.profileAccess === true ||
+    access.profile_access === true ||
+    access.backgroundCheck === true ||
+    access.background_check === true ||
+    access.verificationData === true ||
+    access.verification_data === true
+
+  if (hasAny) return 'remove_access'
+
+  const pendingFull =
+    access.pendingFullProfileAccess === true ||
+    access.pending_full_profile_access === true ||
+    access.pendingFullProfile === true
+
+  if (pendingFull) return 'pending'
+
+  return 'request_access'
 }

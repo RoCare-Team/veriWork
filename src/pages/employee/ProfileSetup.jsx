@@ -17,6 +17,12 @@ import { normalizePhone } from '../../lib/api'
 import { getProfile, setupProfile } from '../../lib/employeeProfile'
 import { mediaUrl } from '../../lib/mediaUrl'
 import { COUNTRY_CODES } from '../../utils/countryCodes'
+import {
+  clearInvitationSession,
+  getInvitationEmail,
+  getInvitationToken,
+} from '../../utils/invitationSession'
+import { useToast } from '../../context/ToastContext'
 
 const GENDER_OPTIONS = [
   { value: 'male', label: 'Male' },
@@ -154,6 +160,7 @@ function applyProfileToForm(data, setters) {
 function ProfileSetup() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { toast } = useToast()
   const { user, profile, updateProfileState } = useAuth()
   const isEditing = profile?.profileSetupComplete === true
 
@@ -203,14 +210,22 @@ function ProfileSetup() {
       setLoading(true)
       try {
         const data = await getProfile()
-        if (!cancelled) applyProfileToForm(data, setters)
+        if (!cancelled) {
+          applyProfileToForm(
+            {
+              ...data,
+              email: data.email || getInvitationEmail() || '',
+            },
+            setters,
+          )
+        }
       } catch {
         if (!cancelled) {
           applyProfileToForm(
             {
               ...profile,
               phone: profile?.phone || user?.phone,
-              email: profile?.email || user?.email,
+              email: profile?.email || user?.email || getInvitationEmail(),
             },
             setters,
           )
@@ -257,9 +272,28 @@ function ProfileSetup() {
         formData.append('permanentAddress', permanentAddress.trim())
       }
       if (photo) formData.append('photo', photo)
+      const invitationToken = getInvitationToken()
+      if (invitationToken) formData.append('invitationToken', invitationToken)
       return setupProfile(formData)
     },
     onSuccess: (data) => {
+      const autoJoined = data?.invitationResult?.autoJoined
+      if (Array.isArray(autoJoined) && autoJoined.length > 0) {
+        const entry = autoJoined[0]
+        const companyName =
+          typeof entry === 'string' ? entry : entry?.companyName || entry?.name || 'the company'
+        updateProfileState({
+          ...profile,
+          profileSetupComplete: data.profileSetupComplete ?? true,
+          photoUrl: data.photoUrl ?? profile?.photoUrl,
+        })
+        queryClient.invalidateQueries({ queryKey: employeeKeys.profile })
+        clearInvitationSession()
+        toast(`You have been added to ${companyName} team!`, 'success')
+        navigate('/employee/verification')
+        return
+      }
+
       updateProfileState({
         ...profile,
         profileSetupComplete: data.profileSetupComplete ?? true,

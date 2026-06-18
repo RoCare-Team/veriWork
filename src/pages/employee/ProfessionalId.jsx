@@ -19,6 +19,7 @@ function ShareIcon() {
 
 function ProfessionalId() {
   const [copied, setCopied] = useState(false)
+  const [idCopied, setIdCopied] = useState(false)
   const { data, isLoading, error } = useQuery({
     queryKey: employeeKeys.professionalId,
     queryFn: fetchProfessionalId,
@@ -63,6 +64,17 @@ function ProfessionalId() {
     }
   }
 
+  const handleCopyId = async () => {
+    if (!data.veriworkId) return
+    try {
+      await navigator.clipboard.writeText(data.veriworkId)
+      setIdCopied(true)
+      window.setTimeout(() => setIdCopied(false), 2000)
+    } catch {
+      setIdCopied(false)
+    }
+  }
+
   return (
     <EmployeeLayout>
       <EmployeePageHeader
@@ -87,6 +99,22 @@ function ProfessionalId() {
             <ShieldCheckIcon className="mt-0.5 h-4 w-4 shrink-0" />
             Cryptographically signed document.
           </p>
+          {data.veriworkId && (
+            <div className="rounded-2xl border border-amber-100 bg-amber-50/60 p-4">
+              <p className="m-0 text-xs font-semibold uppercase tracking-wide text-amber-800">Your VeriWork ID</p>
+              <p className="m-0 mt-1 text-lg font-extrabold text-slate-900">{data.veriworkId}</p>
+              <p className="m-0 mt-2 text-xs text-slate-600">
+                Share this ID so colleagues and managers can endorse you on VeriScore.
+              </p>
+              <button
+                type="button"
+                onClick={handleCopyId}
+                className="mt-3 text-sm font-semibold text-[#1a3a8f] hover:underline"
+              >
+                {idCopied ? 'Copied!' : 'Copy VeriWork ID'}
+              </button>
+            </div>
+          )}
           {data.publicProfileUrl && (
             <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-4">
               <div className="min-w-0 flex-1">
