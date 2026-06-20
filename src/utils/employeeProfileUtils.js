@@ -1,4 +1,5 @@
 import { calculateEmployeeScore, getScoreRating } from './employeeScoreUtils'
+import { buildPublicProfileUrl } from '../lib/publicProfileUrl'
 
 export function getInitials(name = '') {
   const parts = name.trim().split(/\s+/).filter(Boolean)
@@ -72,7 +73,7 @@ export function buildDisplayProfile(profile) {
     verifiedJobs,
     endorsements: profile.endorsements || 0,
     veriworkId: profile.veriworkId,
-    publicProfileUrl: `veriwork.app/u/${profile.publicSlug}`,
+    publicProfileUrl: buildPublicProfileUrl(profile),
     skills:
       profile.skills?.length > 0
         ? profile.skills

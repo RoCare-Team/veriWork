@@ -1,8 +1,13 @@
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import EnterpriseLayout from '../../layouts/EnterpriseLayout'
 import PageHeader from '../../components/enterprise/PageHeader'
 import { TeamMemberRow, SettingsMenuRow } from '../../components/enterprise/SettingsComponents'
-import { TEAM_MEMBERS, SECURITY_MENU } from '../../utils/settingsData'
+import { SECURITY_MENU } from '../../utils/settingsData'
+import { useAuth } from '../../context/AuthContext'
+import { enterpriseKeys, fetchWorkspace } from '../../api/enterprise'
+import { getInitials } from '../../utils/formatters'
+import Loader from '../../components/common/Loader'
 
 const TABS = [
   { id: 'general', label: 'General' },
@@ -19,21 +24,30 @@ function BellIcon() {
   )
 }
 
-function TeamMembersSection() {
+function TeamMembersSection({ admin, companyName }) {
+  if (!admin) {
+    return (
+      <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
+        <h3 className="m-0 text-base font-bold text-slate-900">Team Members</h3>
+        <p className="mt-3 text-sm text-slate-500">No admin account linked.</p>
+      </section>
+    )
+  }
+
   return (
     <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
       <h3 className="m-0 text-base font-bold text-slate-900">Team Members</h3>
+      <p className="m-0 mt-1 text-xs text-slate-500">Portal admins for {companyName || 'your workspace'}</p>
       <div className="mt-4">
-        {TEAM_MEMBERS.map((member) => (
-          <TeamMemberRow key={member.id} {...member} />
-        ))}
+        <TeamMemberRow
+          initials={getInitials(admin.name)}
+          name={admin.name}
+          role={admin.email}
+          badge="Admin"
+          badgeColor="blue"
+          avatarBg="bg-[#1a3a8f]"
+        />
       </div>
-      <button
-        type="button"
-        className="mt-5 w-full rounded-xl border border-dashed border-[#1a3a8f]/30 py-3 text-sm font-semibold text-[#1a3a8f] transition hover:bg-blue-50"
-      >
-        + Invite Team Member
-      </button>
     </section>
   )
 }
@@ -49,7 +63,7 @@ function SecurityApiSection() {
   )
 }
 
-function EnterprisePlanCard() {
+function EnterprisePlanCard({ totalEmployees }) {
   return (
     <section className="rounded-2xl bg-gradient-to-br from-[#1a3a8f] to-[#2747b2] p-5 text-white shadow-lg md:p-6">
       <div className="flex items-start justify-between gap-3">
@@ -58,19 +72,13 @@ function EnterprisePlanCard() {
           Active
         </span>
       </div>
-      <p className="mt-1 text-sm text-white/70">Next renewal: Nov 12, 2024</p>
+      <p className="mt-1 text-sm text-white/70">Workforce linked to your company</p>
       <div className="my-5 border-t border-white/20" />
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="m-0 text-3xl font-extrabold">142 / 500</p>
-          <p className="mt-1 text-sm text-white/70">Verified Employees</p>
+          <p className="m-0 text-3xl font-extrabold">{totalEmployees ?? 0}</p>
+          <p className="mt-1 text-sm text-white/70">Linked Employees</p>
         </div>
-        <button
-          type="button"
-          className="shrink-0 rounded-xl border border-white/40 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
-        >
-          Manage Billing
-        </button>
       </div>
     </section>
   )
@@ -102,13 +110,25 @@ function DangerZoneSection() {
 
 function Settings() {
   const [activeTab, setActiveTab] = useState('general')
+  const { company: authCompany } = useAuth()
+
+  const { data: workspace, isLoading } = useQuery({
+    queryKey: enterpriseKeys.workspace,
+    queryFn: fetchWorkspace,
+  })
+
+  const company = workspace || authCompany
+
+  if (isLoading && !company) {
+    return <Loader variant="fullPage" label="Loading settings..." />
+  }
 
   return (
     <EnterpriseLayout>
       <div className="px-4 py-5 pb-10 md:px-6 md:py-8 lg:px-8">
         <PageHeader
           title="Settings & Team"
-          subtitle="Manage workspace and permissions"
+          subtitle={company?.name ? `${company.name} · Manage workspace and permissions` : 'Manage workspace and permissions'}
           action={
             <button
               type="button"
@@ -147,38 +167,85 @@ function Settings() {
                     <label className="text-sm font-semibold text-slate-700">Company Name</label>
                     <input
                       type="text"
-                      defaultValue="Acme Technologies Pvt. Ltd."
-                      className="mt-2 h-11 w-full rounded-xl border border-slate-200 px-3.5 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-50"
+                      readOnly
+                      value={company?.name || ''}
+                      placeholder="Your company name"
+                      className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-800 outline-none"
                     />
                   </div>
-                  <div>
-                    <label className="text-sm font-semibold text-slate-700">Timezone</label>
-                    <select className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm outline-none focus:border-[#1a3a8f]">
-                      <option>Asia/Kolkata (GMT+5:30)</option>
-                      <option>America/New_York (GMT-5)</option>
-                      <option>Europe/London (GMT+0)</option>
-                    </select>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="text-sm font-semibold text-slate-700">Industry</label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={company?.industry || '—'}
+                        className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-800 outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-semibold text-slate-700">Company Size</label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={company?.companySize || '—'}
+                        className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-800 outline-none"
+                      />
+                    </div>
                   </div>
                   <div>
-                    <label className="text-sm font-semibold text-slate-700">Default Language</label>
-                    <select className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm outline-none focus:border-[#1a3a8f]">
-                      <option>English</option>
-                      <option>Hindi</option>
-                    </select>
+                    <label className="text-sm font-semibold text-slate-700">Work Email</label>
+                    <input
+                      type="text"
+                      readOnly
+                      value={company?.workEmail || ''}
+                      className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-800 outline-none"
+                    />
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="text-sm font-semibold text-slate-700">City</label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={company?.city || '—'}
+                        className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-800 outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-semibold text-slate-700">Country</label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={company?.country || '—'}
+                        className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-800 outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-semibold text-slate-700">Contact Person</label>
+                    <input
+                      type="text"
+                      readOnly
+                      value={company?.contactName || '—'}
+                      className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-800 outline-none"
+                    />
                   </div>
                 </div>
               </section>
-              <TeamMembersSection />
+              <TeamMembersSection admin={workspace?.admin} companyName={company?.name} />
               <SecurityApiSection />
             </>
           )}
 
-          {activeTab === 'team' && <TeamMembersSection />}
+          {activeTab === 'team' && (
+            <TeamMembersSection admin={workspace?.admin} companyName={company?.name} />
+          )}
 
           {activeTab === 'security' && (
             <>
               <SecurityApiSection />
-              <EnterprisePlanCard />
+              <EnterprisePlanCard totalEmployees={workspace?.totalEmployees ?? company?.totalEmployees} />
               <DangerZoneSection />
             </>
           )}

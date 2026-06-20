@@ -8,6 +8,7 @@ import Loader from '../../components/common/Loader'
 import { ShieldCheckIcon } from '../../components/common/Icons'
 import { employeeKeys, fetchProfessionalId } from '../../api/employee'
 import { mediaUrl } from '../../lib/mediaUrl'
+import { buildPublicProfileUrl } from '../../lib/publicProfileUrl'
 
 function ShareIcon() {
   return (
@@ -53,10 +54,15 @@ function ProfessionalId() {
     verifiedJobs: data.verifiedJobsCount,
   }
 
+  const publicProfileUrl = buildPublicProfileUrl({
+    publicSlug: data.publicSlug,
+    veriworkId: data.veriworkId,
+  })
+
   const handleCopy = async () => {
-    if (!data.publicProfileUrl) return
+    if (!publicProfileUrl) return
     try {
-      await navigator.clipboard.writeText(data.publicProfileUrl)
+      await navigator.clipboard.writeText(publicProfileUrl)
       setCopied(true)
       window.setTimeout(() => setCopied(false), 2000)
     } catch {
@@ -115,11 +121,18 @@ function ProfessionalId() {
               </button>
             </div>
           )}
-          {data.publicProfileUrl && (
+          {publicProfileUrl && (
             <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-4">
               <div className="min-w-0 flex-1">
                 <p className="m-0 text-xs text-slate-400">Public Profile Link</p>
-                <p className="m-0 truncate text-sm font-semibold">{data.publicProfileUrl}</p>
+                <a
+                  href={publicProfileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="m-0 block truncate text-sm font-semibold text-[#1a3a8f] no-underline hover:underline"
+                >
+                  {publicProfileUrl}
+                </a>
               </div>
               <button type="button" onClick={handleCopy} className="shrink-0 text-sm font-semibold text-[#1a3a8f]">
                 Copy

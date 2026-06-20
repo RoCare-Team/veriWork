@@ -122,3 +122,34 @@ export function fetchEndorsements() {
 export function createEndorsement(body) {
   return api(API.EMPLOYEE.ENDORSE, { method: 'POST', body })
 }
+
+export function fetchJobVerification(jobId) {
+  return api(API.EMPLOYEE.JOB_VERIFICATION(jobId))
+}
+
+export function createJobVerificationRequest(jobId, body) {
+  return api(API.EMPLOYEE.JOB_VERIFICATION_REQUEST(jobId), { method: 'POST', body })
+}
+
+export function fetchVerificationRequests() {
+  return api(API.EMPLOYEE.VERIFICATION_REQUESTS)
+}
+
+export function approveVerificationConsent(id) {
+  return api(API.EMPLOYEE.VERIFICATION_CONSENT_APPROVE(id), { method: 'POST' })
+}
+
+export function rejectVerificationConsent(id, body) {
+  return api(API.EMPLOYEE.VERIFICATION_CONSENT_REJECT(id), { method: 'POST', body })
+}
+
+export function fetchVerificationTags() {
+  return api(API.EMPLOYEE.VERIFICATION_TAGS)
+}
+
+export function uploadJobDocumentWithType(jobId, file, documentType) {
+  const form = new FormData()
+  form.append('document', file)
+  if (documentType) form.append('documentType', documentType)
+  return api(API.EMPLOYEE.JOB_DOCUMENTS(jobId), { method: 'POST', body: form })
+}

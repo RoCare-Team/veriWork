@@ -12,7 +12,7 @@ function PendingInvitationRow({ invitation }) {
   return (
     <div className="flex items-center justify-between gap-4 px-4 py-4 md:px-5">
       <div className="flex min-w-0 items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-700">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
           {initials}
         </div>
         <div className="min-w-0">
@@ -22,7 +22,7 @@ function PendingInvitationRow({ invitation }) {
           </p>
         </div>
       </div>
-      <span className="shrink-0 rounded-full bg-amber-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-amber-700">
+      <span className="shrink-0 rounded-md bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">
         Pending
       </span>
     </div>

@@ -6,6 +6,9 @@ import Loader from '../../components/common/Loader'
 import EmploymentStatusBadge from '../../components/enterprise/EmploymentStatusBadge'
 import SendAccessRequestModal from '../../components/enterprise/SendAccessRequestModal'
 import RemoveAccessConfirmModal from '../../components/enterprise/RemoveAccessConfirmModal'
+import VerificationRequestModal from '../../components/enterprise/VerificationRequestModal'
+import AssignEmployeeModal from '../../components/enterprise/AssignEmployeeModal'
+import ProfileTab from '../../components/enterprise/EmployeeProfileTab'
 import TrustScoreDisplay from '../../components/enterprise/TrustScoreDisplay'
 import { COMPANY_ROUTES } from '../../constants/companyRoutes'
 import {
@@ -265,83 +268,6 @@ function LockedSection({ pending, message, buttonLabel, onRequest }) {
   )
 }
 
-function DetailRow({ label, value }) {
-  if (!value) return null
-  return (
-    <div className="flex flex-col gap-0.5 border-b border-slate-100 py-3 last:border-0 sm:flex-row sm:justify-between">
-      <dt className="font-semibold text-slate-500">{label}</dt>
-      <dd className="m-0 font-medium text-slate-900">{value}</dd>
-    </div>
-  )
-}
-
-function ProfileTab({ profileSection, employmentHistory }) {
-  const skills = Array.isArray(profileSection?.skills) ? profileSection.skills : []
-  const jobs = Array.isArray(employmentHistory) ? employmentHistory : []
-
-  return (
-    <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-100 bg-white p-5">
-        <h3 className="m-0 text-sm font-bold text-slate-800">Personal details</h3>
-        <dl className="m-0 mt-3">
-          <DetailRow label="Email" value={profileSection?.email} />
-          <DetailRow label="Phone" value={profileSection?.phone || profileSection?.mobile} />
-          <DetailRow label="Date of Birth" value={profileSection?.dateOfBirth ? formatDate(profileSection.dateOfBirth) : null} />
-          <DetailRow label="Gender" value={profileSection?.gender} />
-          <DetailRow label="Current City" value={profileSection?.currentCity || profileSection?.city} />
-          <DetailRow label="Current Address" value={profileSection?.currentAddress} />
-          <DetailRow label="Permanent Address" value={profileSection?.permanentAddress} />
-        </dl>
-      </div>
-
-      {skills.length > 0 && (
-        <div className="rounded-2xl border border-slate-100 bg-white p-5">
-          <h3 className="m-0 text-sm font-bold text-slate-800">Skills</h3>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {skills.map((skill) => (
-              <span key={skill} className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-[#1a3a8f]">
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="rounded-2xl border border-slate-100 bg-white p-5">
-        <h3 className="m-0 text-sm font-bold text-slate-800">Employment history</h3>
-        {jobs.length > 0 ? (
-          <div className="mt-3 overflow-x-auto">
-            <table className="w-full min-w-[560px] border-collapse text-left text-sm">
-              <thead>
-                <tr className="border-b border-slate-100 text-xs uppercase text-slate-500">
-                  <th className="pb-2 pr-3 font-bold">Company</th>
-                  <th className="pb-2 pr-3 font-bold">Title</th>
-                  <th className="pb-2 pr-3 font-bold">Dates</th>
-                  <th className="pb-2 font-bold">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {jobs.map((job) => (
-                  <tr key={job._id || job.id || `${job.company}-${job.title}`} className="border-b border-slate-50 last:border-0">
-                    <td className="py-3 pr-3 font-medium text-slate-900">{job.company}</td>
-                    <td className="py-3 pr-3 text-slate-600">{job.title}</td>
-                    <td className="py-3 pr-3 text-slate-500">
-                      {formatDate(job.startDate)} – {job.endDate ? formatDate(job.endDate) : 'Present'}
-                    </td>
-                    <td className="py-3 text-slate-600">{job.status || '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p className="m-0 mt-3 text-sm text-slate-500">No employment history recorded.</p>
-        )}
-      </div>
-    </div>
-  )
-}
-
 function DocumentRow({ doc }) {
   const href = resolveDocumentUrl(doc)
   const name = doc.originalName || doc.name || doc.fileName || 'Document'
@@ -469,14 +395,27 @@ function DocumentsTab({ documentsSection, documentsData, isLoading, error }) {
 function VerificationTab({ verificationSection, trustScore }) {
   const factors = verificationSection?.scoreFactors || verificationSection?.factors || []
   const status = verificationSection?.verificationStatus || {}
+  const tags = verificationSection?.verificationTags || verificationSection?.verificationHierarchy?.tags || []
   const checklist = [
-    { key: 'profileSetup', label: 'Profile Setup' },
-    { key: 'aadhaar', label: 'Aadhaar Verified' },
-    { key: 'biometric', label: 'Biometric Verified' },
+    { key: 'profileSetupComplete', label: 'Profile Verified' },
+    { key: 'aadhaarVerified', label: 'Aadhaar Verified' },
+    { key: 'biometricVerified', label: 'Biometric Verified' },
   ]
 
   return (
     <div className="space-y-6">
+      {tags.length > 0 && (
+        <div className="rounded-2xl border border-blue-100 bg-blue-50/50 p-5">
+          <h3 className="m-0 text-sm font-bold text-slate-800">Verification hierarchy</h3>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span key={tag.id} className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold text-[#1a3a8f] shadow-sm">
+                ✓ {tag.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
       <div className="rounded-2xl border border-slate-100 bg-white p-5">
         <div className="flex flex-wrap items-center gap-6">
           <ProfileScoreRing score={trustScore ?? verificationSection?.trustScore} maxScore={SCORE_MAX} />
@@ -495,6 +434,28 @@ function VerificationTab({ verificationSection, trustScore }) {
       </div>
 
       <ScoreFactorsBreakdown factors={factors} title="Score factors" />
+
+      {verificationSection?.jobs?.length > 0 && (
+        <div className="rounded-2xl border border-slate-100 bg-white p-5">
+          <h3 className="m-0 text-sm font-bold text-slate-800">Verification by company</h3>
+          <div className="mt-4 flex flex-col gap-3">
+            {verificationSection.jobs.map((job) => (
+              <div
+                key={job.id}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3"
+              >
+                <div>
+                  <p className="m-0 text-sm font-bold text-slate-900">{job.company}</p>
+                  <p className="m-0 text-xs text-slate-500">{job.title}</p>
+                </div>
+                <span className="rounded-full bg-[#1a3a8f]/10 px-3 py-1 text-xs font-bold text-[#1a3a8f]">
+                  {job.verificationTag?.label || 'Not verified'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="rounded-2xl border border-slate-100 bg-white p-5">
         <h3 className="m-0 text-sm font-bold text-slate-800">Verification status</h3>
@@ -525,6 +486,8 @@ function EmployeeProfilePage() {
   const [tab, setTab] = useState('profile')
   const [accessModal, setAccessModal] = useState(null)
   const [showRemoveAccess, setShowRemoveAccess] = useState(false)
+  const [verifyJob, setVerifyJob] = useState(null)
+  const [showAssign, setShowAssign] = useState(false)
 
   const profileQuery = useQuery({
     queryKey: enterpriseKeys.employeeProfile(employeeId),
@@ -616,15 +579,36 @@ function EmployeeProfilePage() {
         </button>
 
         {access.fullProfileAccess && (
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
-            <p className="m-0 text-sm font-semibold text-green-800">Full profile access granted</p>
-            <button
-              type="button"
-              onClick={() => setShowRemoveAccess(true)}
-              className="rounded-lg border border-red-300 bg-white px-3 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50"
-            >
-              Remove Access
-            </button>
+          <div className="mb-6 rounded-2xl border border-green-200 bg-gradient-to-r from-green-50 to-white p-4 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-lg text-white">✓</span>
+                <div>
+                  <p className="m-0 text-sm font-bold text-green-900">Full profile access granted</p>
+                  <p className="m-0 mt-0.5 text-xs text-green-700">
+                    Review company-wise employment records below, then verify previous employers
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {preview.onboardingStage === 'verified' && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAssign(true)}
+                    className="rounded-xl bg-[#1a3a8f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#152b6e]"
+                  >
+                    Assign Department
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setShowRemoveAccess(true)}
+                  className="rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+                >
+                  Remove Access
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -695,6 +679,9 @@ function EmployeeProfilePage() {
               <ProfileTab
                 profileSection={data.profileSection || data.basicProfile}
                 employmentHistory={data.employmentHistory || data.profileSection?.employmentHistory}
+                canVerify={access.fullProfileAccess}
+                onVerifyJob={(job) => setVerifyJob(job)}
+                showFlowStepper={access.fullProfileAccess}
               />
             ) : (
               <LockedSection
@@ -772,6 +759,27 @@ function EmployeeProfilePage() {
             refreshProfile()
             queryClient.invalidateQueries({ queryKey: enterpriseKeys.team })
           }}
+        />
+      )}
+
+      {verifyJob && (
+        <VerificationRequestModal
+          employeeId={employeeId}
+          jobExperienceId={verifyJob.id || verifyJob._id}
+          jobTitle={verifyJob.title}
+          companyName={verifyJob.company}
+          previousCompanyOnPlatform={Boolean(verifyJob.previousCompanyOnPlatform)}
+          matchedPlatformCompany={verifyJob.matchedPlatformCompany || null}
+          onClose={() => setVerifyJob(null)}
+          onSuccess={refreshProfile}
+        />
+      )}
+
+      {showAssign && (
+        <AssignEmployeeModal
+          employee={{ employeeId, employeeName: displayName, department: preview.department, designation: preview.role }}
+          onClose={() => setShowAssign(false)}
+          onSuccess={refreshProfile}
         />
       )}
     </EnterpriseLayout>

@@ -4,6 +4,8 @@ import EnterpriseLayout from '../../layouts/EnterpriseLayout'
 import PageHeader from '../../components/enterprise/PageHeader'
 import Loader from '../../components/common/Loader'
 import EmailVerificationCompleteModal from '../../components/enterprise/EmailVerificationCompleteModal'
+import HrResponseReviewModal from '../../components/enterprise/HrResponseReviewModal'
+import IncomingVerificationApproveModal from '../../components/enterprise/IncomingVerificationApproveModal'
 import { formatAccessDate } from '../../utils/formatters'
 import {
   getVerificationChannelStyle,
@@ -36,10 +38,12 @@ function StatusBadge({ status }) {
   )
 }
 
-function RequestCard({ request, onApprove, onReject, onCompleteEmail, actionPending }) {
+function RequestCard({ request, onApprove, onReject, onCompleteEmail, onReviewHr, actionPending }) {
   const id = request._id || request.id
-  const isPending = request.status === 'pending'
-  const isEmailInProcess = request.verificationChannel === 'email' && request.status === 'in_process'
+  const rawStatus = request.rawStatus || request.status
+  const isPending = rawStatus === 'pending'
+  const isEmailInProcess = request.verificationChannel === 'email' && ['in_process', 'in_review'].includes(rawStatus)
+  const isHrResponded = rawStatus === 'hr_responded'
 
   return (
     <article className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm md:p-5">
@@ -47,19 +51,22 @@ function RequestCard({ request, onApprove, onReject, onCompleteEmail, actionPend
         <div>
           <h3 className="m-0 font-bold text-slate-900">{request.employeeName || 'Employee'}</h3>
           <p className="m-0 mt-1 text-sm text-slate-600">
-            {request.jobTitle || request.title} · {request.companyName || request.company}
+            {request.jobTitle || request.title} · {request.companyName || request.company || request.previousCompanyName}
           </p>
+          {request.verificationTag && (
+            <p className="m-0 mt-2 text-xs font-semibold text-green-700">{request.verificationTag.label}</p>
+          )}
           <p className="m-0 mt-2 text-xs text-slate-400">
             {formatAccessDate(request.createdAt || request.requestedAt)}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <ChannelBadge channel={request.verificationChannel} />
-          <StatusBadge status={request.status} />
+          <StatusBadge status={rawStatus} />
         </div>
       </div>
 
-      {(isPending || isEmailInProcess) && (
+      {(isPending || isEmailInProcess || isHrResponded) && (
         <div className="mt-4 flex flex-wrap gap-2">
           {isPending && onApprove && onReject && (
             <>
@@ -88,7 +95,17 @@ function RequestCard({ request, onApprove, onReject, onCompleteEmail, actionPend
               disabled={actionPending}
               className="rounded-xl border border-[#1a3a8f] px-4 py-2 text-sm font-semibold text-[#1a3a8f] hover:bg-blue-50 disabled:opacity-50"
             >
-              Complete Email Verification
+              Complete / Document Verify
+            </button>
+          )}
+          {isHrResponded && onReviewHr && (
+            <button
+              type="button"
+              onClick={() => onReviewHr(request)}
+              disabled={actionPending}
+              className="rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700 disabled:opacity-50"
+            >
+              Review HR Response
             </button>
           )}
         </div>
@@ -97,7 +114,7 @@ function RequestCard({ request, onApprove, onReject, onCompleteEmail, actionPend
   )
 }
 
-function RequestList({ requests, emptyMessage, onApprove, onReject, onCompleteEmail, actionPending }) {
+function RequestList({ requests, emptyMessage, onApprove, onReject, onCompleteEmail, onReviewHr, actionPending }) {
   if (!requests.length) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-8 text-center">
@@ -115,6 +132,7 @@ function RequestList({ requests, emptyMessage, onApprove, onReject, onCompleteEm
           onApprove={onApprove}
           onReject={onReject}
           onCompleteEmail={onCompleteEmail}
+          onReviewHr={onReviewHr}
           actionPending={actionPending}
         />
       ))}
@@ -126,6 +144,8 @@ function EmploymentVerification() {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const [emailRequest, setEmailRequest] = useState(null)
+  const [hrReviewRequest, setHrReviewRequest] = useState(null)
+  const [incomingApprove, setIncomingApprove] = useState(null)
 
   const outgoingQuery = useQuery({
     queryKey: enterpriseKeys.verificationOutgoing,
@@ -189,6 +209,7 @@ function EmploymentVerification() {
             requests={outgoing}
             emptyMessage="No outgoing verification requests"
             onCompleteEmail={setEmailRequest}
+            onReviewHr={setHrReviewRequest}
             actionPending={actionPending}
           />
         </section>
@@ -201,9 +222,13 @@ function EmploymentVerification() {
           <RequestList
             requests={incoming}
             emptyMessage="No incoming verification requests"
-            onApprove={(id) => approveMutation.mutate(id)}
+            onApprove={(id) => {
+              const req = incoming.find((r) => (r._id || r.id) === id)
+              if (req) setIncomingApprove(req)
+            }}
             onReject={(id) => rejectMutation.mutate(id)}
             onCompleteEmail={setEmailRequest}
+            onReviewHr={setHrReviewRequest}
             actionPending={actionPending}
           />
         </section>
@@ -213,6 +238,22 @@ function EmploymentVerification() {
         <EmailVerificationCompleteModal
           request={emailRequest}
           onClose={() => setEmailRequest(null)}
+          onSuccess={invalidate}
+        />
+      )}
+
+      {hrReviewRequest && (
+        <HrResponseReviewModal
+          request={hrReviewRequest}
+          onClose={() => setHrReviewRequest(null)}
+          onSuccess={invalidate}
+        />
+      )}
+
+      {incomingApprove && (
+        <IncomingVerificationApproveModal
+          request={incomingApprove}
+          onClose={() => setIncomingApprove(null)}
           onSuccess={invalidate}
         />
       )}

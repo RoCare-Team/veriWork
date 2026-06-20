@@ -1,20 +1,49 @@
 import { getScoreRating } from '../../utils/employeeScoreUtils'
+import { getInitials } from '../../utils/formatters'
+import { mediaUrl } from '../../lib/mediaUrl'
 
-function EmployeeCard({ initials, name, role, department, employeeScore, trustScore, verified }) {
+function EmployeeCard({
+  initials,
+  name,
+  role,
+  department,
+  employeeScore,
+  trustScore,
+  verified,
+  photoUrl,
+  stageLabel,
+  onViewProfile,
+}) {
   const score = employeeScore ?? trustScore ?? 0
   const rating = getScoreRating(score)
+  const displayInitials = typeof initials === 'string' && initials.length <= 3
+    ? initials
+    : getInitials(name || initials)
 
   return (
-    <article className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:shadow-md">
+    <article className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:border-slate-200 hover:shadow-md">
       <div className="flex items-start gap-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-[#1a3a8f]">
-          {initials}
-        </div>
+        {photoUrl ? (
+          <img
+            src={mediaUrl(photoUrl)}
+            alt=""
+            className="h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-slate-100"
+          />
+        ) : (
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-[#1a3a8f]">
+            {displayInitials}
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           <h3 className="m-0 truncate text-base font-bold text-slate-900">{name}</h3>
           <p className="mt-0.5 truncate text-sm text-slate-500">
-            {role} • {department}
+            {role} · {department}
           </p>
+          {stageLabel && (
+            <span className="mt-1.5 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+              {stageLabel}
+            </span>
+          )}
         </div>
       </div>
 
@@ -52,6 +81,7 @@ function EmployeeCard({ initials, name, role, department, employeeScore, trustSc
 
       <button
         type="button"
+        onClick={onViewProfile}
         className="mt-4 w-full rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-[#1a3a8f] hover:text-[#1a3a8f]"
       >
         View Profile

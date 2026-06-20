@@ -1,7 +1,7 @@
 import { isVerificationComplete } from './employeeProfileUtils'
 
 export const SCORE_MIN = 300
-export const SCORE_MAX = 900
+export const SCORE_MAX = 1000
 
 export function calculateEmployeeScore(profile) {
   if (!profile) return SCORE_MIN

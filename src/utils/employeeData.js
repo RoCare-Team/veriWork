@@ -1,3 +1,5 @@
+import { buildPublicProfileUrl } from '../lib/publicProfileUrl'
+
 export const EMPLOYEE_PROFILE = {
   name: 'Arjun Raghav',
   initials: 'AR',
@@ -8,7 +10,7 @@ export const EMPLOYEE_PROFILE = {
   verifiedJobs: 12,
   endorsements: 24,
   veriworkId: 'VW-8829-XQ',
-  publicProfileUrl: 'veriwork.app/u/arjun_raghav',
+  publicProfileUrl: buildPublicProfileUrl({ publicSlug: 'user_882900', veriworkId: 'VW-8829-XQ' }),
   skills: ['UI/UX Design', 'Fintech', 'System Architecture', 'Product Strategy'],
 }
 

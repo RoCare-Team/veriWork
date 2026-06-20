@@ -23,6 +23,7 @@ function mapJob(job) {
     type: job.employmentType || job.type,
     status: job.status,
     statusLabel: job.statusLabel,
+    verificationTag: job.verificationTag,
   }
 }
 

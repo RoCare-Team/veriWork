@@ -2,20 +2,27 @@ import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import Button from '../common/Button'
 import Loader from '../common/Loader'
-import { completeEmailVerification } from '../../api/enterprise'
+import { completeEmailVerification, confirmDocumentVerification } from '../../api/enterprise'
 import { useToast } from '../../context/ToastContext'
 
 function EmailVerificationCompleteModal({ request, onClose, onSuccess }) {
   const { toast } = useToast()
   const [verified, setVerified] = useState(true)
+  const [useDocuments, setUseDocuments] = useState(false)
   const [notes, setNotes] = useState('')
 
   const mutation = useMutation({
-    mutationFn: () =>
-      completeEmailVerification(request._id || request.id, {
+    mutationFn: () => {
+      if (useDocuments) {
+        return confirmDocumentVerification(request._id || request.id, {
+          ...(notes.trim() ? { notes: notes.trim() } : {}),
+        })
+      }
+      return completeEmailVerification(request._id || request.id, {
         verified,
         ...(notes.trim() ? { notes: notes.trim() } : {}),
-      }),
+      })
+    },
     onSuccess: () => {
       toast('Verification updated', 'success')
       onSuccess?.()
@@ -34,7 +41,17 @@ function EmailVerificationCompleteModal({ request, onClose, onSuccess }) {
         </p>
 
         <div className="mt-5 flex flex-col gap-4">
-          <div className="flex gap-3">
+          <label className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+            <input
+              type="checkbox"
+              checked={useDocuments}
+              onChange={(e) => setUseDocuments(e.target.checked)}
+            />
+            Verify using uploaded documents (no HR response)
+          </label>
+
+          {!useDocuments && (
+            <div className="flex gap-3">
             <button
               type="button"
               onClick={() => setVerified(true)}
@@ -54,6 +71,7 @@ function EmailVerificationCompleteModal({ request, onClose, onSuccess }) {
               Not Verified
             </button>
           </div>
+          )}
 
           <div className="flex flex-col gap-2">
             <label htmlFor="verification-notes" className="text-sm font-semibold text-slate-800">

@@ -50,15 +50,6 @@ const NAV_ITEMS = [
     ),
   },
   {
-    to: COMPANY_ROUTES.INSIGHTS,
-    label: 'Company Insights',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M3 17V9M8 17V3M13 17v-6M18 17v-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
     to: '/enterprise/workforce',
     label: 'Workforce',
     icon: (
@@ -104,8 +95,7 @@ const NAV_ITEMS = [
 
 function SidebarContent({ onNavigate }) {
   const navigate = useNavigate()
-
-  const { logout } = useAuth()
+  const { logout, company } = useAuth()
 
   const handleSignOut = async () => {
     await logout()
@@ -118,6 +108,9 @@ function SidebarContent({ onNavigate }) {
       <div className="border-b border-white/10 px-5 py-6">
         <BrandLogo size="sm" theme="light" showTagline />
         <p className="mt-2 text-[11px] font-medium text-white/50">Employer Portal</p>
+        {company?.name && (
+          <p className="mt-1 truncate text-xs font-semibold text-white/90">{company.name}</p>
+        )}
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-5">

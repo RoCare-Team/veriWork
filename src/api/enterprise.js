@@ -8,6 +8,7 @@ export const enterpriseKeys = {
   joinRequests: ['enterprise', 'join-requests'],
   qr: ['enterprise', 'qr'],
   team: ['company', 'team'],
+  workspace: ['company', 'workspace'],
   invitationsPending: ['company', 'invitations', 'pending'],
   teamDepartment: (department) => ['company', 'team', department],
   accessRequests: (filters) => ['company', 'access-requests', filters],
@@ -71,6 +72,10 @@ export function fetchTeam() {
   return api(API.COMPANY.TEAM)
 }
 
+export function fetchWorkspace() {
+  return api(API.COMPANY.WORKSPACE)
+}
+
 export function fetchTeamDepartment(department) {
   return api(API.COMPANY.TEAM_DEPARTMENT(department))
 }
@@ -131,6 +136,11 @@ export function createVerificationRequest(body) {
   return api(API.COMPANY.VERIFICATION_REQUEST, { method: 'POST', body })
 }
 
+export function searchPlatformCompanies(query) {
+  const params = new URLSearchParams({ q: query })
+  return api(`${API.COMPANY.PLATFORM_COMPANIES_SEARCH}?${params}`)
+}
+
 export function fetchVerificationOutgoing() {
   return api(API.COMPANY.VERIFICATION_REQUESTS_OUTGOING)
 }
@@ -139,16 +149,32 @@ export function fetchVerificationIncoming() {
   return api(API.COMPANY.VERIFICATION_REQUESTS_INCOMING)
 }
 
-export function approveVerificationRequest(id) {
-  return api(API.COMPANY.VERIFICATION_REQUEST_APPROVE(id), { method: 'POST' })
+export function fetchEmployeeJobVerificationRecord(employeeId, jobId) {
+  return api(API.COMPANY.EMPLOYEE_JOB_VERIFICATION_RECORD(employeeId, jobId))
 }
 
-export function rejectVerificationRequest(id) {
-  return api(API.COMPANY.VERIFICATION_REQUEST_REJECT(id), { method: 'POST' })
+export function assignEmployeeOnboarding(employeeId, body) {
+  return api(API.COMPANY.EMPLOYEE_ONBOARDING(employeeId), { method: 'PATCH', body })
+}
+
+export function approveVerificationRequest(id, body = {}) {
+  return api(API.COMPANY.VERIFICATION_REQUEST_APPROVE(id), { method: 'POST', body })
+}
+
+export function rejectVerificationRequest(id, body = {}) {
+  return api(API.COMPANY.VERIFICATION_REQUEST_REJECT(id), { method: 'POST', body })
 }
 
 export function completeEmailVerification(id, body) {
   return api(API.COMPANY.VERIFICATION_REQUEST_COMPLETE_EMAIL(id), { method: 'POST', body })
+}
+
+export function reviewHrResponse(id, body) {
+  return api(API.COMPANY.VERIFICATION_REQUEST_REVIEW_HR(id), { method: 'POST', body })
+}
+
+export function confirmDocumentVerification(id, body = {}) {
+  return api(API.COMPANY.VERIFICATION_REQUEST_CONFIRM_DOCUMENT(id), { method: 'POST', body })
 }
 
 export function fetchAuditLogs({ action = '', page = 1, limit = 20 } = {}) {

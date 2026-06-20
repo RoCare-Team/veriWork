@@ -70,11 +70,40 @@ export function getVerificationStatusStyle(status) {
   const map = {
     pending: { bg: 'bg-amber-50', color: 'text-amber-700', label: 'Pending' },
     in_process: { bg: 'bg-blue-50', color: 'text-blue-700', label: 'In Process' },
+    in_review: { bg: 'bg-blue-50', color: 'text-blue-700', label: 'Email Sent' },
+    hr_responded: { bg: 'bg-purple-50', color: 'text-purple-700', label: 'HR Responded' },
+    verified: { bg: 'bg-green-50', color: 'text-green-700', label: 'Verified' },
     approved: { bg: 'bg-green-50', color: 'text-green-700', label: 'Approved' },
     rejected: { bg: 'bg-red-50', color: 'text-red-700', label: 'Rejected' },
+    expired: { bg: 'bg-slate-100', color: 'text-slate-600', label: 'Expired' },
     completed: { bg: 'bg-green-50', color: 'text-green-700', label: 'Completed' },
   }
   return map[status] || { bg: 'bg-slate-50', color: 'text-slate-600', label: status || 'Unknown' }
+}
+
+export function getOnboardingStageStyle(stage) {
+  const map = {
+    incoming: { bg: 'bg-slate-100', color: 'text-slate-600', label: 'New' },
+    pending_verification: { bg: 'bg-slate-100', color: 'text-slate-600', label: 'Pending verification' },
+    verified: { bg: 'bg-slate-100', color: 'text-slate-600', label: 'Ready to assign' },
+    active: { bg: 'bg-slate-100', color: 'text-slate-600', label: 'Active' },
+  }
+  return map[stage] || map.incoming
+}
+
+export function employeeHasProfileAccess(employee) {
+  const access = employee?.access || {}
+  return (
+    access.fullProfileAccess === true ||
+    access.full_profile_access === true ||
+    access.hasAllAccess === true ||
+    access.profileAccess === true
+  )
+}
+
+export function getEmployeeVerifyPath(employeeId) {
+  if (!employeeId) return null
+  return `/company/team/${encodeURIComponent(employeeId)}?verify=1`
 }
 
 /** Resolve employee user id from various API field names */

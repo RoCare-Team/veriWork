@@ -35,7 +35,7 @@ function BiometricLiveness() {
         updateProfileState({
           ...profile,
           biometricVerified: true,
-          photoUrl: data.photoUrl,
+          photoUrl: profile.photoUrl || data.photoUrl,
           isVerified: true,
         })
       }

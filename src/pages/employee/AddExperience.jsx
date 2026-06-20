@@ -10,7 +10,7 @@ import Button from '../../components/common/Button'
 import Loader from '../../components/common/Loader'
 import ExperienceDocumentCard from '../../components/employee/ExperienceDocumentCard'
 import { BuildingIcon, BriefcaseIcon, CardIcon } from '../../components/common/Icons'
-import { createJob, employeeKeys, uploadJobDocument } from '../../api/employee'
+import { createJob, employeeKeys, uploadJobDocumentWithType } from '../../api/employee'
 import { EMPLOYMENT_TYPES, EXPERIENCE_DOCUMENTS } from '../../utils/addExperienceConstants'
 
 function CalendarIcon({ className = 'h-[18px] w-[18px]' }) {
@@ -91,16 +91,17 @@ function AddExperience() {
         description: form.description.trim(),
       })
       const jobId = job._id || job.id
-      const files = Object.values(documents).filter(Boolean)
-      for (const file of files) {
-        await uploadJobDocument(jobId, file)
+      const entries = Object.entries(documents).filter(([, file]) => Boolean(file))
+      for (const [documentType, file] of entries) {
+        await uploadJobDocumentWithType(jobId, file, documentType)
       }
       return job
     },
-    onSuccess: () => {
+    onSuccess: (job) => {
       queryClient.invalidateQueries({ queryKey: employeeKeys.jobs })
       queryClient.invalidateQueries({ queryKey: employeeKeys.score })
-      navigate('/employee/job-history')
+      const jobId = job._id || job.id
+      navigate(jobId ? `/employee/jobs/${jobId}/verify` : '/employee/job-history')
     },
     onError: (err) => setError(err.message || 'Failed to add job'),
   })
@@ -274,11 +275,11 @@ function AddExperience() {
         </section>
 
         <Button type="submit" disabled={!isValid || isSubmitting}>
-          {isSubmitting ? 'Submitting...' : 'Save & Request Verification'}
+          {isSubmitting ? 'Saving...' : 'Save & Verify Employment'}
         </Button>
       </form>
 
-      {isSubmitting && <Loader variant="overlay" label="Submitting for verification..." />}
+      {isSubmitting && <Loader variant="overlay" label="Saving employment..." />}
     </EmployeeLayout>
   )
 }

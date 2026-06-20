@@ -43,14 +43,22 @@ export const API = {
     ACCESS_REQUEST_REJECT: (id) => `/employee/access-request/${id}/reject`,
     ENDORSEMENTS: '/employee/endorsements',
     ENDORSE: '/employee/endorse',
+    JOB_VERIFICATION: (id) => `/employee/jobs/${id}/verification`,
+    JOB_VERIFICATION_REQUEST: (id) => `/employee/jobs/${id}/verification-request`,
+    VERIFICATION_REQUESTS: '/employee/verification/requests',
+    VERIFICATION_CONSENT_APPROVE: (id) => `/employee/verification-requests/${id}/approve-consent`,
+    VERIFICATION_CONSENT_REJECT: (id) => `/employee/verification-requests/${id}/reject-consent`,
+    VERIFICATION_TAGS: '/employee/verification/tags',
   },
 
   PUBLIC: {
+    PROFILE: (slug) => `/public/profile/${encodeURIComponent(slug)}`,
     EMPLOYEE_INVITATION: (token) => `/public/employee-invitation/${encodeURIComponent(token)}`,
     EMPLOYMENT_VERIFICATION: (token) => `/public/employment-verification/${encodeURIComponent(token)}`,
   },
 
   COMPANY: {
+    WORKSPACE: '/company/workspace',
     TEAM: '/company/team',
     TEAM_DEPARTMENT: (department) => `/company/team/department/${encodeURIComponent(department)}`,
     INVITE_EMPLOYEE: '/company/invite-employee',
@@ -63,12 +71,18 @@ export const API = {
     ACCESS_REQUEST_TYPES: '/company/access-request-types',
     ACCESS_REQUESTS: '/company/access-requests',
     INSIGHTS: '/company/insights',
+    PLATFORM_COMPANIES_SEARCH: '/company/platform-companies/search',
     VERIFICATION_REQUEST: '/company/verification-request',
     VERIFICATION_REQUESTS_OUTGOING: '/company/verification-requests/outgoing',
     VERIFICATION_REQUESTS_INCOMING: '/company/verification-requests/incoming',
     VERIFICATION_REQUEST_APPROVE: (id) => `/company/verification-requests/${id}/approve`,
     VERIFICATION_REQUEST_REJECT: (id) => `/company/verification-requests/${id}/reject`,
     VERIFICATION_REQUEST_COMPLETE_EMAIL: (id) => `/company/verification-requests/${id}/complete-email`,
+    VERIFICATION_REQUEST_REVIEW_HR: (id) => `/company/verification-requests/${id}/review-hr-response`,
+    VERIFICATION_REQUEST_CONFIRM_DOCUMENT: (id) => `/company/verification-requests/${id}/confirm-document-verification`,
+    EMPLOYEE_JOB_VERIFICATION_RECORD: (employeeId, jobId) =>
+      `/company/employees/${employeeId}/jobs/${jobId}/verification-record`,
+    EMPLOYEE_ONBOARDING: (employeeId) => `/company/employees/${employeeId}/onboarding`,
     AUDIT_LOGS: '/company/audit-logs',
   },
 

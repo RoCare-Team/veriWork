@@ -18,6 +18,8 @@ import AccessRequests from '../pages/enterprise/AccessRequests'
 import CompanyInsights from '../pages/enterprise/CompanyInsights'
 import EmploymentVerification from '../pages/enterprise/EmploymentVerification'
 import AuditLogs from '../pages/enterprise/AuditLogs'
+import VerifyEmployment from '../pages/public/VerifyEmployment'
+import PublicProfile from '../pages/public/PublicProfile'
 import AdminLogin from '../pages/admin/AdminLogin'
 import AdminDashboard from '../pages/admin/AdminDashboard'
 import AdminCompanies from '../pages/admin/AdminCompanies'
@@ -32,6 +34,7 @@ import BiometricLiveness from '../pages/employee/BiometricLiveness'
 import EmployeeScore from '../pages/employee/EmployeeScore'
 import ProfessionalId from '../pages/employee/ProfessionalId'
 import JobHistory from '../pages/employee/JobHistory'
+import JobVerification from '../pages/employee/JobVerification'
 import AddExperience from '../pages/employee/AddExperience'
 import DocumentVault from '../pages/employee/DocumentVault'
 import Activity from '../pages/employee/Activity'
@@ -55,9 +58,11 @@ function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/u/:slug" element={<PublicProfile />} />
 
         {/* Public employee join — no auth */}
         <Route path="/employee/join" element={<EmployeeJoin />} />
+        <Route path="/verify-employment/:token" element={<VerifyEmployment />} />
 
         {/* Admin */}
         <Route element={<AdminGuestGuard />}>
@@ -132,6 +137,7 @@ function AppRoutes() {
           <Route path="/employee/professional-id" element={<ProfessionalId />} />
           <Route path="/employee/job-history" element={<JobHistory />} />
           <Route path="/employee/job-history/add" element={<AddExperience />} />
+          <Route path="/employee/jobs/:jobId/verify" element={<JobVerification />} />
           <Route path="/employee/vault" element={<DocumentVault />} />
           <Route path="/employee/invitations" element={<EmployeeInvitations />} />
           <Route path="/employee/access-requests" element={<EmployeeAccessConsent />} />
