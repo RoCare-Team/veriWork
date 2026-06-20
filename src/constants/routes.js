@@ -53,6 +53,7 @@ export const API = {
 
   PUBLIC: {
     PROFILE: (slug) => `/public/profile/${encodeURIComponent(slug)}`,
+    PROFILE_ACCESS: (slug) => `/public/profile/${encodeURIComponent(slug)}/request-access`,
     EMPLOYEE_INVITATION: (token) => `/public/employee-invitation/${encodeURIComponent(token)}`,
     EMPLOYMENT_VERIFICATION: (token) => `/public/employment-verification/${encodeURIComponent(token)}`,
   },

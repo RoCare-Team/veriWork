@@ -5,6 +5,10 @@ export function fetchPublicProfile(slug) {
   return api(API.PUBLIC.PROFILE(slug), { auth: false })
 }
 
+export function submitPublicProfileAccessRequest(slug, body) {
+  return api(API.PUBLIC.PROFILE_ACCESS(slug), { method: 'POST', body, auth: false })
+}
+
 export function fetchPublicEmployeeInvitation(token) {
   return api(API.PUBLIC.EMPLOYEE_INVITATION(token), { auth: false })
 }
