@@ -17,6 +17,11 @@ function VerifyEmployment() {
     joiningDate: '',
     exitDate: '',
     duration: '',
+    employeeCode: '',
+    department: '',
+    uanNumber: '',
+    pfNumber: '',
+    esiNumber: '',
     feedback: '',
     rehireEligible: true,
     verificationNotes: '',
@@ -36,9 +41,14 @@ function VerifyEmployment() {
     setForm((prev) => ({
       ...prev,
       designation: info.designation || prev.designation,
-      joiningDate: info.joiningDate || prev.joiningDate,
-      exitDate: info.exitDate || prev.exitDate,
+      joiningDate: info.joiningDate ? String(info.joiningDate).slice(0, 10) : prev.joiningDate,
+      exitDate: info.exitDate ? String(info.exitDate).slice(0, 10) : prev.exitDate,
       duration: info.duration || prev.duration,
+      employeeCode: info.employeeCode || prev.employeeCode,
+      department: info.department || prev.department,
+      uanNumber: info.uanNumber || prev.uanNumber,
+      pfNumber: info.pfNumber || prev.pfNumber,
+      esiNumber: info.esiNumber || prev.esiNumber,
     }))
   }, [info])
 
@@ -154,6 +164,53 @@ function VerifyEmployment() {
                     className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
                     value={form.exitDate}
                     onChange={(e) => setForm((f) => ({ ...f, exitDate: e.target.value }))}
+                  />
+                </label>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <label className="block text-sm">
+                  <span className="font-semibold text-slate-800">Employee ID</span>
+                  <input
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
+                    value={form.employeeCode}
+                    onChange={(e) => setForm((f) => ({ ...f, employeeCode: e.target.value }))}
+                    placeholder="Company employee code"
+                  />
+                </label>
+                <label className="block text-sm">
+                  <span className="font-semibold text-slate-800">Department</span>
+                  <input
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
+                    value={form.department}
+                    onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))}
+                    placeholder="Department"
+                  />
+                </label>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <label className="block text-sm">
+                  <span className="font-semibold text-slate-800">UAN (PF)</span>
+                  <input
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
+                    value={form.uanNumber}
+                    onChange={(e) => setForm((f) => ({ ...f, uanNumber: e.target.value.replace(/\D/g, '').slice(0, 12) }))}
+                    placeholder="12 digits"
+                  />
+                </label>
+                <label className="block text-sm">
+                  <span className="font-semibold text-slate-800">PF ID</span>
+                  <input
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
+                    value={form.pfNumber}
+                    onChange={(e) => setForm((f) => ({ ...f, pfNumber: e.target.value }))}
+                  />
+                </label>
+                <label className="block text-sm">
+                  <span className="font-semibold text-slate-800">ESI No.</span>
+                  <input
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
+                    value={form.esiNumber}
+                    onChange={(e) => setForm((f) => ({ ...f, esiNumber: e.target.value }))}
                   />
                 </label>
               </div>

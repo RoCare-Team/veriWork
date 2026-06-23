@@ -26,6 +26,17 @@ const NAV = [
       </svg>
     ),
   },
+  {
+    to: '/admin/employees',
+    label: 'Employees',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <circle cx="7" cy="7" r="3" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="14" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M2 17c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5M11 17c0-1.8 1.5-3.2 3.5-3.2.8 0 1.5.2 2.1.6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ]
 
 function SidebarContent({ onNavigate }) {

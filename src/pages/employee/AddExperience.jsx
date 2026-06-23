@@ -61,12 +61,26 @@ const INITIAL_FORM = {
   role: '',
   employmentType: 'Full-time',
   salaryBand: '',
+  department: '',
+  workLocation: '',
+  employeeCode: '',
   joiningDate: '',
   exitDate: '',
   isPresent: false,
+  uanNumber: '',
+  pfNumber: '',
+  esiNumber: '',
+  lastDrawnSalary: '',
   companyEmail: '',
   hrEmail: '',
+  managerName: '',
+  managerEmail: '',
   description: '',
+}
+
+function toDateInputValue(value) {
+  if (!value) return ''
+  return String(value).slice(0, 10)
 }
 
 function AddExperience() {
@@ -82,12 +96,21 @@ function AddExperience() {
         title: form.role.trim(),
         company: form.companyName.trim(),
         employmentType: form.employmentType,
-        salaryBand: form.salaryBand,
+        salaryBand: form.salaryBand.trim(),
+        department: form.department.trim(),
+        workLocation: form.workLocation.trim(),
+        employeeCode: form.employeeCode.trim(),
         joiningDate: form.joiningDate,
-        exitDate: form.isPresent ? undefined : form.exitDate,
+        exitDate: form.isPresent ? '' : form.exitDate,
         isPresent: form.isPresent,
+        uanNumber: form.uanNumber.trim(),
+        pfNumber: form.pfNumber.trim(),
+        esiNumber: form.esiNumber.trim(),
+        lastDrawnSalary: form.lastDrawnSalary.trim(),
         companyEmail: form.companyEmail.trim(),
         hrEmail: form.hrEmail.trim(),
+        managerName: form.managerName.trim(),
+        managerEmail: form.managerEmail.trim(),
         description: form.description.trim(),
       })
       const jobId = job._id || job.id
@@ -111,16 +134,35 @@ function AddExperience() {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
+  const updateDigits = (field, max) => (e) => {
+    const value = e.target.value.replace(/\D/g, '').slice(0, max)
+    setForm((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handlePresentChange = (e) => {
+    const checked = e.target.checked
+    setForm((prev) => ({
+      ...prev,
+      isPresent: checked,
+      exitDate: checked ? '' : prev.exitDate,
+    }))
+  }
+
   const handleUpload = (docId, file) => {
     setDocuments((prev) => ({ ...prev, [docId]: file }))
   }
 
+  const uanValid = !form.uanNumber || form.uanNumber.length === 12
+  const datesValid = !form.exitDate || !form.joiningDate || form.exitDate >= form.joiningDate
+
   const isValid =
     form.companyName.trim() &&
     form.role.trim() &&
-    form.joiningDate.trim() &&
-    (form.isPresent || form.exitDate.trim()) &&
-    form.companyEmail.trim()
+    form.joiningDate &&
+    (form.isPresent || form.exitDate) &&
+    form.companyEmail.trim() &&
+    uanValid &&
+    datesValid
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -131,22 +173,25 @@ function AddExperience() {
   const isSubmitting = mutation.isPending
 
   return (
-    <EmployeeLayout>
+    <EmployeeLayout fullWidth>
       <EmployeePageHeader
-        title="Add Job Detail"
-        subtitle="Add employment details for verification"
+        title="Add Employment Details"
+        subtitle="Complete employment and statutory details for verification"
       />
 
-      {error && <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
+      {error && (
+        <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+      )}
 
-      <form className="flex flex-col gap-8 md:gap-10" onSubmit={handleSubmit} noValidate>
-        <section>
-          <SectionTitle>Company Information</SectionTitle>
-          <div className="mt-5 grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-2">
+      <form className="flex w-full flex-col gap-8 md:gap-10" onSubmit={handleSubmit} noValidate>
+        <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
+          <SectionTitle>Company & Role</SectionTitle>
+          <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-5">
             <Input
               id="company-name"
               label="Company Name"
-              placeholder="e.g. Google India"
+              required
+              placeholder="e.g. Tata Consultancy Services"
               value={form.companyName}
               onChange={update('companyName')}
               leftIcon={<BuildingIcon className="h-[18px] w-[18px]" />}
@@ -154,8 +199,9 @@ function AddExperience() {
             />
             <Input
               id="role"
-              label="Role / Position"
-              placeholder="e.g. Senior Product Designer"
+              label="Role / Designation"
+              required
+              placeholder="e.g. Senior Software Engineer"
               value={form.role}
               onChange={update('role')}
               leftIcon={<BriefcaseIcon className="h-[18px] w-[18px]" />}
@@ -170,6 +216,30 @@ function AddExperience() {
               disabled={isSubmitting}
             />
             <Input
+              id="department"
+              label="Department"
+              placeholder="e.g. Engineering"
+              value={form.department}
+              onChange={update('department')}
+              disabled={isSubmitting}
+            />
+            <Input
+              id="work-location"
+              label="Work Location"
+              placeholder="e.g. Mumbai, Maharashtra"
+              value={form.workLocation}
+              onChange={update('workLocation')}
+              disabled={isSubmitting}
+            />
+            <Input
+              id="employee-code"
+              label="Employee ID / Code"
+              placeholder="Company employee number"
+              value={form.employeeCode}
+              onChange={update('employeeCode')}
+              disabled={isSubmitting}
+            />
+            <Input
               id="salary-band"
               label="Salary Band"
               placeholder="Optional"
@@ -178,17 +248,26 @@ function AddExperience() {
               leftIcon={<CardIcon className="h-[18px] w-[18px]" />}
               disabled={isSubmitting}
             />
+            <Input
+              id="last-drawn-salary"
+              label="Last Drawn Salary"
+              placeholder="Optional — for verification"
+              value={form.lastDrawnSalary}
+              onChange={update('lastDrawnSalary')}
+              disabled={isSubmitting}
+            />
           </div>
         </section>
 
-        <section>
+        <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
           <SectionTitle>Employment Timeline</SectionTitle>
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-5">
             <Input
               id="joining-date"
               label="Joining Date"
-              placeholder="MM/YYYY"
-              value={form.joiningDate}
+              type="date"
+              required
+              value={toDateInputValue(form.joiningDate)}
               onChange={update('joiningDate')}
               leftIcon={<CalendarIcon />}
               disabled={isSubmitting}
@@ -197,17 +276,21 @@ function AddExperience() {
               <Input
                 id="exit-date"
                 label="Exit Date"
-                placeholder={form.isPresent ? 'Present' : 'MM/YYYY'}
-                value={form.isPresent ? 'Present' : form.exitDate}
+                type="date"
+                required={!form.isPresent}
+                value={toDateInputValue(form.exitDate)}
                 onChange={update('exitDate')}
                 leftIcon={<CalendarIcon />}
                 disabled={isSubmitting || form.isPresent}
               />
+              {!datesValid && (
+                <p className="mt-1 text-xs text-red-600">Exit date cannot be before joining date</p>
+              )}
               <label className="mt-2 flex cursor-pointer items-center gap-2 text-sm text-slate-600">
                 <input
                   type="checkbox"
                   checked={form.isPresent}
-                  onChange={update('isPresent')}
+                  onChange={handlePresentChange}
                   className="h-4 w-4 rounded border-slate-300 text-[#1a3a8f] focus:ring-[#1a3a8f]"
                   disabled={isSubmitting}
                 />
@@ -217,13 +300,49 @@ function AddExperience() {
           </div>
         </section>
 
-        <section>
+        <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
+          <SectionTitle>PF, ESI & Statutory Details</SectionTitle>
+          <p className="mt-2 text-sm text-slate-500">
+            Provident Fund and ESI details strengthen employment verification
+          </p>
+          <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
+            <Input
+              id="uan-number"
+              label="UAN (PF)"
+              placeholder="12-digit Universal Account Number"
+              value={form.uanNumber}
+              onChange={updateDigits('uanNumber', 12)}
+              disabled={isSubmitting}
+              error={!uanValid}
+              errorText={!uanValid ? 'UAN must be exactly 12 digits' : ''}
+            />
+            <Input
+              id="pf-number"
+              label="PF Member ID"
+              placeholder="EPF member / PF account number"
+              value={form.pfNumber}
+              onChange={update('pfNumber')}
+              disabled={isSubmitting}
+            />
+            <Input
+              id="esi-number"
+              label="ESI / ESIC Number"
+              placeholder="Employee State Insurance number"
+              value={form.esiNumber}
+              onChange={updateDigits('esiNumber', 17)}
+              disabled={isSubmitting}
+            />
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
           <SectionTitle>Verification Contacts</SectionTitle>
-          <div className="mt-5 grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-2">
+          <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-5">
             <Input
               id="company-email"
               label="Company Email"
               type="email"
+              required
               placeholder="yourname@company.com"
               value={form.companyEmail}
               onChange={update('companyEmail')}
@@ -240,15 +359,33 @@ function AddExperience() {
               leftIcon={<HrEmailIcon />}
               disabled={isSubmitting}
             />
+            <Input
+              id="manager-name"
+              label="Reporting Manager"
+              placeholder="Manager full name"
+              value={form.managerName}
+              onChange={update('managerName')}
+              disabled={isSubmitting}
+            />
+            <Input
+              id="manager-email"
+              label="Manager Email"
+              type="email"
+              placeholder="manager@company.com"
+              value={form.managerEmail}
+              onChange={update('managerEmail')}
+              leftIcon={<HrEmailIcon />}
+              disabled={isSubmitting}
+            />
           </div>
         </section>
 
-        <section>
+        <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
           <SectionTitle>Supporting Documents</SectionTitle>
-          <p className="mt-2 text-sm text-slate-500 md:text-base">
-            Upload official documents to increase your Trust Score
+          <p className="mt-2 text-sm text-slate-500">
+            Upload offer letter, salary slip, PF statement, Form 16, or relieving letter to increase trust score
           </p>
-          <div className="mt-5 grid grid-cols-1 gap-3 md:gap-4 lg:grid-cols-2">
+          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
             {EXPERIENCE_DOCUMENTS.map((doc) => (
               <ExperienceDocumentCard
                 key={doc.id}
@@ -260,7 +397,7 @@ function AddExperience() {
           </div>
         </section>
 
-        <section>
+        <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
           <SectionTitle>Work Description</SectionTitle>
           <div className="mt-5">
             <TextArea
@@ -274,7 +411,7 @@ function AddExperience() {
           </div>
         </section>
 
-        <Button type="submit" disabled={!isValid || isSubmitting}>
+        <Button type="submit" disabled={!isValid || isSubmitting} className="shadow-lg">
           {isSubmitting ? 'Saving...' : 'Save & Verify Employment'}
         </Button>
       </form>

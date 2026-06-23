@@ -61,7 +61,7 @@ export function buildDisplayProfile(profile) {
     name,
     initials: getInitials(name),
     role: profile.role?.trim() || 'Professional',
-    company: profile.company?.trim() || 'Not set',
+    company: profile.company?.trim() || '',
     experience:
       jobHistory.length > 0
         ? `${jobHistory.length} role${jobHistory.length > 1 ? 's' : ''} added`

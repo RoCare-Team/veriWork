@@ -18,10 +18,14 @@ export const API = {
     COMPANIES: '/admin/companies',
     COMPANY: (id) => `/admin/companies/${id}`,
     REVIEW: (id) => `/admin/companies/${id}/review`,
+    EMPLOYEES: '/admin/employees',
+    EMPLOYEE: (id) => `/admin/employees/${id}`,
   },
 
   EMPLOYEE: {
     PROFILE: '/employee/profile',
+    SUGGEST_COMPANIES: '/employee/suggestions/companies',
+    SUGGEST_ROLES: '/employee/suggestions/roles',
     PROFILE_SETUP: '/employee/profile/setup',
     PROFILE_PHOTO: '/employee/profile/photo',
     SCORE: '/employee/score',

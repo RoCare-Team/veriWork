@@ -10,9 +10,14 @@ function IncomingVerificationApproveModal({ request, onClose, onSuccess }) {
   const { toast } = useToast()
   const [form, setForm] = useState({
     designation: request.jobTitle || request.title || '',
-    joiningDate: '',
-    exitDate: '',
-    duration: '',
+    joiningDate: request.joiningDate ? String(request.joiningDate).slice(0, 10) : '',
+    exitDate: request.exitDate ? String(request.exitDate).slice(0, 10) : '',
+    duration: request.duration || '',
+    employeeCode: request.employeeCode || '',
+    department: request.department || '',
+    uanNumber: request.uanNumber || '',
+    pfNumber: request.pfNumber || '',
+    esiNumber: request.esiNumber || '',
     feedback: '',
     rehireEligible: true,
     employmentStatus: 'confirmed',
@@ -26,6 +31,11 @@ function IncomingVerificationApproveModal({ request, onClose, onSuccess }) {
         joiningDate: form.joiningDate,
         exitDate: form.exitDate,
         duration: form.duration,
+        employeeCode: form.employeeCode,
+        department: form.department,
+        uanNumber: form.uanNumber,
+        pfNumber: form.pfNumber,
+        esiNumber: form.esiNumber,
         feedback: form.feedback,
         rehireEligible: form.rehireEligible,
         employmentStatus: form.employmentStatus,
@@ -68,6 +78,40 @@ function IncomingVerificationApproveModal({ request, onClose, onSuccess }) {
               type="date"
               value={form.exitDate}
               onChange={(e) => setForm((f) => ({ ...f, exitDate: e.target.value }))}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Input
+              id="employee-code"
+              label="Employee ID"
+              value={form.employeeCode}
+              onChange={(e) => setForm((f) => ({ ...f, employeeCode: e.target.value }))}
+            />
+            <Input
+              id="department"
+              label="Department"
+              value={form.department}
+              onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))}
+            />
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <Input
+              id="uan"
+              label="UAN (PF)"
+              value={form.uanNumber}
+              onChange={(e) => setForm((f) => ({ ...f, uanNumber: e.target.value.replace(/\D/g, '').slice(0, 12) }))}
+            />
+            <Input
+              id="pf"
+              label="PF Member ID"
+              value={form.pfNumber}
+              onChange={(e) => setForm((f) => ({ ...f, pfNumber: e.target.value }))}
+            />
+            <Input
+              id="esi"
+              label="ESI Number"
+              value={form.esiNumber}
+              onChange={(e) => setForm((f) => ({ ...f, esiNumber: e.target.value }))}
             />
           </div>
           <Input

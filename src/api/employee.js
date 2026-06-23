@@ -19,6 +19,16 @@ export function fetchProfile() {
   return api(API.EMPLOYEE.PROFILE)
 }
 
+export function fetchCompanySuggestions(query) {
+  const params = new URLSearchParams({ q: query })
+  return api(`${API.EMPLOYEE.SUGGEST_COMPANIES}?${params}`)
+}
+
+export function fetchRoleSuggestions(query) {
+  const params = new URLSearchParams({ q: query })
+  return api(`${API.EMPLOYEE.SUGGEST_ROLES}?${params}`)
+}
+
 export function updateProfile(body) {
   return api(API.EMPLOYEE.PROFILE, { method: 'PATCH', body })
 }

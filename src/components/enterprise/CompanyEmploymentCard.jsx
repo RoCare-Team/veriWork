@@ -29,6 +29,8 @@ const DOC_TYPE_LABELS = {
   salary_slip: 'Salary Slip',
   experience_letter: 'Experience Letter',
   relieving_letter: 'Relieving Letter',
+  pf_statement: 'PF Statement',
+  form_16: 'Form 16',
   other: 'Document',
 }
 
@@ -137,8 +139,18 @@ function CompanyEmploymentCard({ job, canVerify, onVerify, defaultExpanded = fal
       {/* Details grid */}
       <div className="grid gap-3 p-5 sm:grid-cols-2 lg:grid-cols-4">
         <InfoCell label="Employment type" value={job.employmentType} />
+        <InfoCell label="Department" value={job.department} />
+        <InfoCell label="Employee ID" value={job.employeeCode} />
+        <InfoCell label="Work location" value={job.workLocation} />
         <InfoCell label="Duration" value={job.duration} />
         <InfoCell label="Salary band" value={job.salaryBand} />
+        <InfoCell label="UAN (PF)" value={job.uanNumber} />
+        <InfoCell label="PF Member ID" value={job.pfNumber} />
+        <InfoCell label="ESI Number" value={job.esiNumber} />
+        <InfoCell label="Company PAN" value={job.companyPan} />
+        <InfoCell label="CIN" value={job.companyCin} />
+        <InfoCell label="GSTIN" value={job.companyGst} />
+        <InfoCell label="Manager" value={job.managerName} />
         <InfoCell
           label="Verified on"
           value={job.verifiedAt ? formatDate(job.verifiedAt) : null}

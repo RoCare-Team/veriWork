@@ -1,5 +1,6 @@
 import { getAccessToken } from './authStorage'
 import { normalizeAdminCompanyDetail, normalizeAdminListItem } from '../utils/adminCompanyUtils'
+import { normalizeAdminEmployee, normalizeAdminEmployeeList } from '../utils/adminEmployeeUtils'
 
 export const DEV_ADMIN_EMAIL = 'admin@veriwork.com'
 export const DEV_ADMIN_PASSWORD = 'Admin@VeriWork123'
@@ -66,6 +67,119 @@ const SEED = [
   },
 ]
 
+const DEV_EMPLOYEES = [
+  {
+    id: 'dev-emp-1',
+    userId: 'dev-emp-1',
+    profileId: 'dev-profile-1',
+    name: 'Aarav Mehta',
+    email: 'aarav.mehta@example.com',
+    phone: '+919876543210',
+    role: 'Software Engineer',
+    company: 'Startup Labs Pvt. Ltd.',
+    veriworkId: 'VW-100234',
+    publicSlug: 'aarav-mehta',
+    initials: 'AM',
+    photoUrl: null,
+    profileSetupComplete: true,
+    aadhaarVerified: true,
+    biometricVerified: true,
+    isVerified: true,
+    employeeScore: 742,
+    currentCity: 'Mumbai',
+    linkedCompanies: ['Startup Labs Pvt. Ltd.'],
+    isActive: true,
+    createdAt: new Date(Date.now() - 86400000 * 30).toISOString(),
+    dateOfBirth: '1996-04-12',
+    gender: 'male',
+    totalExperience: '3-5 years',
+    currentAddress: 'Andheri East, Mumbai',
+    permanentAddress: 'Andheri East, Mumbai',
+    education: {
+      class10: { board: 'CBSE', school: 'Delhi Public School', passingYear: '2012', percentage: '88%' },
+      class12: { board: 'CBSE', school: 'Delhi Public School', stream: 'Science', passingYear: '2014', percentage: '85%' },
+      graduation: { degree: 'B.Tech CSE', college: 'IIT Bombay', university: 'IIT Bombay', passingYear: '2018', percentage: '8.4 CGPA' },
+    },
+    skills: ['React', 'Node.js'],
+    endorsements: 3,
+    digilockerUsed: true,
+    publicProfileEnabled: true,
+    authProvider: 'phone',
+  },
+  {
+    id: 'dev-emp-2',
+    userId: 'dev-emp-2',
+    profileId: 'dev-profile-2',
+    name: 'Priya Sharma',
+    email: 'priya.sharma@example.com',
+    phone: '+919888877766',
+    role: 'HR Manager',
+    company: 'Nova HR Solutions',
+    veriworkId: 'VW-100567',
+    publicSlug: 'priya-sharma',
+    initials: 'PS',
+    photoUrl: null,
+    profileSetupComplete: true,
+    aadhaarVerified: true,
+    biometricVerified: false,
+    isVerified: false,
+    employeeScore: 655,
+    currentCity: 'Bangalore',
+    linkedCompanies: ['Nova HR Solutions'],
+    isActive: true,
+    createdAt: new Date(Date.now() - 86400000 * 12).toISOString(),
+    dateOfBirth: '1992-08-21',
+    gender: 'female',
+    totalExperience: '5-8 years',
+    currentAddress: 'Koramangala, Bangalore',
+    permanentAddress: 'Koramangala, Bangalore',
+    education: {
+      class10: { board: 'ICSE', school: 'St. Mary School', passingYear: '2008', percentage: '90%' },
+      class12: { board: 'ISC', school: 'St. Mary School', stream: 'Commerce', passingYear: '2010', percentage: '87%' },
+      graduation: { degree: 'MBA HR', college: 'Christ University', university: 'Christ University', passingYear: '2014', percentage: '8.1 CGPA' },
+    },
+    skills: ['Recruitment', 'Payroll'],
+    endorsements: 1,
+    digilockerUsed: false,
+    publicProfileEnabled: true,
+    authProvider: 'google',
+  },
+  {
+    id: 'dev-emp-3',
+    userId: 'dev-emp-3',
+    profileId: 'dev-profile-3',
+    name: 'Rohan Verma',
+    email: 'rohan.verma@example.com',
+    phone: '+919765432109',
+    role: 'Professional',
+    company: 'Not set',
+    veriworkId: 'VW-100890',
+    publicSlug: 'rohan-verma',
+    initials: 'RV',
+    photoUrl: null,
+    profileSetupComplete: false,
+    aadhaarVerified: false,
+    biometricVerified: false,
+    isVerified: false,
+    employeeScore: 300,
+    currentCity: 'Pune',
+    linkedCompanies: [],
+    isActive: true,
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+    dateOfBirth: '',
+    gender: '',
+    totalExperience: '',
+    currentAddress: '',
+    permanentAddress: '',
+    education: null,
+    skills: [],
+    endorsements: 0,
+    digilockerUsed: false,
+    publicProfileEnabled: true,
+    authProvider: 'phone',
+  },
+]
+
 function loadCompanies() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -110,12 +224,16 @@ export function tryDevAdminLogin(email, password) {
 export function getDevAdminDashboard() {
   const all = loadCompanies()
   const count = (s) => all.filter((r) => r.onboarding?.status === s).length
+  const employees = DEV_EMPLOYEES
   return {
     stats: {
       pending: count('submitted'),
       approved: count('approved'),
       rejected: count('rejected'),
       total: all.length,
+      totalEmployees: employees.length,
+      employeesProfileComplete: employees.filter((e) => e.profileSetupComplete).length,
+      employeesVerified: employees.filter((e) => e.isVerified).length,
     },
   }
 }
@@ -158,6 +276,38 @@ export function reviewDevAdminCompany(id, status, reason) {
     approvalStatus: status,
     isVerified: status === 'approved',
   }
+}
+
+function filterDevEmployees({ status = 'all', q = '' } = {}) {
+  let list = [...DEV_EMPLOYEES]
+  const query = q?.trim().toLowerCase()
+
+  if (status === 'complete') list = list.filter((e) => e.profileSetupComplete)
+  if (status === 'incomplete') list = list.filter((e) => !e.profileSetupComplete)
+  if (status === 'verified') list = list.filter((e) => e.isVerified)
+
+  if (query) {
+    list = list.filter((e) => (
+      e.name?.toLowerCase().includes(query)
+      || e.email?.toLowerCase().includes(query)
+      || e.phone?.includes(query)
+      || e.veriworkId?.toLowerCase().includes(query)
+      || e.company?.toLowerCase().includes(query)
+      || e.currentCity?.toLowerCase().includes(query)
+    ))
+  }
+
+  return normalizeAdminEmployeeList(list)
+}
+
+export function getDevAdminEmployees(filters) {
+  return filterDevEmployees(filters)
+}
+
+export function getDevAdminEmployee(id) {
+  const item = DEV_EMPLOYEES.find((e) => e.id === id || e.userId === id)
+  if (!item) throw new Error('Employee not found')
+  return item
 }
 
 export { normalizeAdminCompanyDetail }
