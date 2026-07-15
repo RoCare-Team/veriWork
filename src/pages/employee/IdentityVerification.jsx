@@ -96,7 +96,7 @@ function IdentityVerification() {
             </Button>
           </Link>
           <div className="mt-6 flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50/80 p-4">
-            <LockIcon className="mt-0.5 h-5 w-5 shrink-0 text-[#1a3a8f]" />
+            <LockIcon className="mt-0.5 h-5 w-5 shrink-0 text-[#005fd6]" />
             <p className="m-0 text-sm text-slate-600">Your data is encrypted end-to-end.</p>
           </div>
         </div>

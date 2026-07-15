@@ -10,12 +10,12 @@ function AuthLayout({ children }) {
   return (
     <main className="min-h-screen bg-white lg:grid lg:grid-cols-2">
       {/* Mobile brand strip */}
-      <div className="flex items-center justify-center bg-gradient-to-r from-[#152b6e] to-[#1a3a8f] px-6 py-5 lg:hidden">
+      <div className="flex items-center justify-center bg-gradient-to-r from-[#004bab] to-[#005fd6] px-6 py-5 lg:hidden">
         <BrandLogo size="md" theme="light" showTagline />
       </div>
 
       {/* Desktop hero */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#152b6e] via-[#1a3a8f] to-[#2747b2] lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16">
+      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#004bab] via-[#005fd6] to-[#0073fe] lg:flex lg:flex-col lg:justify-center lg:p-12 xl:p-16">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.05]"
           style={{
@@ -24,64 +24,46 @@ function AuthLayout({ children }) {
             backgroundSize: '48px 48px',
           }}
         />
-        <div className="pointer-events-none absolute -right-20 top-20 h-72 w-72 rounded-full bg-[#ea7a3b]/15 blur-3xl" />
+        <div className="pointer-events-none absolute -right-16 top-16 h-80 w-80 rounded-full bg-[#ea7a3b]/15 blur-3xl" />
+        <div className="pointer-events-none absolute -left-16 bottom-16 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
 
-        <div className="relative z-10">
+        <div className="relative z-10 flex flex-col gap-10">
           <BrandLogo size="lg" theme="light" />
-        </div>
 
-        <div className="relative z-10 flex flex-1 flex-col justify-center py-10">
-          <div className="mx-auto w-full max-w-lg rounded-2xl border border-white/10 bg-white/[0.07] p-6 backdrop-blur-md">
-            <div className="mb-5 flex items-center gap-3">
-              <div className="h-3 w-3 rounded-full bg-[#ea7a3b]" />
-              <div className="h-2.5 flex-1 rounded-full bg-white/25" />
-            </div>
-            <div className="mb-4 h-2 w-32 rounded-full bg-white/35" />
-            <div className="mb-6 h-2 w-48 rounded-full bg-white/20" />
-            <div className="mb-4 flex gap-2">
-              <div className="h-9 flex-1 rounded-xl bg-[#ea7a3b]/90" />
-              <div className="h-9 flex-1 rounded-xl bg-white/15" />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {[1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="rounded-xl border border-white/10 bg-white/5 p-4"
-                >
-                  <div className="mb-2.5 h-2 w-14 rounded bg-white/30" />
-                  <div className="h-2 w-24 rounded bg-white/15" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="relative z-10 space-y-8">
-          <div>
-            <h2 className="m-0 text-3xl font-extrabold leading-tight tracking-tight text-white xl:text-[40px]">
-              Workforce trust, verified.
-            </h2>
-            <p className="mt-3 max-w-md text-base leading-relaxed text-white/75">
-              Monitor employee credentials, verification requests, and compliance
-              from one secure employer dashboard.
+          <div className="max-w-xl rounded-[32px] border border-white/10 bg-white/[0.08] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.12)] backdrop-blur-md">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-white/70">
+              Enterprise employer portal
             </p>
+            <h2 className="mt-4 text-4xl font-extrabold leading-tight text-white xl:text-[3rem]">
+              Secure hiring, smarter verification.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-white/75">
+              Access a unified dashboard for company onboarding, candidate checks, and compliance monitoring.
+            </p>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-3xl border border-white/10 bg-white/10 p-4 text-white">
+                <strong className="block text-xl font-bold">99.9%</strong>
+                <span className="text-sm text-white/70">Secure platform uptime</span>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-white/10 p-4 text-white">
+                <strong className="block text-xl font-bold">Real-time</strong>
+                <span className="text-sm text-white/70">Verification and reporting</span>
+              </div>
+            </div>
           </div>
 
-          <ul className="m-0 grid list-none grid-cols-3 gap-3 p-0">
+          <div className="grid gap-3 sm:grid-cols-3">
             {HERO_STATS.map((item) => (
-              <li
+              <div
                 key={item.value}
-                className="rounded-2xl border border-white/12 bg-white/10 px-4 py-4 backdrop-blur-sm"
+                className="rounded-3xl border border-white/10 bg-white/10 px-5 py-5 text-white"
               >
-                <strong className="block text-sm font-bold text-white">
-                  {item.value}
-                </strong>
-                <span className="mt-1 block text-[11px] text-white/65">
-                  {item.label}
-                </span>
-              </li>
+                <strong className="block text-xl font-bold">{item.value}</strong>
+                <span className="mt-2 block text-sm text-white/70">{item.label}</span>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </aside>
 

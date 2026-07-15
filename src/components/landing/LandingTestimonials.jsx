@@ -23,7 +23,7 @@ function LandingTestimonials() {
                 &ldquo;{item.quote}&rdquo;
               </p>
               <footer className="mt-6 flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#2747b2] to-[#1a3a8f] text-sm font-bold text-white">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#0073fe] to-[#005fd6] text-sm font-bold text-white">
                   {item.initials}
                 </div>
                 <div>

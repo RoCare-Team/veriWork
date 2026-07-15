@@ -98,7 +98,7 @@ function ProfessionalId() {
           <ProfessionalIdCard profile={profile} photoUrl={mediaUrl(data.photoUrl)} />
         </div>
         <div className="mt-6 space-y-5 lg:col-span-2 lg:mt-0">
-          <Link to="/employee/profile-setup" className="block text-center text-sm font-semibold text-[#1a3a8f] no-underline hover:underline">
+          <Link to="/employee/profile-setup" className="block text-center text-sm font-semibold text-[#005fd6] no-underline hover:underline">
             Edit Identity Details
           </Link>
           <p className="m-0 flex items-start gap-2 text-xs text-slate-500">
@@ -107,7 +107,7 @@ function ProfessionalId() {
           </p>
           {data.veriworkId && (
             <div className="rounded-2xl border border-amber-100 bg-amber-50/60 p-4">
-              <p className="m-0 text-xs font-semibold uppercase tracking-wide text-amber-800">Your VeriWork ID</p>
+              <p className="m-0 text-xs font-semibold uppercase tracking-wide text-amber-800">Your PagerLook ID</p>
               <p className="m-0 mt-1 text-lg font-extrabold text-slate-900">{data.veriworkId}</p>
               <p className="m-0 mt-2 text-xs text-slate-600">
                 Share this ID so colleagues and managers can endorse you on VeriScore.
@@ -115,9 +115,9 @@ function ProfessionalId() {
               <button
                 type="button"
                 onClick={handleCopyId}
-                className="mt-3 text-sm font-semibold text-[#1a3a8f] hover:underline"
+                className="mt-3 text-sm font-semibold text-[#005fd6] hover:underline"
               >
-                {idCopied ? 'Copied!' : 'Copy VeriWork ID'}
+                {idCopied ? 'Copied!' : 'Copy PagerLook ID'}
               </button>
             </div>
           )}
@@ -129,18 +129,18 @@ function ProfessionalId() {
                   href={publicProfileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="m-0 block truncate text-sm font-semibold text-[#1a3a8f] no-underline hover:underline"
+                  className="m-0 block truncate text-sm font-semibold text-[#005fd6] no-underline hover:underline"
                 >
                   {publicProfileUrl}
                 </a>
               </div>
-              <button type="button" onClick={handleCopy} className="shrink-0 text-sm font-semibold text-[#1a3a8f]">
+              <button type="button" onClick={handleCopy} className="shrink-0 text-sm font-semibold text-[#005fd6]">
                 Copy
               </button>
             </div>
           )}
           {copied && <p className="m-0 text-center text-xs font-semibold text-green-600">Link copied!</p>}
-          <Link to="/employee/job-history" className="flex h-12 items-center justify-center rounded-2xl bg-[#1a3a8f] text-sm font-semibold text-white no-underline hover:bg-[#152b6e]">
+          <Link to="/employee/job-history" className="flex h-12 items-center justify-center rounded-2xl bg-[#005fd6] text-sm font-semibold text-white no-underline hover:bg-[#004bab]">
             View Job History
           </Link>
         </div>

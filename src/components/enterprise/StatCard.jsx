@@ -1,43 +1,31 @@
-function StatCard({ icon, label, value, accent = 'blue', trend }) {
-  const styles = {
-    blue: {
-      border: 'border-l-[#1a3a8f]',
-      icon: 'bg-blue-50 text-[#1a3a8f]',
-    },
-    green: {
-      border: 'border-l-green-500',
-      icon: 'bg-green-50 text-green-600',
-    },
-    orange: {
-      border: 'border-l-orange-400',
-      icon: 'bg-orange-50 text-orange-500',
-    },
-    red: {
-      border: 'border-l-red-500',
-      icon: 'bg-red-50 text-red-500',
-    },
-  }
+/* accent names blue|green|orange|red are load-bearing — other pages pass them. */
+const accents = {
+  blue: 'bg-brand-50 text-brand-600',
+  green: 'bg-success-bg text-success',
+  orange: 'bg-warning-bg text-warning',
+  red: 'bg-danger-bg text-danger',
+}
 
-  const s = styles[accent] || styles.blue
+function StatCard({ icon, label, value, accent = 'blue', trend }) {
+  const iconTile = accents[accent] || accents.blue
 
   return (
-    <div
-      className={`group rounded-2xl border border-slate-100 border-l-4 bg-white p-5 shadow-sm transition hover:shadow-md ${s.border}`}
-    >
-      <div className="flex items-start justify-between">
-        <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${s.icon}`}>
-          {icon}
-        </div>
+    // min-w-0: grid children default to min-width:auto, which is what let long
+    // values push these cards past the viewport edge on mobile.
+    <div className="group min-w-0 rounded-xl border border-hairline bg-surface p-4 shadow-sm transition duration-150 ease-swift hover:-translate-y-px hover:shadow-md motion-reduce:hover:translate-y-0 md:p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-ctl ${iconTile}`}>{icon}</div>
         {trend && (
-          <span className="rounded-full bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-500">
+          <span className="shrink-0 rounded-full bg-canvas px-2 py-0.5 text-[11px] font-semibold text-ink-muted ring-1 ring-hairline ring-inset">
             {trend}
           </span>
         )}
       </div>
-      <p className="mt-4 text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl">
+      {/* tabular-nums so the metric doesn't jitter as it ticks */}
+      <p className="tabular m-0 mt-4 truncate text-2xl font-bold tracking-tight text-ink-strong md:text-[28px]">
         {value}
       </p>
-      <p className="mt-1 text-xs font-medium text-slate-500 md:text-sm">{label}</p>
+      <p className="m-0 mt-1 truncate text-[13px] font-medium text-ink-muted">{label}</p>
     </div>
   )
 }

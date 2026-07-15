@@ -105,7 +105,7 @@ function AddressTextarea({ id, label, value, onChange, error, errorText, disable
         onChange={onChange}
         disabled={disabled}
         aria-invalid={error ? 'true' : undefined}
-        className={`w-full resize-y rounded-2xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:text-base ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-50' : 'border-slate-200'}`}
+        className={`w-full resize-y rounded-2xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:text-base ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-50' : 'border-slate-200'}`}
       />
       {error && errorText && (
         <p className="m-0 text-xs text-red-600" role="alert">
@@ -498,7 +498,7 @@ function ProfileSetup() {
 
       <form className="flex w-full flex-col gap-6" onSubmit={handleSubmit} noValidate>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <FormSection title="Personal details" description="Basic identity information for your VeriWork account">
+        <FormSection title="Personal details" description="Basic identity information for your PagerLook account">
           <Input
             id="full-name"
             label="Full Name"
@@ -649,7 +649,7 @@ function ProfileSetup() {
               checked={sameAsCurrentAddress}
               onChange={(e) => handleSameAddressChange(e.target.checked)}
               disabled={mutation.isPending}
-              className="h-4 w-4 rounded border-slate-300 text-[#1a3a8f] focus:ring-[#1a3a8f]"
+              className="h-4 w-4 rounded border-slate-300 text-[#005fd6] focus:ring-[#005fd6]"
             />
             Permanent address same as current address
           </label>
@@ -680,7 +680,7 @@ function ProfileSetup() {
             <div className="flex flex-1 flex-col gap-2 text-center sm:text-left">
               <label
                 htmlFor="photo"
-                className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-[#1a3a8f]/30 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-[#1a3a8f] transition hover:bg-blue-100 sm:w-fit"
+                className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-[#005fd6]/30 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-[#005fd6] transition hover:bg-blue-100 sm:w-fit"
               >
                 Choose photo
               </label>

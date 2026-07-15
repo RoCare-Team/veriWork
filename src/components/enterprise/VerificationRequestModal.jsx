@@ -13,14 +13,21 @@ function VerificationRequestModal({
   companyName,
   previousCompanyOnPlatform = false,
   matchedPlatformCompany = null,
+  // Auto-population from stored employee/job data
+  defaultHrEmail = '',
+  defaultManagerEmail = '',
+  defaultHrName = '',
+  department = '',
+  duration = '',
+  employmentType = '',
   onClose,
   onSuccess,
 }) {
   const { toast } = useToast()
   const queryClient = useQueryClient()
-  const [hrEmail, setHrEmail] = useState('')
-  const [managerEmail, setManagerEmail] = useState('')
-  const [hrName, setHrName] = useState('')
+  const [hrEmail, setHrEmail] = useState(defaultHrEmail || '')
+  const [managerEmail, setManagerEmail] = useState(defaultManagerEmail || '')
+  const [hrName, setHrName] = useState(defaultHrName || '')
   const [companySearch, setCompanySearch] = useState('')
   const [selectedPlatformCompany, setSelectedPlatformCompany] = useState(matchedPlatformCompany)
 
@@ -71,13 +78,44 @@ function VerificationRequestModal({
       <div className="relative z-10 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl">
         <h3 className="m-0 text-lg font-extrabold text-slate-900">Start Employment Verification</h3>
 
+        {/* Auto-populated review of the previous employment (from stored employee data) */}
+        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+          <p className="m-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            Previous employment · auto-filled
+          </p>
+          <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <div>
+              <dt className="text-xs text-slate-500">Company</dt>
+              <dd className="m-0 font-semibold text-slate-900">{companyName || '—'}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-slate-500">Designation</dt>
+              <dd className="m-0 font-semibold text-slate-900">{jobTitle || '—'}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-slate-500">Department</dt>
+              <dd className="m-0 font-semibold text-slate-900">{department || '—'}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-slate-500">Duration</dt>
+              <dd className="m-0 font-semibold text-slate-900">{duration || '—'}</dd>
+            </div>
+            {employmentType && (
+              <div>
+                <dt className="text-xs text-slate-500">Type</dt>
+                <dd className="m-0 font-semibold text-slate-900">{employmentType}</dd>
+              </div>
+            )}
+          </dl>
+        </div>
+
         {isCaseA ? (
           <>
             <p className="mt-2 text-sm text-slate-600">
               Verify <strong>{jobTitle}</strong> at <strong>{companyName}</strong>.
             </p>
-            <div className="mt-4 rounded-xl border border-[#1a3a8f]/20 bg-blue-50/50 px-4 py-3 text-sm">
-              <p className="m-0 font-semibold text-[#1a3a8f]">Case A — Direct platform verification</p>
+            <div className="mt-4 rounded-xl border border-[#005fd6]/20 bg-blue-50/50 px-4 py-3 text-sm">
+              <p className="m-0 font-semibold text-[#005fd6]">Case A — Direct platform verification</p>
               <p className="m-0 mt-2 text-slate-700">
                 <strong>{platformName}</strong> is registered on PagerLook.
               </p>
@@ -139,6 +177,10 @@ function VerificationRequestModal({
 
             <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-400">
               Or — Case B email verification
+            </p>
+            <p className="m-0 mt-1 text-xs text-slate-500">
+              Contact details are pre-filled from the employee's records. Review or edit, then
+              send. The email is delivered securely from your company's configured mailbox.
             </p>
             <div className="mt-3 flex flex-col gap-4">
               <Input

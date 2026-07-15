@@ -302,7 +302,7 @@ function BusinessBasicInfo() {
         {needsAccount && (
           <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:p-7">
             <SectionTitle>Account Credentials</SectionTitle>
-            <p className="mt-2 text-sm text-slate-500">Create your admin login for the VeriWork employer portal.</p>
+            <p className="mt-2 text-sm text-slate-500">Create your admin login for the PagerLook employer portal.</p>
             <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
               <Input
                 id="login-email"
@@ -543,7 +543,7 @@ function BusinessBasicInfo() {
 
         <p className="m-0 pb-2 text-center text-xs text-slate-400">
           Already registered?{' '}
-          <Link to="/enterprise/login" className="font-semibold text-[#1a3a8f] hover:underline">
+          <Link to="/enterprise/login" className="font-semibold text-[#005fd6] hover:underline">
             Sign in
           </Link>
         </p>

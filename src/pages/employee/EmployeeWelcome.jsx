@@ -26,7 +26,7 @@ function EmployeeWelcome() {
 
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
           <VerifiedCheckIcon className="h-14 w-14 md:h-16 md:w-16 lg:h-20 lg:w-20" />
-          <h2 className="m-0 mt-5 text-2xl font-extrabold tracking-tight text-[#1a3a8f] md:text-3xl">
+          <h2 className="m-0 mt-5 text-2xl font-extrabold tracking-tight text-[#005fd6] md:text-3xl">
             Get Your Employee Score
           </h2>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-500 md:text-base">
@@ -41,7 +41,7 @@ function EmployeeWelcome() {
           <button
             type="button"
             onClick={() => navigate('/employee/otp')}
-            className="mt-3 w-full rounded-2xl border border-slate-200 bg-white py-3.5 text-sm font-semibold text-[#1a3a8f] transition hover:bg-slate-50 md:text-base"
+            className="mt-3 w-full rounded-2xl border border-slate-200 bg-white py-3.5 text-sm font-semibold text-[#005fd6] transition hover:bg-slate-50 md:text-base"
           >
             Sign in with Phone OTP
           </button>
@@ -49,7 +49,7 @@ function EmployeeWelcome() {
 
         <p className="m-0 text-center text-sm text-slate-500 lg:text-left">
           Employer?{' '}
-          <Link to="/enterprise/login" className="font-bold text-[#1a3a8f] no-underline hover:underline">
+          <Link to="/enterprise/login" className="font-bold text-[#005fd6] no-underline hover:underline">
             Enterprise Portal
           </Link>
         </p>

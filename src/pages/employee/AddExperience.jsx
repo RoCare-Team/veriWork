@@ -31,6 +31,22 @@ function HrEmailIcon({ className = 'h-[18px] w-[18px]' }) {
   )
 }
 
+function PlusIcon({ className = 'h-4 w-4' }) {
+  return (
+    <svg className={className} viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M8 3.5v9M3.5 8h9" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function RemoveIcon({ className = 'h-[18px] w-[18px]' }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 function TextArea({ label, id, leftIcon, className = '', ...props }) {
   return (
     <div className={`flex flex-col gap-2 ${className}`.trim()}>
@@ -48,7 +64,7 @@ function TextArea({ label, id, leftIcon, className = '', ...props }) {
         <textarea
           id={id}
           rows={4}
-          className={`w-full resize-none rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100 md:text-base ${leftIcon ? 'pl-10' : ''}`}
+          className={`w-full resize-none rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100 md:text-base ${leftIcon ? 'pl-10' : ''}`}
           {...props}
         />
       </div>
@@ -72,11 +88,12 @@ const INITIAL_FORM = {
   esiNumber: '',
   lastDrawnSalary: '',
   companyEmail: '',
-  hrEmail: '',
-  managerName: '',
-  managerEmail: '',
   description: '',
 }
+
+// Two slots by default — HR 1 and HR 2 — with more addable.
+const INITIAL_HR_CONTACTS = ['', '']
+const MAX_HR_CONTACTS = 6
 
 function toDateInputValue(value) {
   if (!value) return ''
@@ -87,6 +104,7 @@ function AddExperience() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [form, setForm] = useState(INITIAL_FORM)
+  const [hrContacts, setHrContacts] = useState(INITIAL_HR_CONTACTS)
   const [documents, setDocuments] = useState({})
   const [error, setError] = useState('')
 
@@ -108,9 +126,12 @@ function AddExperience() {
         esiNumber: form.esiNumber.trim(),
         lastDrawnSalary: form.lastDrawnSalary.trim(),
         companyEmail: form.companyEmail.trim(),
-        hrEmail: form.hrEmail.trim(),
-        managerName: form.managerName.trim(),
-        managerEmail: form.managerEmail.trim(),
+        // hrContacts is the full list; hrEmail/managerEmail mirror the first two
+        // so pre-existing readers (companyLinkingService, older rows) still work.
+        // sendVerificationEmails mails the deduped union of all three.
+        hrContacts: cleanHrContacts,
+        hrEmail: cleanHrContacts[0] || '',
+        managerEmail: cleanHrContacts[1] || '',
         description: form.description.trim(),
       })
       const jobId = job._id || job.id
@@ -134,6 +155,20 @@ function AddExperience() {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
+  const updateHrContact = (index) => (e) => {
+    const { value } = e.target
+    setHrContacts((prev) => prev.map((c, i) => (i === index ? value : c)))
+  }
+
+  const addHrContact = () =>
+    setHrContacts((prev) => (prev.length >= MAX_HR_CONTACTS ? prev : [...prev, '']))
+
+  // Keep at least the two base slots so the section never collapses to nothing.
+  const removeHrContact = (index) =>
+    setHrContacts((prev) =>
+      prev.length <= INITIAL_HR_CONTACTS.length ? prev : prev.filter((_, i) => i !== index),
+    )
+
   const updateDigits = (field, max) => (e) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, max)
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -154,6 +189,16 @@ function AddExperience() {
 
   const uanValid = !form.uanNumber || form.uanNumber.length === 12
   const datesValid = !form.exitDate || !form.joiningDate || form.exitDate >= form.joiningDate
+
+  // Deduped case-insensitively to match what the backend mails.
+  const cleanHrContacts = Array.from(
+    new Map(
+      hrContacts
+        .map((c) => c.trim())
+        .filter(Boolean)
+        .map((c) => [c.toLowerCase(), c]),
+    ).values(),
+  )
 
   const isValid =
     form.companyName.trim() &&
@@ -291,7 +336,7 @@ function AddExperience() {
                   type="checkbox"
                   checked={form.isPresent}
                   onChange={handlePresentChange}
-                  className="h-4 w-4 rounded border-slate-300 text-[#1a3a8f] focus:ring-[#1a3a8f]"
+                  className="h-4 w-4 rounded border-slate-300 text-[#005fd6] focus:ring-[#005fd6]"
                   disabled={isSubmitting}
                 />
                 Currently working here
@@ -337,7 +382,10 @@ function AddExperience() {
 
         <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
           <SectionTitle>Verification Contacts</SectionTitle>
-          <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-5">
+          <p className="mt-2 text-sm text-slate-500">
+            We email your verification request to these HR contacts.
+          </p>
+          <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-5">
             <Input
               id="company-email"
               label="Company Email"
@@ -349,35 +397,45 @@ function AddExperience() {
               leftIcon={<span className="text-sm font-semibold">@</span>}
               disabled={isSubmitting}
             />
-            <Input
-              id="hr-email"
-              label="HR Contact Email"
-              type="email"
-              placeholder="hr@company.com"
-              value={form.hrEmail}
-              onChange={update('hrEmail')}
-              leftIcon={<HrEmailIcon />}
-              disabled={isSubmitting}
-            />
-            <Input
-              id="manager-name"
-              label="Reporting Manager"
-              placeholder="Manager full name"
-              value={form.managerName}
-              onChange={update('managerName')}
-              disabled={isSubmitting}
-            />
-            <Input
-              id="manager-email"
-              label="Manager Email"
-              type="email"
-              placeholder="manager@company.com"
-              value={form.managerEmail}
-              onChange={update('managerEmail')}
-              leftIcon={<HrEmailIcon />}
-              disabled={isSubmitting}
-            />
+            {hrContacts.map((contact, index) => (
+              <div key={index} className="flex items-end gap-2">
+                <Input
+                  id={`hr-email-${index + 1}`}
+                  className="flex-1"
+                  label={`HR Contact ${index + 1}`}
+                  type="email"
+                  placeholder={`hr${index + 1}@company.com`}
+                  value={contact}
+                  onChange={updateHrContact(index)}
+                  leftIcon={<HrEmailIcon />}
+                  disabled={isSubmitting}
+                />
+                {hrContacts.length > INITIAL_HR_CONTACTS.length && (
+                  <button
+                    type="button"
+                    onClick={() => removeHrContact(index)}
+                    disabled={isSubmitting}
+                    aria-label={`Remove HR Contact ${index + 1}`}
+                    className="mb-0.5 flex h-12 w-10 shrink-0 items-center justify-center rounded-ctl text-ink-faint outline-none transition-colors duration-150 ease-swift hover:bg-danger-bg hover:text-danger focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:opacity-50"
+                  >
+                    <RemoveIcon />
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
+
+          {hrContacts.length < MAX_HR_CONTACTS && (
+            <button
+              type="button"
+              onClick={addHrContact}
+              disabled={isSubmitting}
+              className="mt-4 inline-flex items-center gap-1.5 rounded-ctl px-2.5 py-1.5 text-sm font-semibold text-brand-600 outline-none transition-colors duration-150 ease-swift hover:bg-brand-50 focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:opacity-50"
+            >
+              <PlusIcon />
+              Add HR contact
+            </button>
+          )}
         </section>
 
         <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">

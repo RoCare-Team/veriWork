@@ -3,7 +3,7 @@ import { LANDING_SECURITY } from '../../utils/landingData'
 
 function LandingSecurity() {
   return (
-    <section id="security" className="scroll-mt-24 bg-gradient-to-br from-[#152b6e] via-[#1a3a8f] to-[#2747b2] py-20 text-white md:py-28">
+    <section id="security" className="scroll-mt-24 bg-gradient-to-br from-[#004bab] via-[#005fd6] to-[#0073fe] py-20 text-white md:py-28">
       <div className="mx-auto max-w-7xl px-5 md:px-8 lg:px-10">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div>

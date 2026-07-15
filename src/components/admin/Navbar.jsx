@@ -24,7 +24,7 @@ function AdminNavbar({ onMenuClick }) {
         </button>
 
         <div className="min-w-0 flex-1">
-          <p className="m-0 text-xs font-medium text-slate-400">VeriWork Platform Admin</p>
+          <p className="m-0 text-xs font-medium text-slate-400">PagerLook Platform Admin</p>
           <h1 className="m-0 truncate text-lg font-extrabold text-slate-900">Compliance Console</h1>
         </div>
 

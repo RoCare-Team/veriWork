@@ -11,7 +11,7 @@ function Select({ label, id, options, placeholder, error, required = false, clas
         id={id}
         required={required}
         aria-invalid={error ? 'true' : undefined}
-        className={`h-12 w-full appearance-none rounded-2xl border bg-white px-4 text-[15px] text-slate-900 outline-none transition focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:h-[52px] md:text-base ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-50' : 'border-slate-200'}`}
+        className={`h-12 w-full appearance-none rounded-2xl border bg-white px-4 text-[15px] text-slate-900 outline-none transition focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:h-[52px] md:text-base ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-50' : 'border-slate-200'}`}
         {...props}
       >
         {placeholder && (

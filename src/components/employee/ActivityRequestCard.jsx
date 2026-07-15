@@ -30,7 +30,7 @@ function ActivityRequestCard({ item, onApprove, onDeny, showActions = true }) {
           <button
             type="button"
             onClick={() => onApprove(item.id)}
-            className="h-11 rounded-xl bg-[#1a3a8f] text-sm font-semibold text-white transition hover:bg-[#152b6e]"
+            className="h-11 rounded-xl bg-[#005fd6] text-sm font-semibold text-white transition hover:bg-[#004bab]"
           >
             Approve
           </button>

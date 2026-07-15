@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext'
 import { enterpriseKeys, fetchWorkspace } from '../../api/enterprise'
 import { getInitials } from '../../utils/formatters'
 import Loader from '../../components/common/Loader'
+import SmtpSettingsSection from '../../components/enterprise/SmtpSettingsSection'
 
 const TABS = [
   { id: 'general', label: 'General' },
@@ -45,7 +46,7 @@ function TeamMembersSection({ admin, companyName }) {
           role={admin.email}
           badge="Admin"
           badgeColor="blue"
-          avatarBg="bg-[#1a3a8f]"
+          avatarBg="bg-[#005fd6]"
         />
       </div>
     </section>
@@ -65,10 +66,10 @@ function SecurityApiSection() {
 
 function EnterprisePlanCard({ totalEmployees }) {
   return (
-    <section className="rounded-2xl bg-gradient-to-br from-[#1a3a8f] to-[#2747b2] p-5 text-white shadow-lg md:p-6">
+    <section className="rounded-2xl bg-gradient-to-br from-[#005fd6] to-[#0073fe] p-5 text-white shadow-lg md:p-6">
       <div className="flex items-start justify-between gap-3">
         <h3 className="m-0 text-lg font-extrabold">Enterprise Plan</h3>
-        <span className="rounded-full bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#1a3a8f]">
+        <span className="rounded-full bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#005fd6]">
           Active
         </span>
       </div>
@@ -233,6 +234,7 @@ function Settings() {
                   </div>
                 </div>
               </section>
+              <SmtpSettingsSection />
               <TeamMembersSection admin={workspace?.admin} companyName={company?.name} />
               <SecurityApiSection />
             </>
@@ -250,7 +252,7 @@ function Settings() {
             </>
           )}
 
-          <p className="pt-4 text-center text-xs text-slate-400">VeriWork Employer v2.4.0</p>
+          <p className="pt-4 text-center text-xs text-slate-400">PagerLook Employer v2.4.0</p>
         </div>
       </div>
     </EnterpriseLayout>

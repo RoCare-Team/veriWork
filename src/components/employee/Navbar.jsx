@@ -1,69 +1,211 @@
-import { Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { mediaUrl } from '../../lib/mediaUrl'
 
 function SearchIcon({ className = 'h-[18px] w-[18px]' }) {
   return (
     <svg className={className} viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M14 14l3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="9" cy="9" r="5.75" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M13.25 13.25L17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   )
 }
 
 function MenuIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-      <path d="M3 6h16M3 11h16M3 16h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M3 5.5h14M3 10h14M3 14.5h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   )
 }
 
 function BellIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M10 3a5 5 0 0 1 5 5v3l1.5 2.5H3.5L5 11V8a5 5 0 0 1 5-5Z" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M8.5 16a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.5" />
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M10 2.75A4.75 4.75 0 0 1 14.75 7.5v2.75l1.25 2.25H4l1.25-2.25V7.5A4.75 4.75 0 0 1 10 2.75Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path d="M8.25 15.25a1.75 1.75 0 0 0 3.5 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   )
 }
 
-function EmployeeNavbar({ onMenuClick }) {
-  const { profile } = useAuth()
-  const firstName = profile?.name?.split(' ')[0] || 'User'
+function ChevronIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M4.5 6.5L8 10l3.5-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+/** Closes a popover on outside pointerdown or Escape, and restores focus. */
+function useDismiss(open, onClose, containerRef, triggerRef) {
+  useEffect(() => {
+    if (!open) return undefined
+
+    const handlePointerDown = (event) => {
+      if (!containerRef.current?.contains(event.target)) onClose()
+    }
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose()
+        triggerRef.current?.focus()
+      }
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('touchstart', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('touchstart', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [open, onClose, containerRef, triggerRef])
+}
+
+function ProfileMenu({ profile }) {
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef(null)
+  const triggerRef = useRef(null)
+  const navigate = useNavigate()
+  const { logout } = useAuth()
+  useDismiss(open, () => setOpen(false), containerRef, triggerRef)
+
   const photo = mediaUrl(profile?.photoUrl)
 
+  // Same contract as the sidebar's Sign Out: clear session, then redirect.
+  const handleSignOut = async () => {
+    setOpen(false)
+    await logout()
+    navigate('/employee/login')
+  }
+
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 backdrop-blur-md">
-      <div className="flex h-16 items-center gap-4 px-4 md:px-6 lg:px-8">
-        <button type="button" onClick={onMenuClick} className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-700 hover:bg-slate-100 lg:hidden" aria-label="Open menu">
+    <div className="relative" ref={containerRef}>
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label="Account menu"
+        className={`flex items-center gap-2 rounded-ctl py-1 pl-1 pr-1.5 outline-none transition-colors duration-150 ease-swift hover:bg-ink-strong/[0.04] focus-visible:ring-2 focus-visible:ring-brand-500/40 sm:pr-2 ${
+          open ? 'bg-ink-strong/[0.04]' : ''
+        }`}
+      >
+        {photo ? (
+          <img src={photo} alt="" className="h-7 w-7 shrink-0 rounded-lg object-cover" />
+        ) : (
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-600 text-[11px] font-bold text-white">
+            {profile?.initials}
+          </span>
+        )}
+        <span className="hidden min-w-0 text-left sm:block">
+          <span className="block truncate text-xs font-semibold leading-tight text-ink-strong">
+            {profile?.name}
+          </span>
+          <span className="block truncate text-[11px] leading-tight text-ink-faint">{profile?.role}</span>
+        </span>
+        <span className="hidden text-ink-faint sm:block">
+          <ChevronIcon />
+        </span>
+      </button>
+
+      {open && (
+        <div
+          role="menu"
+          aria-label="Account"
+          className="animate-fade-in absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-hairline bg-surface shadow-lg"
+        >
+          <div className="border-b border-hairline px-4 py-3">
+            <p className="m-0 truncate text-sm font-semibold text-ink-strong">{profile?.name}</p>
+            {profile?.role && <p className="m-0 mt-0.5 truncate text-xs text-ink-muted">{profile.role}</p>}
+          </div>
+          <div className="p-1.5">
+            <Link
+              to="/employee/settings"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="block rounded-ctl px-3 py-2 text-sm font-medium text-ink-body no-underline outline-none transition-colors duration-150 ease-swift hover:bg-canvas hover:text-ink-strong focus-visible:ring-2 focus-visible:ring-brand-500/40"
+            >
+              Settings
+            </Link>
+          </div>
+          <div className="border-t border-hairline p-1.5">
+            <button
+              type="button"
+              role="menuitem"
+              onClick={handleSignOut}
+              className="block w-full rounded-ctl px-3 py-2 text-left text-sm font-medium text-danger outline-none transition-colors duration-150 ease-swift hover:bg-danger-bg focus-visible:ring-2 focus-visible:ring-brand-500/40"
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Surface, not canvas: the navbar and sidebar are one continuous white chrome;
+// the grey canvas is the workspace they frame.
+// shrink-0 rather than sticky: the layout shell pins it — it never scrolls.
+function EmployeeNavbar({ onMenuClick }) {
+  const { profile } = useAuth()
+
+  return (
+    <header className="z-30 shrink-0 border-b border-hairline bg-surface">
+      <div className="flex h-16 items-center gap-2 px-4 md:gap-3 md:px-6">
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-ctl text-ink-body outline-none transition-colors duration-150 ease-swift hover:bg-ink-strong/[0.04] focus-visible:ring-2 focus-visible:ring-brand-500/40 lg:hidden"
+          aria-label="Open menu"
+        >
           <MenuIcon />
         </button>
 
-        <div className="hidden min-w-0 lg:block">
-          {/* <p className="m-0 text-xs font-medium text-slate-400">Good morning, {firstName}</p> */}
-          {/* <h1 className="m-0 truncate text-lg font-extrabold text-slate-900">{profile?.name}</h1> */}
+        <div className="relative hidden w-full max-w-md md:block">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint">
+            <SearchIcon />
+          </span>
+          <input
+            type="search"
+            placeholder="Search documents, jobs…"
+            aria-label="Search"
+            className="peer h-9 w-full rounded-ctl border border-hairline bg-canvas pl-9 pr-16 text-sm text-ink-strong outline-none transition duration-150 ease-swift placeholder:text-ink-faint hover:border-line focus:border-brand-500 focus:bg-surface focus:ring-2 focus:ring-brand-500/25 [&::-webkit-search-cancel-button]:hidden"
+          />
+          <kbd className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md border border-hairline bg-surface px-1.5 py-0.5 font-sans text-[11px] font-medium text-ink-faint peer-focus:opacity-0">
+            ⌘K
+          </kbd>
         </div>
 
-        <div className="ml-auto flex items-center gap-2">
-          <Link to="/employee/activity" className="relative flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-100" aria-label="Notifications">
+        <div className="ml-auto flex items-center gap-1.5 md:gap-2">
+          <button
+            type="button"
+            className="flex h-9 w-9 items-center justify-center rounded-ctl text-ink-muted outline-none transition-colors duration-150 ease-swift hover:bg-ink-strong/[0.04] hover:text-ink-strong focus-visible:ring-2 focus-visible:ring-brand-500/40 md:hidden"
+            aria-label="Search"
+          >
+            <SearchIcon />
+          </button>
+
+          <Link
+            to="/employee/activity"
+            className="relative flex h-9 w-9 items-center justify-center rounded-ctl text-ink-muted no-underline outline-none transition-colors duration-150 ease-swift hover:bg-ink-strong/[0.04] hover:text-ink-strong focus-visible:ring-2 focus-visible:ring-brand-500/40"
+            aria-label="Notifications"
+          >
             <BellIcon />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-danger ring-2 ring-surface" />
           </Link>
 
-          <div className="ml-1 flex items-center gap-2.5 rounded-xl border border-slate-100 bg-slate-50 py-1.5 pl-1.5 pr-3">
-            {photo ? (
-              <img src={photo} alt={profile?.name} className="h-8 w-8 rounded-lg object-cover" />
-            ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#1a3a8f] text-xs font-bold text-white">
-                {profile?.initials}
-              </div>
-            )}
-            <div className="hidden sm:block">
-              <p className="m-0 text-xs font-bold text-slate-800">{profile?.name}</p>
-              <p className="m-0 text-[10px] text-slate-400">{profile?.role}</p>
-            </div>
-          </div>
+          <span aria-hidden="true" className="mx-0.5 hidden h-5 w-px bg-hairline sm:block" />
+
+          <ProfileMenu profile={profile} />
         </div>
       </div>
     </header>

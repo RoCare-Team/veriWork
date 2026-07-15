@@ -91,7 +91,7 @@ function Workforce() {
               </span>
             )}
             {queues.verified?.length > 0 && (
-              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-[#1a3a8f]">
+              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-[#005fd6]">
                 {queues.verified.length} ready to assign
               </span>
             )}
@@ -112,7 +112,7 @@ function Workforce() {
             placeholder="Search name, role, or department..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="h-12 w-full rounded-2xl border border-slate-200 bg-white pl-10 pr-4 text-sm outline-none transition focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-50"
+            className="h-12 w-full rounded-2xl border border-slate-200 bg-white pl-10 pr-4 text-sm outline-none transition focus:border-[#005fd6] focus:ring-4 focus:ring-blue-50"
           />
         </div>
 
@@ -124,7 +124,7 @@ function Workforce() {
               onClick={() => setStageFilter(filter.id)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
                 stageFilter === filter.id
-                  ? 'bg-[#1a3a8f] text-white'
+                  ? 'bg-[#005fd6] text-white'
                   : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50'
               }`}
             >
@@ -175,7 +175,7 @@ function Workforce() {
             {!employees.length && (
               <Link
                 to="/company/team"
-                className="mt-4 inline-block text-sm font-semibold text-[#1a3a8f] no-underline hover:underline"
+                className="mt-4 inline-block text-sm font-semibold text-[#005fd6] no-underline hover:underline"
               >
                 Go to Team Management →
               </Link>

@@ -13,6 +13,28 @@ import {
 } from '../../api/employee'
 import { useToast } from '../../context/ToastContext'
 import { formatDate } from '../../utils/formatters'
+import { mediaUrl } from '../../lib/mediaUrl'
+
+const RATING_LABELS = {
+  excellent: 'Excellent',
+  good: 'Good',
+  average: 'Average',
+  below_average: 'Below Average',
+  poor: 'Poor',
+}
+
+const RECOMMENDATION_LABELS = {
+  strongly_recommend: 'Strongly recommend',
+  recommend: 'Recommend',
+  neutral: 'Neutral',
+  not_recommend: 'Do not recommend',
+}
+
+const AI_VERDICT = {
+  verified: { label: 'Verified', cls: 'bg-emerald-50 text-emerald-700 border-emerald-100' },
+  unverified: { label: 'Unverified', cls: 'bg-red-50 text-red-600 border-red-100' },
+  inconclusive: { label: 'Inconclusive', cls: 'bg-amber-50 text-amber-700 border-amber-100' },
+}
 
 const DOC_TYPES = [
   { id: 'offer_letter', label: 'Offer Letter' },
@@ -102,6 +124,136 @@ function VerifiedRecordPanel({ record, job }) {
   )
 }
 
+function DetailRow({ label, value }) {
+  if (value === null || value === undefined || value === '') return null
+  return (
+    <div>
+      <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</dt>
+      <dd className="m-0 mt-1 text-slate-800">{value}</dd>
+    </div>
+  )
+}
+
+// AI-analysed verdict of the HR response — decides Verified / Unverified for this experience.
+function AiAnalysisPanel({ analysis }) {
+  if (!analysis || (!analysis.verdict && !analysis.summary)) return null
+  const verdict = AI_VERDICT[analysis.verdict] || AI_VERDICT.inconclusive
+  const flags = analysis.flags || analysis.redFlags || []
+
+  return (
+    <section className={`rounded-2xl border bg-white p-5 shadow-sm ${verdict.cls}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="m-0 text-sm font-bold text-slate-900">AI Analysis</h3>
+          <p className="m-0 mt-1 text-xs text-slate-500">
+            Automated review of the HR response for this experience.
+          </p>
+        </div>
+        <span className="shrink-0 rounded-full bg-white/70 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
+          {verdict.label}
+        </span>
+      </div>
+      {analysis.confidence != null && (
+        <p className="m-0 mt-3 text-xs font-semibold text-slate-600">
+          Confidence: {analysis.confidence}%
+        </p>
+      )}
+      {analysis.summary && <p className="m-0 mt-2 text-sm text-slate-700">{analysis.summary}</p>}
+      {flags.length > 0 && (
+        <ul className="m-0 mt-3 list-disc space-y-1 pl-5 text-xs text-slate-600">
+          {flags.map((flag, i) => (
+            <li key={i}>{typeof flag === 'string' ? flag : flag.message || flag.label}</li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
+
+// HR feedback attached to this experience — read-only / locked once submitted.
+function HrResponsePanel({ details }) {
+  if (!details || Object.keys(details).length === 0) return null
+  const verifierLine = [details.verifierName, details.verifierDesignation].filter(Boolean).join(' · ')
+
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="m-0 text-sm font-bold text-slate-900">HR Response</h3>
+          <p className="m-0 mt-1 text-xs text-slate-500">
+            Submitted by your previous employer — locked and attached to this experience.
+          </p>
+        </div>
+        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+          <svg width="11" height="11" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="4.5" y="9" width="11" height="8" rx="2" stroke="currentColor" strokeWidth="1.6" />
+            <path d="M7 9V6.5a3 3 0 0 1 6 0V9" stroke="currentColor" strokeWidth="1.6" />
+          </svg>
+          Locked
+        </span>
+      </div>
+
+      <dl className="mt-4 space-y-3 rounded-2xl bg-slate-50 p-4 text-sm">
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">Worked here</dt>
+          <dd className="m-0 mt-1 font-semibold text-slate-800">
+            {details.workedHere === true ? 'Yes' : details.workedHere === false ? 'No' : '—'}
+          </dd>
+        </div>
+        <DetailRow label="Designation" value={details.designation} />
+        {(details.joiningDate || details.exitDate) && (
+          <DetailRow
+            label="Duration"
+            value={[details.joiningDate, details.exitDate].filter(Boolean).join(' — ')}
+          />
+        )}
+        <DetailRow label="Department" value={details.department} />
+        <DetailRow label="Reporting manager" value={details.reportingManager} />
+        {details.rehireEligible != null && (
+          <DetailRow label="Rehire eligible" value={details.rehireEligible ? 'Yes' : 'No'} />
+        )}
+        <DetailRow label="Performance rating" value={RATING_LABELS[details.performanceRating]} />
+        <DetailRow label="Recommendation" value={RECOMMENDATION_LABELS[details.recommendation]} />
+        <DetailRow label="Behavior / Conduct" value={details.behaviorRemarks} />
+        {details.disciplinaryIssues != null && (
+          <DetailRow
+            label="Disciplinary issues"
+            value={
+              details.disciplinaryIssues
+                ? `Yes${details.disciplinaryDetails ? ` — ${details.disciplinaryDetails}` : ''}`
+                : 'None reported'
+            }
+          />
+        )}
+        {(details.feedback || details.hrRemarks || details.verificationNotes) && (
+          <DetailRow
+            label="HR remarks"
+            value={details.hrRemarks || details.feedback || details.verificationNotes}
+          />
+        )}
+        {details.supportingDocumentUrl && (
+          <div>
+            <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Supporting document
+            </dt>
+            <dd className="m-0 mt-1">
+              <a
+                href={mediaUrl(details.supportingDocumentUrl)}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm font-semibold text-[#005fd6] no-underline hover:underline"
+              >
+                {details.supportingDocumentName || 'View document'}
+              </a>
+            </dd>
+          </div>
+        )}
+        <DetailRow label="Verified by" value={verifierLine || null} />
+      </dl>
+    </section>
+  )
+}
+
 function JobVerification() {
   const { jobId } = useParams()
   const { toast } = useToast()
@@ -123,6 +275,21 @@ function JobVerification() {
   const openRequest = verificationRequests.find(
     (r) => ['pending', 'in_review', 'in_process', 'hr_responded'].includes(r.status),
   )
+  // A completed request (verified/hr_responded/rejected) carries the HR's actual
+  // submitted feedback — surface it even after the role is fully verified.
+  const respondedRequest = verificationRequests.find(
+    (r) =>
+      ['verified', 'approved', 'hr_responded', 'rejected'].includes(r.status) &&
+      r.employmentDetails &&
+      r.employmentDetails.workedHere != null,
+  )
+  const record = payload?.permanentRecord
+  const hrResponse =
+    record?.hrResponse ||
+    openRequest?.employmentDetails ||
+    openRequest?.hrResponse ||
+    respondedRequest?.employmentDetails
+  const aiAnalysis = record?.aiAnalysis || openRequest?.aiAnalysis || payload?.aiAnalysis
 
   useEffect(() => {
     if (job?.hrEmail) setHrEmail(job.hrEmail)
@@ -175,7 +342,7 @@ function JobVerification() {
         title="Verify Employment"
         subtitle={job.company}
         action={
-          <Link to="/employee/job-history" className="text-sm font-semibold text-[#1a3a8f] no-underline">
+          <Link to="/employee/job-history" className="text-sm font-semibold text-[#005fd6] no-underline">
             ← Back
           </Link>
         }
@@ -189,6 +356,9 @@ function JobVerification() {
             {tag?.label || (isVerified ? 'Verified' : 'Not Verified')}
           </p>
         </section>
+
+        <AiAnalysisPanel analysis={aiAnalysis} />
+        <HrResponsePanel details={hrResponse} />
 
         {isVerified && (
           <>
@@ -228,7 +398,7 @@ function JobVerification() {
                     type="button"
                     onClick={() => setUploadType(t.id)}
                     className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                      uploadType === t.id ? 'bg-[#1a3a8f] text-white' : 'bg-slate-100 text-slate-600'
+                      uploadType === t.id ? 'bg-[#005fd6] text-white' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
                     {t.label}
@@ -237,7 +407,7 @@ function JobVerification() {
               </div>
 
               <label className="mt-4 flex cursor-pointer flex-col items-center rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center">
-                <span className="text-sm font-semibold text-[#1a3a8f]">Choose file to upload</span>
+                <span className="text-sm font-semibold text-[#005fd6]">Choose file to upload</span>
                 <input
                   type="file"
                   className="hidden"
@@ -263,29 +433,31 @@ function JobVerification() {
             </section>
 
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="m-0 text-sm font-bold text-slate-900">Step 2 — HR / Manager contact</h3>
+              <h3 className="m-0 text-sm font-bold text-slate-900">Step 2 — HR contacts</h3>
               <p className="m-0 mt-1 text-xs text-slate-500">
                 Required if the previous company is not registered on PagerLook (Case B). If registered, request goes to their HR dashboard (Case A).
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <label className="block text-sm">
-                  <span className="font-semibold text-slate-700">HR email</span>
+                  <span className="font-semibold text-slate-700">HR contact 1</span>
                   <input
                     type="email"
                     className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
                     value={hrEmail}
                     onChange={(e) => setHrEmail(e.target.value)}
-                    placeholder="hr@company.com"
+                    placeholder="hr1@company.com"
                   />
                 </label>
+                {/* Backed by the managerEmail column — the second of the two
+                    recipient slots sendVerificationEmails mails. Label only. */}
                 <label className="block text-sm">
-                  <span className="font-semibold text-slate-700">Manager email</span>
+                  <span className="font-semibold text-slate-700">HR contact 2</span>
                   <input
                     type="email"
                     className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
                     value={managerEmail}
                     onChange={(e) => setManagerEmail(e.target.value)}
-                    placeholder="manager@company.com"
+                    placeholder="hr2@company.com"
                   />
                 </label>
               </div>

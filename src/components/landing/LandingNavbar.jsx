@@ -53,7 +53,7 @@ function LandingNavbar() {
             <a
               key={item.href}
               href={item.href}
-              className="text-sm font-semibold text-slate-600 no-underline transition hover:text-[#1a3a8f]"
+              className="text-sm font-semibold text-slate-600 no-underline transition hover:text-[#005fd6]"
             >
               {item.label}
             </a>
@@ -69,7 +69,7 @@ function LandingNavbar() {
           </Link>
           <Link
             to="/enterprise/register"
-            className="rounded-xl bg-[#1a3a8f] px-5 py-2.5 text-sm font-semibold text-white no-underline shadow-lg shadow-blue-900/15 transition hover:bg-[#152b6e]"
+            className="rounded-xl bg-[#005fd6] px-5 py-2.5 text-sm font-semibold text-white no-underline shadow-lg shadow-blue-900/15 transition hover:bg-[#004bab]"
           >
             Get started
           </Link>
@@ -111,7 +111,7 @@ function LandingNavbar() {
             <Link
               to="/enterprise/register"
               onClick={() => setMenuOpen(false)}
-              className="rounded-xl bg-[#1a3a8f] py-3 text-center text-sm font-semibold text-white no-underline"
+              className="rounded-xl bg-[#005fd6] py-3 text-center text-sm font-semibold text-white no-underline"
             >
               Get started
             </Link>

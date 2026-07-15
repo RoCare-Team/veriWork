@@ -38,12 +38,12 @@ function EndorseColleagueModal({ onClose, onSuccess }) {
       <button type="button" className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} aria-label="Close" />
       <div className="relative z-10 w-full max-w-md rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl">
         <h3 className="m-0 text-lg font-extrabold text-slate-900">Endorse a colleague</h3>
-        <p className="mt-1 text-sm text-slate-500">Enter their VeriWork / PagerLook ID to endorse them.</p>
+        <p className="mt-1 text-sm text-slate-500">Enter their PagerLook ID to endorse them.</p>
 
         <div className="mt-5 flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <label htmlFor="endorse-veriwork-id" className="text-sm font-semibold text-slate-800">
-              VeriWork ID
+              PagerLook ID
             </label>
             <input
               id="endorse-veriwork-id"
@@ -52,7 +52,7 @@ function EndorseColleagueModal({ onClose, onSuccess }) {
               onChange={(e) => setVeriworkId(e.target.value)}
               disabled={mutation.isPending}
               placeholder="e.g. VW-ABC123"
-              className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100"
+              className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
             />
           </div>
 
@@ -65,7 +65,7 @@ function EndorseColleagueModal({ onClose, onSuccess }) {
               value={relationship}
               onChange={(e) => setRelationship(e.target.value)}
               disabled={mutation.isPending}
-              className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100"
+              className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
             >
               {RELATIONSHIPS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -86,7 +86,7 @@ function EndorseColleagueModal({ onClose, onSuccess }) {
               onChange={(e) => setMessage(e.target.value)}
               disabled={mutation.isPending}
               placeholder="Why are you endorsing them?"
-              className="w-full resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100"
+              className="w-full resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
             />
           </div>
         </div>

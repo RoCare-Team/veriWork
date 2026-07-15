@@ -31,7 +31,7 @@ function LandingFeatures() {
           {LANDING_FEATURES.map((feature) => (
             <article
               key={feature.id}
-              className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#1a3a8f]/20 hover:shadow-lg md:p-7"
+              className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#005fd6]/20 hover:shadow-lg md:p-7"
             >
               <div
                 className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl ${feature.accent}`}

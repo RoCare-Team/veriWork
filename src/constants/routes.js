@@ -53,6 +53,8 @@ export const API = {
     VERIFICATION_CONSENT_APPROVE: (id) => `/employee/verification-requests/${id}/approve-consent`,
     VERIFICATION_CONSENT_REJECT: (id) => `/employee/verification-requests/${id}/reject-consent`,
     VERIFICATION_TAGS: '/employee/verification/tags',
+    SMTP_SETTINGS: '/employee/settings/smtp',
+    SMTP_TEST: '/employee/settings/smtp/test',
   },
 
   PUBLIC: {
@@ -60,6 +62,8 @@ export const API = {
     PROFILE_ACCESS: (slug) => `/public/profile/${encodeURIComponent(slug)}/request-access`,
     EMPLOYEE_INVITATION: (token) => `/public/employee-invitation/${encodeURIComponent(token)}`,
     EMPLOYMENT_VERIFICATION: (token) => `/public/employment-verification/${encodeURIComponent(token)}`,
+    EMPLOYMENT_VERIFICATION_DOCUMENT: (token) =>
+      `/public/employment-verification/${encodeURIComponent(token)}/document`,
   },
 
   COMPANY: {
@@ -83,12 +87,15 @@ export const API = {
     VERIFICATION_REQUEST_APPROVE: (id) => `/company/verification-requests/${id}/approve`,
     VERIFICATION_REQUEST_REJECT: (id) => `/company/verification-requests/${id}/reject`,
     VERIFICATION_REQUEST_COMPLETE_EMAIL: (id) => `/company/verification-requests/${id}/complete-email`,
+    VERIFICATION_REQUEST_RESEND_EMAIL: (id) => `/company/verification-requests/${id}/resend-email`,
     VERIFICATION_REQUEST_REVIEW_HR: (id) => `/company/verification-requests/${id}/review-hr-response`,
     VERIFICATION_REQUEST_CONFIRM_DOCUMENT: (id) => `/company/verification-requests/${id}/confirm-document-verification`,
     EMPLOYEE_JOB_VERIFICATION_RECORD: (employeeId, jobId) =>
       `/company/employees/${employeeId}/jobs/${jobId}/verification-record`,
     EMPLOYEE_ONBOARDING: (employeeId) => `/company/employees/${employeeId}/onboarding`,
     AUDIT_LOGS: '/company/audit-logs',
+    SMTP_SETTINGS: '/company/settings/smtp',
+    SMTP_TEST: '/company/settings/smtp/test',
   },
 
   ENTERPRISE: {

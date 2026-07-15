@@ -10,7 +10,7 @@ function VerificationProgressCard({ percent = 65, message, currentStep }) {
   const offset = circumference - (percent / 100) * circumference
 
   return (
-    <div className="rounded-3xl bg-gradient-to-br from-[#2747b2] via-[#1a3a8f] to-[#152b6e] px-6 py-8 text-center text-white shadow-xl shadow-blue-900/20 md:px-8 md:py-10">
+    <div className="rounded-3xl bg-gradient-to-br from-[#0073fe] via-[#005fd6] to-[#004bab] px-6 py-8 text-center text-white shadow-xl shadow-blue-900/20 md:px-8 md:py-10">
       <div className="relative mx-auto h-[140px] w-[140px] md:h-[160px] md:w-[160px]">
         <svg className="h-full w-full -rotate-90" viewBox="0 0 120 120" aria-hidden="true">
           <circle cx="60" cy="60" r={radius} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="8" />

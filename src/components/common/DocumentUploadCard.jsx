@@ -42,7 +42,7 @@ function DocumentUploadCard({
             <span
               className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
                 required
-                  ? 'bg-blue-50 text-[#1a3a8f]'
+                  ? 'bg-blue-50 text-[#005fd6]'
                   : 'bg-slate-100 text-slate-500'
               }`}
             >
@@ -98,7 +98,7 @@ function DocumentUploadCard({
           />
           <div
             className={`flex h-12 w-12 items-center justify-center rounded-full ${
-              uploading ? 'bg-slate-100 text-slate-400' : 'bg-blue-50 text-[#1a3a8f]'
+              uploading ? 'bg-slate-100 text-slate-400' : 'bg-blue-50 text-[#005fd6]'
             }`}
           >
             {uploading ? (
@@ -110,7 +110,7 @@ function DocumentUploadCard({
               <UploadIcon className="h-6 w-6" />
             )}
           </div>
-          <span className={`text-sm font-semibold ${uploading ? 'text-slate-500' : 'text-[#1a3a8f]'}`}>
+          <span className={`text-sm font-semibold ${uploading ? 'text-slate-500' : 'text-[#005fd6]'}`}>
             {uploading ? 'Uploading to secure storage...' : 'Tap to upload PDF or Image'}
           </span>
           <span className="text-xs text-slate-400">PDF or image only · Max 10MB</span>

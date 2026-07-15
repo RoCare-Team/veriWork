@@ -24,7 +24,7 @@ function VerificationStepBar({ currentStep, className = '' }) {
                   isComplete
                     ? 'bg-green-500 text-white'
                     : isCurrent
-                      ? 'bg-[#1a3a8f] text-white ring-4 ring-blue-100'
+                      ? 'bg-[#005fd6] text-white ring-4 ring-blue-100'
                       : 'bg-slate-100 text-slate-400'
                 }`}
               >
@@ -44,7 +44,7 @@ function VerificationStepBar({ currentStep, className = '' }) {
               </span>
               <span
                 className={`hidden text-[11px] font-semibold sm:block ${
-                  isCurrent ? 'text-[#1a3a8f]' : isUpcoming ? 'text-slate-400' : 'text-green-600'
+                  isCurrent ? 'text-[#005fd6]' : isUpcoming ? 'text-slate-400' : 'text-green-600'
                 }`}
               >
                 {VERIFICATION_STEP_LABELS[step]}
@@ -69,7 +69,7 @@ export function VerificationBackLink({ to = '/employee/verification', children =
   return (
     <Link
       to={to}
-      className="mb-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#1a3a8f] no-underline hover:underline"
+      className="mb-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#005fd6] no-underline hover:underline"
     >
       <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
         <path d="M12 5 7 10l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />

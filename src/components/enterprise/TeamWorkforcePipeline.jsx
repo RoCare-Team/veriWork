@@ -84,17 +84,17 @@ function PipelineEmployeeCard({
 
   return (
     <article
-      className={`group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition hover:border-[#1a3a8f]/30 hover:shadow-md ${
+      className={`group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition hover:border-[#005fd6]/30 hover:shadow-md ${
         compact ? 'p-4' : 'p-5'
       }`}
     >
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#1a3a8f] via-[#3b5cc4] to-[#1a3a8f] opacity-0 transition group-hover:opacity-100" />
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#005fd6] via-[#3b5cc4] to-[#005fd6] opacity-0 transition group-hover:opacity-100" />
 
       <div className="flex gap-4">
         {photoSrc ? (
           <img src={photoSrc} alt="" className="h-14 w-14 shrink-0 rounded-2xl object-cover ring-2 ring-slate-100" />
         ) : (
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1a3a8f] to-[#2747b2] text-lg font-bold text-white">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#005fd6] to-[#0073fe] text-lg font-bold text-white">
             {getInitials(name)}
           </div>
         )}
@@ -133,7 +133,7 @@ function PipelineEmployeeCard({
             action.variant === 'success'
               ? 'bg-emerald-600 text-white hover:bg-emerald-700'
               : action.variant === 'primary'
-                ? 'bg-[#1a3a8f] text-white hover:bg-[#152b6e]'
+                ? 'bg-[#005fd6] text-white hover:bg-[#004bab]'
                 : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
           }`}
         >

@@ -34,7 +34,7 @@ function Support() {
           type="button"
           className="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-slate-200"
         >
-          <svg className="h-8 w-8 text-[#1a3a8f]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <svg className="h-8 w-8 text-[#005fd6]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
             <path d="M9.5 9.5a3 3 0 0 1 4.2 0M9 15h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
           </svg>
@@ -44,7 +44,7 @@ function Support() {
           type="button"
           className="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-slate-200"
         >
-          <svg className="h-8 w-8 text-[#1a3a8f]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <svg className="h-8 w-8 text-[#005fd6]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3V8a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.6" />
           </svg>
           <span className="mt-2 text-sm font-semibold text-slate-800">Live Chat</span>
@@ -58,11 +58,11 @@ function Support() {
 
       <div className="mt-8 rounded-2xl border border-blue-100 bg-blue-50/60 p-5 md:p-6">
         <div className="flex items-center gap-2">
-          <svg className="h-5 w-5 text-[#1a3a8f]" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <svg className="h-5 w-5 text-[#005fd6]" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <rect x="3" y="5" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
             <path d="M7 9h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
-          <p className="m-0 text-sm font-bold text-[#1a3a8f] md:text-base">Open a Support Ticket</p>
+          <p className="m-0 text-sm font-bold text-[#005fd6] md:text-base">Open a Support Ticket</p>
         </div>
         <p className="mt-2 text-sm text-slate-600">
           Have an issue with your verification? Our team typically responds within 2 hours.
@@ -90,7 +90,7 @@ function Support() {
       </div>
 
       <div className="mt-8 flex flex-col items-center gap-3 text-center">
-        <Link to="/employee/login" className="text-sm font-semibold text-[#1a3a8f] no-underline hover:underline">
+        <Link to="/employee/login" className="text-sm font-semibold text-[#005fd6] no-underline hover:underline">
           Logout Session
         </Link>
         <button type="button" className="text-xs text-slate-400 underline hover:text-slate-600">
@@ -100,7 +100,7 @@ function Support() {
 
       <Link
         to="/employee/settings"
-        className="mt-6 inline-block text-sm font-semibold text-[#1a3a8f] no-underline hover:underline"
+        className="mt-6 inline-block text-sm font-semibold text-[#005fd6] no-underline hover:underline"
       >
         ← Back to Settings
       </Link>

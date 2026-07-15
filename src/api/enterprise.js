@@ -20,6 +20,7 @@ export const enterpriseKeys = {
   verificationOutgoing: ['company', 'verification', 'outgoing'],
   verificationIncoming: ['company', 'verification', 'incoming'],
   auditLogs: (filters) => ['company', 'audit-logs', filters],
+  smtpSettings: ['company', 'smtp-settings'],
 }
 
 export function fetchOnboarding() {
@@ -169,6 +170,10 @@ export function completeEmailVerification(id, body) {
   return api(API.COMPANY.VERIFICATION_REQUEST_COMPLETE_EMAIL(id), { method: 'POST', body })
 }
 
+export function resendVerificationEmail(id) {
+  return api(API.COMPANY.VERIFICATION_REQUEST_RESEND_EMAIL(id), { method: 'POST', body: {} })
+}
+
 export function reviewHrResponse(id, body) {
   return api(API.COMPANY.VERIFICATION_REQUEST_REVIEW_HR(id), { method: 'POST', body })
 }
@@ -181,4 +186,16 @@ export function fetchAuditLogs({ action = '', page = 1, limit = 20 } = {}) {
   const params = new URLSearchParams({ page: String(page), limit: String(limit) })
   if (action) params.set('action', action)
   return api(`${API.COMPANY.AUDIT_LOGS}?${params}`)
+}
+
+export function fetchSmtpSettings() {
+  return api(API.COMPANY.SMTP_SETTINGS)
+}
+
+export function updateSmtpSettings(body) {
+  return api(API.COMPANY.SMTP_SETTINGS, { method: 'PUT', body })
+}
+
+export function sendSmtpTest(body = {}) {
+  return api(API.COMPANY.SMTP_TEST, { method: 'POST', body })
 }

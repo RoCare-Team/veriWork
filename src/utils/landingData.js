@@ -19,7 +19,7 @@ export const LANDING_FEATURES = [
     description:
       'Aadhaar, DigiLocker, and biometric liveness checks create a tamper-proof professional identity.',
     icon: 'shield',
-    accent: 'bg-blue-50 text-[#1a3a8f]',
+    accent: 'bg-blue-50 text-[#005fd6]',
   },
   {
     id: 'workforce',
@@ -100,7 +100,7 @@ export const LANDING_PORTALS = [
     cta: 'Access Employer Portal',
     secondaryTo: '/enterprise/register',
     secondaryCta: 'Register company',
-    gradient: 'from-[#152b6e] via-[#1a3a8f] to-[#2747b2]',
+    gradient: 'from-[#004bab] via-[#005fd6] to-[#0073fe]',
     highlights: ['Workforce dashboard', 'Join request workflow', 'QR onboarding', 'Fraud alerts'],
   },
   {
@@ -112,7 +112,7 @@ export const LANDING_PORTALS = [
     cta: 'Access Employee Portal',
     secondaryTo: '/employee/login',
     secondaryCta: 'Sign in with OTP',
-    gradient: 'from-[#1a3a8f] via-[#2747b2] to-[#3b5ccc]',
+    gradient: 'from-[#005fd6] via-[#0073fe] to-[#3b5ccc]',
     highlights: ['Aadhaar verification', 'Professional ID card', 'Document vault', 'Activity log'],
   },
 ]
@@ -127,7 +127,7 @@ export const LANDING_SECURITY = [
 export const LANDING_TESTIMONIALS = [
   {
     quote:
-      'VeriWork cut our background verification time from two weeks to under a day. The trust score is a game changer.',
+      'PagerLook cut our background verification time from two weeks to under a day. The trust score is a game changer.',
     name: 'Priya Sharma',
     role: 'HR Director, TechFlow Systems',
     initials: 'PS',

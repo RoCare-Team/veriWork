@@ -3,7 +3,7 @@ import { LANDING_STEPS } from '../../utils/landingData'
 function StepBadge({ audience }) {
   const styles = {
     both: 'bg-slate-100 text-slate-600',
-    employee: 'bg-blue-50 text-[#1a3a8f]',
+    employee: 'bg-blue-50 text-[#005fd6]',
     enterprise: 'bg-orange-50 text-[#ea7a3b]',
   }
   const labels = {
@@ -38,7 +38,7 @@ function LandingHowItWorks() {
         </div>
 
         <div className="relative mt-14">
-          <div className="absolute left-8 top-0 hidden h-full w-px bg-gradient-to-b from-[#1a3a8f]/30 via-[#ea7a3b]/30 to-transparent md:left-1/2 md:block md:-translate-x-px" />
+          <div className="absolute left-8 top-0 hidden h-full w-px bg-gradient-to-b from-[#005fd6]/30 via-[#ea7a3b]/30 to-transparent md:left-1/2 md:block md:-translate-x-px" />
 
           <div className="flex flex-col gap-8 md:gap-12">
             {LANDING_STEPS.map((item, index) => {
@@ -55,7 +55,7 @@ function LandingHowItWorks() {
                       <div
                         className={`mb-3 flex items-center gap-3 ${isEven ? 'md:justify-end' : ''}`}
                       >
-                        <span className="text-2xl font-extrabold text-[#1a3a8f]/20">{item.step}</span>
+                        <span className="text-2xl font-extrabold text-[#005fd6]/20">{item.step}</span>
                         <StepBadge audience={item.for} />
                       </div>
                       <h3 className="m-0 text-xl font-extrabold text-slate-900">{item.title}</h3>
@@ -65,7 +65,7 @@ function LandingHowItWorks() {
                     </article>
                   </div>
 
-                  <div className="absolute left-8 hidden h-4 w-4 -translate-x-1/2 rounded-full border-4 border-white bg-[#1a3a8f] shadow md:left-1/2 md:block" />
+                  <div className="absolute left-8 hidden h-4 w-4 -translate-x-1/2 rounded-full border-4 border-white bg-[#005fd6] shadow md:left-1/2 md:block" />
 
                   <div className="hidden md:block md:w-1/2" />
                 </div>

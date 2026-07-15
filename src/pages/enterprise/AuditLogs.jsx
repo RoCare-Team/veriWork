@@ -46,7 +46,7 @@ function AuditLogs() {
             value={action}
             onChange={(e) => updateParams({ action: e.target.value, page: '1' })}
             placeholder="Filter by action..."
-            className="h-11 w-full max-w-sm rounded-xl border border-slate-200 px-4 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100"
+            className="h-11 w-full max-w-sm rounded-xl border border-slate-200 px-4 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
           />
         </div>
 

@@ -58,11 +58,11 @@ function PendingApproval() {
 
         <p className="m-0 mt-8 text-xs text-slate-400">
           Questions?{' '}
-          <a href="mailto:support@veriwork.com" className="font-semibold text-[#1a3a8f] hover:underline">
+          <a href="mailto:support@veriwork.com" className="font-semibold text-[#005fd6] hover:underline">
             support@veriwork.com
           </a>
           {' · '}
-          <Link to="/" className="font-semibold text-[#1a3a8f] hover:underline">
+          <Link to="/" className="font-semibold text-[#005fd6] hover:underline">
             Back to home
           </Link>
         </p>

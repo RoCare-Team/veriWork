@@ -129,7 +129,7 @@ function AdminCompanies({ status = 'submitted' }) {
                       <td className="px-5 py-4">
                         <Link
                           to={`/admin/companies/${item.id}`}
-                          className="inline-flex rounded-xl bg-[#1a3a8f] px-4 py-2 text-xs font-semibold text-white no-underline transition hover:bg-[#152b6e]"
+                          className="inline-flex rounded-xl bg-[#005fd6] px-4 py-2 text-xs font-semibold text-white no-underline transition hover:bg-[#004bab]"
                         >
                           View
                         </Link>

@@ -84,7 +84,7 @@ function JoinRequests() {
               placeholder="Search candidates..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-50"
+              className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-50"
             />
           </div>
         </div>

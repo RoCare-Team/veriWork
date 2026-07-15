@@ -35,7 +35,7 @@ function EmployeeJoin() {
       <EmployeeAuthLayout>
         <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-100 bg-white p-8 text-center shadow-sm">
           <p className="m-0 text-sm text-red-600">Invalid invitation link — missing token.</p>
-          <Link to="/employee" className="mt-4 inline-block text-sm font-semibold text-[#1a3a8f] no-underline hover:underline">
+          <Link to="/employee" className="mt-4 inline-block text-sm font-semibold text-[#005fd6] no-underline hover:underline">
             Go to employee home
           </Link>
         </div>
@@ -50,7 +50,7 @@ function EmployeeJoin() {
       <EmployeeAuthLayout>
         <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-100 bg-white p-8 text-center shadow-sm">
           <p className="m-0 text-sm text-red-600">{error?.message || 'Invitation not found or expired.'}</p>
-          <Link to="/employee" className="mt-4 inline-block text-sm font-semibold text-[#1a3a8f] no-underline hover:underline">
+          <Link to="/employee" className="mt-4 inline-block text-sm font-semibold text-[#005fd6] no-underline hover:underline">
             Go to employee home
           </Link>
         </div>
@@ -64,7 +64,7 @@ function EmployeeJoin() {
   return (
     <EmployeeAuthLayout>
       <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-100 bg-white p-8 shadow-sm">
-        <p className="m-0 text-xs font-bold uppercase tracking-wider text-[#1a3a8f]">Workforce invitation</p>
+        <p className="m-0 text-xs font-bold uppercase tracking-wider text-[#005fd6]">Workforce invitation</p>
         <h1 className="m-0 mt-2 text-2xl font-extrabold text-slate-900">
           You&apos;re invited by {companyName}
         </h1>
@@ -88,7 +88,7 @@ function EmployeeJoin() {
 
         {requiresRegistration && (
           <p className="m-0 mt-4 text-sm text-slate-600">
-            Create your VeriWork account to join the team. You&apos;ll be added automatically after profile setup.
+            Create your PagerLook account to join the team. You&apos;ll be added automatically after profile setup.
           </p>
         )}
 

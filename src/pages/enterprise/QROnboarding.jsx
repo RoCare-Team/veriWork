@@ -80,7 +80,7 @@ function QROnboarding() {
                 {Array.from({ length: 16 }).map((_, i) => (
                   <div
                     key={i}
-                    className={`h-6 w-6 rounded-sm ${i % 3 === 0 ? 'bg-[#1a3a8f]' : 'bg-transparent'}`}
+                    className={`h-6 w-6 rounded-sm ${i % 3 === 0 ? 'bg-[#005fd6]' : 'bg-transparent'}`}
                   />
                 ))}
               </div>

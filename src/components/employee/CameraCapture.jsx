@@ -424,7 +424,7 @@ function CameraCapture({ onCapture, autoStart = true, liveness = false, userName
 
                 disabled={!isLive}
 
-                className="flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-[#1a3a8f] text-sm font-semibold text-white shadow-lg shadow-blue-900/20 transition hover:bg-[#152b6e] disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-[#005fd6] text-sm font-semibold text-white shadow-lg shadow-blue-900/20 transition hover:bg-[#004bab] disabled:cursor-not-allowed disabled:opacity-50"
 
               >
 

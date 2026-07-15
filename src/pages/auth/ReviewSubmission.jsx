@@ -126,7 +126,7 @@ function ReviewSubmission() {
         <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:p-7">
           <div className="mb-4 flex items-center justify-between">
             <SectionTitle>Company Information</SectionTitle>
-            <Link to="/enterprise/register" className="text-xs font-semibold text-[#1a3a8f] hover:underline">
+            <Link to="/enterprise/register" className="text-xs font-semibold text-[#005fd6] hover:underline">
               Edit
             </Link>
           </div>
@@ -151,7 +151,7 @@ function ReviewSubmission() {
         <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:p-7">
           <div className="mb-4 flex items-center justify-between">
             <SectionTitle>Uploaded Documents</SectionTitle>
-            <Link to="/enterprise/verify" className="text-xs font-semibold text-[#1a3a8f] hover:underline">
+            <Link to="/enterprise/verify" className="text-xs font-semibold text-[#005fd6] hover:underline">
               Edit
             </Link>
           </div>
@@ -182,11 +182,11 @@ function ReviewSubmission() {
         </section>
 
         <div className="flex gap-3 rounded-3xl border border-blue-100 bg-blue-50/60 p-5">
-          <div className="shrink-0 text-[#1a3a8f]">
+          <div className="shrink-0 text-[#005fd6]">
             <InfoIcon className="h-5 w-5" />
           </div>
           <div>
-            <p className="m-0 text-sm font-bold text-[#1a3a8f]">What happens next?</p>
+            <p className="m-0 text-sm font-bold text-[#005fd6]">What happens next?</p>
             <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
               After submission, our compliance team will review your application within 24–48 business hours. You&apos;ll
               receive an email at <strong>{basicInfo.workEmail || 'your work email'}</strong> once your account is verified
@@ -200,7 +200,7 @@ function ReviewSubmission() {
             type="checkbox"
             checked={certified}
             onChange={(e) => setCertifiedState(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-[#1a3a8f] focus:ring-[#1a3a8f]"
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-[#005fd6] focus:ring-[#005fd6]"
           />
           <span className="text-sm leading-relaxed text-slate-700">
             I certify that all information and documents provided are authentic and accurate. I understand that falsifying
@@ -210,7 +210,7 @@ function ReviewSubmission() {
 
         <p className="m-0 pb-2 text-center text-xs text-slate-400">
           Already registered?{' '}
-          <Link to="/enterprise/login" className="font-semibold text-[#1a3a8f] hover:underline">
+          <Link to="/enterprise/login" className="font-semibold text-[#005fd6] hover:underline">
             Sign in
           </Link>
         </p>

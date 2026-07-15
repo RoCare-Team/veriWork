@@ -214,7 +214,7 @@ export function tryDevAdminLogin(email, password) {
     user: {
       id: 'dev-admin-1',
       email: DEV_ADMIN_EMAIL,
-      name: 'VeriWork Admin',
+      name: 'PagerLook Admin',
       role: 'platform_admin',
     },
     homeRoute: '/admin/dashboard',

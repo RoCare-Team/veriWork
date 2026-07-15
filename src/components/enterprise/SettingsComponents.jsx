@@ -24,7 +24,7 @@ function SecurityMenuIcon({ type }) {
 
 function TeamMemberRow({ initials, name, role, badge, badgeColor, avatarBg }) {
   const badgeStyles = {
-    blue: 'bg-blue-50 text-[#1a3a8f]',
+    blue: 'bg-blue-50 text-[#005fd6]',
     green: 'bg-green-50 text-green-700',
   }
 

@@ -6,7 +6,7 @@ export const TEAM_MEMBERS = [
     role: 'Super Admin',
     badge: 'admin',
     badgeColor: 'blue',
-    avatarBg: 'bg-[#1a3a8f]',
+    avatarBg: 'bg-[#005fd6]',
   },
   {
     id: '2',
@@ -38,7 +38,7 @@ export const SECURITY_MENU = [
   {
     id: 'api',
     title: 'API Access Tokens',
-    description: 'Manage VeriWork integration',
+    description: 'Manage PagerLook integration',
     icon: 'star',
   },
   {

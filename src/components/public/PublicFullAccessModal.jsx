@@ -56,7 +56,7 @@ function PublicFullAccessModal({ slug, employeeName, onClose, onSuccess }) {
               value={form.requesterName}
               onChange={handleChange('requesterName')}
               placeholder="Alex Rivera"
-              className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-3.5 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-50"
+              className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-3.5 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-50"
             />
           </div>
           <div>
@@ -69,7 +69,7 @@ function PublicFullAccessModal({ slug, employeeName, onClose, onSuccess }) {
               value={form.requesterEmail}
               onChange={handleChange('requesterEmail')}
               placeholder="hr@company.com"
-              className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-3.5 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-50"
+              className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-3.5 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-50"
             />
           </div>
           <div>
@@ -82,7 +82,7 @@ function PublicFullAccessModal({ slug, employeeName, onClose, onSuccess }) {
               value={form.reason}
               onChange={handleChange('reason')}
               placeholder="e.g. We are hiring for a Senior Developer role and need to verify employment history before interview."
-              className="mt-1.5 w-full resize-none rounded-xl border border-slate-200 px-3.5 py-3 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-50"
+              className="mt-1.5 w-full resize-none rounded-xl border border-slate-200 px-3.5 py-3 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-50"
             />
             <p className="m-0 mt-1 text-xs text-slate-400">Minimum 10 characters. {employeeName} will review and approve.</p>
           </div>

@@ -1,207 +1,214 @@
-import { NavLink, useNavigate } from 'react-router-dom'
-import { ShieldLogoIcon } from '../common/Icons'
+import { useNavigate } from 'react-router-dom'
+import AppSidebar from '../common/AppSidebar'
 import { useAuth } from '../../context/AuthContext'
 
-const NAV_ITEMS = [
+/* Icons: 20x20, 1.5 stroke, round caps/joins — one optical weight across the set. */
+
+function VerificationIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M10 2.5l6.25 2.4v4.85c0 3.6-2.65 6.4-6.25 7.25-3.6-.85-6.25-3.65-6.25-7.25V4.9L10 2.5Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7.4 9.9l1.85 1.85 3.35-3.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+/* Gauge — a score that moves, not a clock. */
+function ScoreIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M3.25 14.5a7.5 7.5 0 1 1 13.5 0"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path d="M10 14.25L13 8.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="10" cy="14.5" r="1.25" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  )
+}
+
+function ProfessionalIdIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <rect x="2.75" y="4.25" width="14.5" height="11.5" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="7.5" cy="9.5" r="1.85" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M4.6 13.9c.5-1.35 1.6-2.1 2.9-2.1s2.4.75 2.9 2.1M12.5 8.75h3.25M12.5 11.5h2.25"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+/* Briefcase — employment history. */
+function JobHistoryIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <rect x="2.75" y="6.25" width="14.5" height="10.5" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M7.25 6.25V4.9a1.4 1.4 0 0 1 1.4-1.4h2.7a1.4 1.4 0 0 1 1.4 1.4v1.35M2.75 10.5h14.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+/* Vault door — documents under lock, not a generic file. */
+function VaultIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <rect x="2.75" y="3.25" width="14.5" height="13.5" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="9.75" cy="10" r="3" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M9.75 7v-1.4M9.75 14.4V13M12.75 10h1.4M5.35 10h1.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function InvitationsIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <rect x="2.75" y="4.75" width="14.5" height="10.5" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M3.25 6.5L10 11l6.75-4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+/* Shield + keyhole — consent to access. */
+function AccessConsentIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M10 2.5l6.25 2.4v4.85c0 3.6-2.65 6.4-6.25 7.25-3.6-.85-6.25-3.65-6.25-7.25V4.9L10 2.5Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <circle cx="10" cy="9" r="1.4" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M10 10.4v2.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+/* Pulse — activity over time. */
+function ActivityIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M2.75 10.5h3l2-4.75 3 9 2.25-5.5h4.25"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function SettingsIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <circle cx="10" cy="10" r="2.6" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M10 2.5v1.9M10 15.6v1.9M17.5 10h-1.9M4.4 10H2.5M15.3 4.7l-1.35 1.35M6.05 13.95L4.7 15.3M15.3 15.3l-1.35-1.35M6.05 6.05L4.7 4.7"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+/*
+ * Routes, labels, `end`, and `requiresVerification` are load-bearing — they
+ * match the existing router and the profile gating exactly.
+ */
+const NAV_GROUPS = [
   {
-    to: '/employee/verification',
-    label: 'Verification',
-    end: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M10 2.5l6.5 2.6v4.9c0 3.7-2.8 6.6-6.5 7.5-3.7-.9-6.5-3.8-6.5-7.5V5.1L10 2.5Z" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M7.5 10l1.8 1.8 3.7-3.6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
+    label: 'Overview',
+    items: [
+      { to: '/employee/verification', label: 'Verification', end: true, icon: <VerificationIcon /> },
+      { to: '/employee/score', label: 'Employee Score', requiresVerification: true, icon: <ScoreIcon /> },
+    ],
   },
   {
-    to: '/employee/score',
-    label: 'Employee Score',
-    requiresVerification: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M10 6v4l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
+    label: 'Profile',
+    items: [
+      {
+        to: '/employee/professional-id',
+        label: 'Professional ID',
+        requiresVerification: true,
+        icon: <ProfessionalIdIcon />,
+      },
+      { to: '/employee/job-history', label: 'Job History', requiresVerification: true, icon: <JobHistoryIcon /> },
+      { to: '/employee/vault', label: 'Document Vault', requiresVerification: true, icon: <VaultIcon /> },
+    ],
   },
   {
-    to: '/employee/professional-id',
-    label: 'Professional ID',
-    requiresVerification: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <rect x="3" y="4" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <circle cx="8" cy="9.5" r="2" stroke="currentColor" strokeWidth="1.3" />
-        <path d="M12 8h4M12 11h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-      </svg>
-    ),
+    label: 'Requests',
+    items: [
+      { to: '/employee/invitations', label: 'Invitations', icon: <InvitationsIcon /> },
+      { to: '/employee/access-requests', label: 'Access Consent', icon: <AccessConsentIcon /> },
+    ],
   },
   {
-    to: '/employee/job-history',
-    label: 'Job History',
-    requiresVerification: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M7 8h6M7 11h4M7 14h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    to: '/employee/vault',
-    label: 'Document Vault',
-    requiresVerification: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M7 7h6M7 10h4M7 13h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    to: '/employee/invitations',
-    label: 'Invitations',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <rect x="3" y="5" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M3 7l7 4 7-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    to: '/employee/access-requests',
-    label: 'Access Consent',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M10 2.5l6.5 2.6v4.9c0 3.7-2.8 6.6-6.5 7.5-3.7-.9-6.5-3.8-6.5-7.5V5.1L10 2.5Z" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M8 10h4M10 8v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    to: '/employee/activity',
-    label: 'Activity',
-    requiresVerification: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M4 4h12v12H4V4Z" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M7 10l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    to: '/employee/settings',
-    label: 'Settings',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <circle cx="10" cy="10" r="3" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
+    label: 'Account',
+    items: [
+      { to: '/employee/activity', label: 'Activity', requiresVerification: true, icon: <ActivityIcon /> },
+      { to: '/employee/settings', label: 'Settings', icon: <SettingsIcon /> },
+    ],
   },
 ]
 
-function SidebarContent({ onNavigate }) {
+function EmployeeSidebar({ open, onClose, collapsed = false, onToggleCollapse }) {
   const navigate = useNavigate()
   const { profile, logout } = useAuth()
   const verified = profile?.isVerified === true
 
   const handleSignOut = async () => {
     await logout()
-    onNavigate?.()
+    onClose?.()
     navigate('/employee/login')
   }
 
+  // Resolve gating here so AppSidebar stays portal-agnostic.
+  const groups = NAV_GROUPS.map((group) => ({
+    ...group,
+    items: group.items.map((item) => ({
+      ...item,
+      disabled: item.requiresVerification && !verified,
+      disabledHint: 'Complete verification to unlock',
+    })),
+  }))
+
   return (
-    <>
-      <div className="border-b border-white/10 px-5 py-6">
-        <div className="flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/15">
-            <ShieldLogoIcon className="h-6 w-6" />
-          </div>
-          <div>
-            <p className="m-0 text-base font-extrabold text-white">VeriWork</p>
-            <p className="m-0 text-[11px] font-medium text-white/50">Employee Portal</p>
-          </div>
-        </div>
-      </div>
-
-      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
-        {NAV_ITEMS.map((item) => {
-          const disabled = item.requiresVerification && !verified
-
-          if (disabled) {
-            return (
-              <span
-                key={item.label}
-                className="flex cursor-not-allowed items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white/30"
-                title="Complete verification to unlock"
-              >
-                <span className="shrink-0 opacity-60">{item.icon}</span>
-                {item.label}
-              </span>
-            )
-          }
-
-          return (
-            <NavLink
-              key={item.label}
-              to={item.to}
-              end={item.end}
-              onClick={onNavigate}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
-                  isActive
-                    ? 'bg-white/15 text-white shadow-sm'
-                    : 'text-white/65 hover:bg-white/10 hover:text-white'
-                }`
-              }
-            >
-              <span className="shrink-0 opacity-90">{item.icon}</span>
-              {item.label}
-            </NavLink>
-          )
-        })}
-      </nav>
-
-      <div className="border-t border-white/10 p-4">
-        <button
-          type="button"
-          onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white/60 transition hover:bg-white/10 hover:text-white"
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M7 10H17M13 6l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M3 4v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-          Sign Out
-        </button>
-      </div>
-    </>
-  )
-}
-
-function EmployeeSidebar({ open, onClose }) {
-  return (
-    <>
-      {open && (
-        <button
-          type="button"
-          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"
-          onClick={onClose}
-          aria-label="Close menu"
-        />
-      )}
-
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col bg-gradient-to-b from-[#152b6e] via-[#1a3a8f] to-[#1f3c9f] transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0 ${
-          open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        }`}
-      >
-        <SidebarContent onNavigate={onClose} />
-      </aside>
-    </>
+    <AppSidebar
+      open={open}
+      onClose={onClose}
+      collapsed={collapsed}
+      onToggleCollapse={onToggleCollapse}
+      groups={groups}
+      portalLabel="Employee Portal"
+      identityName={profile?.name}
+      onSignOut={handleSignOut}
+      navAriaLabel="Employee"
+    />
   )
 }
 

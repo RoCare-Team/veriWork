@@ -50,7 +50,7 @@ function MiniStat({ label, value, accent }) {
     green: 'border-l-green-500',
     amber: 'border-l-amber-400',
     red: 'border-l-red-500',
-    blue: 'border-l-[#1a3a8f]',
+    blue: 'border-l-[#005fd6]',
   }
   return (
     <div className={`rounded-2xl border border-slate-100 border-l-4 bg-white p-4 shadow-sm ${accents[accent] || accents.blue}`}>

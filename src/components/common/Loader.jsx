@@ -14,7 +14,7 @@ function Loader({
 
   const spinner = (
     <span
-      className={`inline-block animate-spin rounded-full border-slate-200 border-t-[#1a3a8f] ${spinnerSizes[size] || spinnerSizes.md}`}
+      className={`inline-block animate-spin rounded-full border-slate-200 border-t-[#005fd6] ${spinnerSizes[size] || spinnerSizes.md}`}
       aria-hidden="true"
     />
   )

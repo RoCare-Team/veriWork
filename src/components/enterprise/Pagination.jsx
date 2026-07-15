@@ -33,7 +33,7 @@ function Pagination({ pagination, onPageChange }) {
                 onClick={() => onPageChange(p)}
                 className={`min-w-[36px] rounded-xl px-3 py-2 text-sm font-semibold transition ${
                   p === page
-                    ? 'bg-[#1a3a8f] text-white shadow-sm'
+                    ? 'bg-[#005fd6] text-white shadow-sm'
                     : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                 }`}
               >

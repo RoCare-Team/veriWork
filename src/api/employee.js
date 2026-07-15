@@ -13,6 +13,7 @@ export const employeeKeys = {
   invitations: ['employee', 'invitations'],
   accessRequests: ['employee', 'access-requests'],
   endorsements: ['employee', 'endorsements'],
+  smtpSettings: ['employee', 'smtp-settings'],
 }
 
 export function fetchProfile() {
@@ -162,4 +163,16 @@ export function uploadJobDocumentWithType(jobId, file, documentType) {
   form.append('document', file)
   if (documentType) form.append('documentType', documentType)
   return api(API.EMPLOYEE.JOB_DOCUMENTS(jobId), { method: 'POST', body: form })
+}
+
+export function fetchEmployeeSmtpSettings() {
+  return api(API.EMPLOYEE.SMTP_SETTINGS)
+}
+
+export function updateEmployeeSmtpSettings(body) {
+  return api(API.EMPLOYEE.SMTP_SETTINGS, { method: 'PUT', body })
+}
+
+export function sendEmployeeSmtpTest(body = {}) {
+  return api(API.EMPLOYEE.SMTP_TEST, { method: 'POST', body })
 }

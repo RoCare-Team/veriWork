@@ -83,7 +83,7 @@ function EmailVerificationCompleteModal({ request, onClose, onSuccess }) {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               disabled={mutation.isPending}
-              className="w-full resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100"
+              className="w-full resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
             />
           </div>
         </div>

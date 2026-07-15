@@ -19,7 +19,7 @@ function CandidateRequestCard({
   return (
     <article className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
       <div className="flex items-start gap-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-blue-50 text-sm font-bold text-[#1a3a8f]">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-blue-50 text-sm font-bold text-[#005fd6]">
           {avatar}
         </div>
         <div className="min-w-0 flex-1">
@@ -72,7 +72,7 @@ function CandidateRequestCard({
         <button
           type="button"
           onClick={onApprove}
-          className="rounded-xl bg-[#1a3a8f] py-2.5 text-sm font-semibold text-white transition hover:bg-[#152b6e]"
+          className="rounded-xl bg-[#005fd6] py-2.5 text-sm font-semibold text-white transition hover:bg-[#004bab]"
         >
           Approve
         </button>

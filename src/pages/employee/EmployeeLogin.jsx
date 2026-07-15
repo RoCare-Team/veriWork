@@ -90,7 +90,7 @@ function EmployeeLogin() {
     >
       <div className="flex flex-col gap-7 md:gap-8">
         <section className="text-center lg:text-left">
-          <h1 className="m-0 text-2xl font-extrabold tracking-tight text-[#1a3a8f] md:text-3xl">
+          <h1 className="m-0 text-2xl font-extrabold tracking-tight text-[#005fd6] md:text-3xl">
             Sign In
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-slate-500 md:text-base">
@@ -113,7 +113,7 @@ function EmployeeLogin() {
             <div className="rounded-2xl border border-blue-100 bg-blue-50/50 p-4 md:p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="m-0 text-xs font-semibold uppercase tracking-wide text-[#1a3a8f]">
+                  <p className="m-0 text-xs font-semibold uppercase tracking-wide text-[#005fd6]">
                     OTP Sent
                   </p>
                   <p className="m-0 mt-1 text-sm text-slate-700 md:text-base">
@@ -123,7 +123,7 @@ function EmployeeLogin() {
                 <button
                   type="button"
                   onClick={() => { setOtpSent(false); setOtp('') }}
-                  className="shrink-0 text-xs font-semibold text-[#1a3a8f] hover:underline md:text-sm"
+                  className="shrink-0 text-xs font-semibold text-[#005fd6] hover:underline md:text-sm"
                 >
                   Change
                 </button>
@@ -147,7 +147,7 @@ function EmployeeLogin() {
                 {resendSeconds > 0 ? (
                   <span className="font-semibold text-slate-400">Resend in {resendSeconds}s</span>
                 ) : (
-                  <button type="button" onClick={handleResend} className="font-semibold text-[#1a3a8f] hover:underline">
+                  <button type="button" onClick={handleResend} className="font-semibold text-[#005fd6] hover:underline">
                     Resend OTP
                   </button>
                 )}
@@ -172,7 +172,7 @@ function EmployeeLogin() {
 
         <p className="m-0 text-center text-sm text-slate-500 lg:text-left">
           Employer?{' '}
-          <Link to="/enterprise/login" className="font-bold text-[#1a3a8f] no-underline hover:underline">
+          <Link to="/enterprise/login" className="font-bold text-[#005fd6] no-underline hover:underline">
             Enterprise Portal
           </Link>
         </p>

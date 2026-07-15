@@ -56,7 +56,7 @@ function AadhaarVerification() {
 
       <div className="lg:grid lg:grid-cols-2 lg:gap-8">
         <div className="rounded-2xl border border-blue-100 bg-blue-50/80 p-4">
-          <LockIcon className="h-5 w-5 text-[#1a3a8f]" />
+          <LockIcon className="h-5 w-5 text-[#005fd6]" />
           <p className="mt-2 text-sm text-slate-600">Aadhaar data is encrypted and never stored in plain text.</p>
         </div>
 
@@ -64,7 +64,7 @@ function AadhaarVerification() {
           {method === 'digilocker' ? (
             <div className="flex flex-col gap-4">
               <DigiLockerButton onClick={handleDigiLocker} loading={mutation.isPending} />
-              <button type="button" onClick={() => setMethod('otp')} className="text-sm font-semibold text-[#1a3a8f] hover:underline">
+              <button type="button" onClick={() => setMethod('otp')} className="text-sm font-semibold text-[#005fd6] hover:underline">
                 Other Verification Methods
               </button>
             </div>
@@ -73,10 +73,10 @@ function AadhaarVerification() {
               <Input id="aadhaar" label="Aadhaar Number" value={aadhaar} onChange={(e) => setAadhaar(formatAadhaar(e.target.value))} leftIcon={<IdCardIcon className="h-[18px] w-[18px]" />} />
               <label className="flex items-start gap-3 text-sm text-slate-600">
                 <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1" />
-                I authorize VeriWork to fetch my identity from UIDAI.
+                I authorize PagerLook to fetch my identity from UIDAI.
               </label>
               <Button type="submit" disabled={!otpValid || mutation.isPending}>Verify via OTP</Button>
-              <button type="button" onClick={() => setMethod('digilocker')} className="text-sm font-semibold text-[#1a3a8f] hover:underline">
+              <button type="button" onClick={() => setMethod('digilocker')} className="text-sm font-semibold text-[#005fd6] hover:underline">
                 Back to DigiLocker
               </button>
             </form>

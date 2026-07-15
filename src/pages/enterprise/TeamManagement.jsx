@@ -128,7 +128,7 @@ function TeamManagement() {
 
             onClick={() => setShowInvite(true)}
 
-            className="flex shrink-0 items-center gap-2 rounded-lg bg-[#1a3a8f] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#152b6e]"
+            className="flex shrink-0 items-center gap-2 rounded-lg bg-[#005fd6] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#004bab]"
 
           >
 

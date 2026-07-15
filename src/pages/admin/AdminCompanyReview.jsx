@@ -47,7 +47,7 @@ function RejectModal({ open, onClose, onConfirm, busy }) {
           placeholder="e.g. GST certificate is unclear, please re-upload..."
           rows={4}
           required
-          className="mt-4 w-full resize-none rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100"
+          className="mt-4 w-full resize-none rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
         />
         <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Button type="button" variant="ghost" fullWidth={false} onClick={onClose} disabled={busy}>
@@ -76,7 +76,7 @@ function DocumentLink({ label, url }) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="shrink-0 rounded-xl border border-[#1a3a8f]/20 px-3 py-1.5 text-xs font-semibold text-[#1a3a8f] no-underline hover:bg-blue-50"
+        className="shrink-0 rounded-xl border border-[#005fd6]/20 px-3 py-1.5 text-xs font-semibold text-[#005fd6] no-underline hover:bg-blue-50"
       >
         View
       </a>
@@ -116,7 +116,7 @@ function AdminCompanyReview() {
       <AdminLayout>
         <div className="px-8 py-12 text-center">
           <p className="text-red-600">{error?.message || 'Company not found'}</p>
-          <Link to="/admin/companies" className="mt-4 inline-block text-sm font-semibold text-[#1a3a8f]">
+          <Link to="/admin/companies" className="mt-4 inline-block text-sm font-semibold text-[#005fd6]">
             Back to list
           </Link>
         </div>
@@ -140,7 +140,7 @@ function AdminCompanyReview() {
       <div className="px-4 py-6 md:px-8 md:py-8">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <Link to="/admin/companies" className="text-sm font-semibold text-[#1a3a8f] no-underline hover:underline">
+            <Link to="/admin/companies" className="text-sm font-semibold text-[#005fd6] no-underline hover:underline">
               ← Back to companies
             </Link>
             <h2 className="m-0 mt-2 text-2xl font-extrabold text-slate-900">

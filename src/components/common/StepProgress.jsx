@@ -28,7 +28,7 @@ function StepProgress({ steps, currentStep, variant = 'horizontal' }) {
                 <div
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
                     isDone || isActive
-                      ? 'bg-[#1a3a8f] text-white shadow-md shadow-blue-900/20'
+                      ? 'bg-[#005fd6] text-white shadow-md shadow-blue-900/20'
                       : 'border-2 border-white/30 bg-white/10 text-white/50'
                   }`}
                 >
@@ -75,7 +75,7 @@ function StepProgress({ steps, currentStep, variant = 'horizontal' }) {
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition ${
                     isDone || isActive
-                      ? 'bg-[#1a3a8f] text-white shadow-md shadow-blue-900/15'
+                      ? 'bg-[#005fd6] text-white shadow-md shadow-blue-900/15'
                       : 'border-2 border-slate-200 bg-white text-slate-400'
                   }`}
                 >
@@ -83,7 +83,7 @@ function StepProgress({ steps, currentStep, variant = 'horizontal' }) {
                 </div>
                 <span
                   className={`hidden max-w-[100px] text-center text-[11px] font-semibold leading-tight sm:block md:max-w-none md:text-xs ${
-                    isActive ? 'text-[#1a3a8f]' : 'text-slate-500'
+                    isActive ? 'text-[#005fd6]' : 'text-slate-500'
                   }`}
                 >
                   {step}
@@ -91,14 +91,14 @@ function StepProgress({ steps, currentStep, variant = 'horizontal' }) {
               </div>
               {!isLast && (
                 <div
-                  className={`mx-2 h-0.5 flex-1 md:mx-4 ${isDone ? 'bg-[#1a3a8f]/40' : 'bg-slate-200'}`}
+                  className={`mx-2 h-0.5 flex-1 md:mx-4 ${isDone ? 'bg-[#005fd6]/40' : 'bg-slate-200'}`}
                 />
               )}
             </div>
           )
         })}
       </div>
-      <p className="mt-3 text-center text-xs font-semibold text-[#1a3a8f] sm:hidden">
+      <p className="mt-3 text-center text-xs font-semibold text-[#005fd6] sm:hidden">
         {steps[currentStep - 1]}
       </p>
     </div>

@@ -73,7 +73,7 @@ function EnterpriseApprovalCard({ item, onApprove, onReject, onView, busy }) {
             type="button"
             disabled={busy}
             onClick={() => onApprove(item)}
-            className="rounded-2xl bg-[#1a3a8f] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#152b6e] disabled:opacity-50"
+            className="rounded-2xl bg-[#005fd6] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#004bab] disabled:opacity-50"
           >
             Approve
           </button>

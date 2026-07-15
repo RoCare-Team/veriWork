@@ -4,7 +4,7 @@ export const EMPLOYEE_PROFILE = {
   name: 'Arjun Raghav',
   initials: 'AR',
   role: 'Senior Product Designer',
-  company: 'VeriWork Tech',
+  company: 'PagerLook Tech',
   experience: '8+ Years Exp',
   trustScore: 98,
   verifiedJobs: 12,

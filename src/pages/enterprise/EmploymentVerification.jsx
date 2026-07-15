@@ -17,8 +17,26 @@ import {
   fetchVerificationIncoming,
   approveVerificationRequest,
   rejectVerificationRequest,
+  resendVerificationEmail,
 } from '../../api/enterprise'
 import { useToast } from '../../context/ToastContext'
+
+const EMAIL_DELIVERY = {
+  sent: { label: 'Email sent', cls: 'bg-emerald-50 text-emerald-700' },
+  mock: { label: 'Not sent — configure SMTP', cls: 'bg-amber-50 text-amber-700' },
+  failed: { label: 'Send failed — retry', cls: 'bg-red-50 text-red-600' },
+  not_sent: { label: 'Email pending', cls: 'bg-slate-100 text-slate-500' },
+}
+
+function EmailDeliveryBadge({ status }) {
+  const meta = EMAIL_DELIVERY[status]
+  if (!meta) return null
+  return (
+    <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${meta.cls}`}>
+      {meta.label}
+    </span>
+  )
+}
 
 function ChannelBadge({ channel }) {
   const style = getVerificationChannelStyle(channel)
@@ -38,12 +56,14 @@ function StatusBadge({ status }) {
   )
 }
 
-function RequestCard({ request, onApprove, onReject, onCompleteEmail, onReviewHr, actionPending }) {
+function RequestCard({ request, onApprove, onReject, onCompleteEmail, onReviewHr, onResendEmail, actionPending }) {
   const id = request._id || request.id
   const rawStatus = request.rawStatus || request.status
   const isPending = rawStatus === 'pending'
-  const isEmailInProcess = request.verificationChannel === 'email' && ['in_process', 'in_review'].includes(rawStatus)
+  const isEmailChannel = request.verificationChannel === 'email'
+  const isEmailInProcess = isEmailChannel && ['in_process', 'in_review'].includes(rawStatus)
   const isHrResponded = rawStatus === 'hr_responded'
+  const showEmailDelivery = isEmailChannel && request.emailStatus && request.emailStatus !== 'not_applicable'
 
   return (
     <article className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm md:p-5">
@@ -60,14 +80,25 @@ function RequestCard({ request, onApprove, onReject, onCompleteEmail, onReviewHr
             {formatAccessDate(request.createdAt || request.requestedAt)}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
           <ChannelBadge channel={request.verificationChannel} />
           <StatusBadge status={rawStatus} />
+          {showEmailDelivery && <EmailDeliveryBadge status={request.emailStatus} />}
         </div>
       </div>
 
       {(isPending || isEmailInProcess || isHrResponded) && (
         <div className="mt-4 flex flex-wrap gap-2">
+          {isEmailInProcess && onResendEmail && (
+            <button
+              type="button"
+              onClick={() => onResendEmail(id)}
+              disabled={actionPending}
+              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            >
+              Resend email
+            </button>
+          )}
           {isPending && onApprove && onReject && (
             <>
               <button
@@ -82,7 +113,7 @@ function RequestCard({ request, onApprove, onReject, onCompleteEmail, onReviewHr
                 type="button"
                 onClick={() => onApprove(id)}
                 disabled={actionPending}
-                className="rounded-xl bg-[#1a3a8f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#152b6e] disabled:opacity-50"
+                className="rounded-xl bg-[#005fd6] px-4 py-2 text-sm font-semibold text-white hover:bg-[#004bab] disabled:opacity-50"
               >
                 Approve
               </button>
@@ -93,7 +124,7 @@ function RequestCard({ request, onApprove, onReject, onCompleteEmail, onReviewHr
               type="button"
               onClick={() => onCompleteEmail(request)}
               disabled={actionPending}
-              className="rounded-xl border border-[#1a3a8f] px-4 py-2 text-sm font-semibold text-[#1a3a8f] hover:bg-blue-50 disabled:opacity-50"
+              className="rounded-xl border border-[#005fd6] px-4 py-2 text-sm font-semibold text-[#005fd6] hover:bg-blue-50 disabled:opacity-50"
             >
               Complete / Document Verify
             </button>
@@ -114,7 +145,7 @@ function RequestCard({ request, onApprove, onReject, onCompleteEmail, onReviewHr
   )
 }
 
-function RequestList({ requests, emptyMessage, onApprove, onReject, onCompleteEmail, onReviewHr, actionPending }) {
+function RequestList({ requests, emptyMessage, onApprove, onReject, onCompleteEmail, onReviewHr, onResendEmail, actionPending }) {
   if (!requests.length) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-8 text-center">
@@ -133,6 +164,7 @@ function RequestList({ requests, emptyMessage, onApprove, onReject, onCompleteEm
           onReject={onReject}
           onCompleteEmail={onCompleteEmail}
           onReviewHr={onReviewHr}
+          onResendEmail={onResendEmail}
           actionPending={actionPending}
         />
       ))}
@@ -183,7 +215,21 @@ function EmploymentVerification() {
     onError: (err) => toast(err.message || 'Failed to reject', 'error'),
   })
 
-  const actionPending = approveMutation.isPending || rejectMutation.isPending
+  const resendMutation = useMutation({
+    mutationFn: resendVerificationEmail,
+    onSuccess: (res) => {
+      const result = res?.data || res
+      const status = result?.emailStatus
+      toast(
+        result?.message || (status === 'sent' ? 'Verification email re-sent' : 'Resend attempted'),
+        status === 'failed' ? 'error' : 'success',
+      )
+      invalidate()
+    },
+    onError: (err) => toast(err.message || 'Failed to resend email', 'error'),
+  })
+
+  const actionPending = approveMutation.isPending || rejectMutation.isPending || resendMutation.isPending
   const isLoading = outgoingQuery.isLoading || incomingQuery.isLoading
 
   if (isLoading) return <Loader variant="fullPage" label="Loading verification requests..." />
@@ -210,6 +256,7 @@ function EmploymentVerification() {
             emptyMessage="No outgoing verification requests"
             onCompleteEmail={setEmailRequest}
             onReviewHr={setHrReviewRequest}
+            onResendEmail={(id) => resendMutation.mutate(id)}
             actionPending={actionPending}
           />
         </section>

@@ -34,10 +34,25 @@ const DOC_TYPE_LABELS = {
   other: 'Document',
 }
 
+const RATING_LABELS = {
+  excellent: 'Excellent',
+  good: 'Good',
+  average: 'Average',
+  below_average: 'Below Average',
+  poor: 'Poor',
+}
+
+const RECOMMENDATION_LABELS = {
+  strongly_recommend: 'Strongly recommend',
+  recommend: 'Recommend',
+  neutral: 'Neutral',
+  not_recommend: 'Do not recommend',
+}
+
 function CompanyInitial({ name }) {
   const letter = (name || '?').charAt(0).toUpperCase()
   return (
-    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1a3a8f] to-[#3b5cc4] text-xl font-extrabold text-white shadow-md">
+    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#005fd6] to-[#3b5cc4] text-xl font-extrabold text-white shadow-md">
       {letter}
     </div>
   )
@@ -57,7 +72,7 @@ function VerificationLadder({ currentLevel }) {
               className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${
                 done
                   ? active
-                    ? 'bg-[#1a3a8f] text-white shadow-sm'
+                    ? 'bg-[#005fd6] text-white shadow-sm'
                     : 'bg-green-100 text-green-800'
                   : 'bg-slate-100 text-slate-400'
               }`}
@@ -81,6 +96,90 @@ function InfoCell({ label, value }) {
     <div className="rounded-xl bg-slate-50/80 px-3 py-2.5">
       <p className="m-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</p>
       <p className="m-0 mt-0.5 text-sm font-semibold text-slate-900">{value}</p>
+    </div>
+  )
+}
+
+function FeedbackRow({ label, value }) {
+  if (value === null || value === undefined || value === '') return null
+  return (
+    <div className="rounded-xl bg-white/70 px-3 py-2">
+      <p className="m-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</p>
+      <p className="m-0 mt-0.5 text-sm font-medium text-slate-800">{value}</p>
+    </div>
+  )
+}
+
+// Structured HR response the previous employer submitted for this role.
+function HrFeedbackPanel({ job }) {
+  const details = job.latestVerificationRequest?.employmentDetails || {}
+  const remarks = details.hrRemarks || details.feedback || job.verificationFeedback || details.verificationNotes || job.verificationNotes
+  const verifierLine = [details.verifierName, details.verifierDesignation].filter(Boolean).join(' · ')
+  const verifierContact = [details.verifierEmail, details.verifierPhone].filter(Boolean).join(' · ')
+
+  const hasStructured = Boolean(
+    details.performanceRating ||
+      details.recommendation ||
+      details.behaviorRemarks ||
+      details.reportingManager ||
+      details.disciplinaryIssues != null ||
+      verifierLine ||
+      details.supportingDocumentUrl,
+  )
+
+  if (!remarks && !hasStructured) return null
+
+  const docHref = details.supportingDocumentUrl ? mediaUrl(details.supportingDocumentUrl) : null
+
+  return (
+    <div className="border-t border-slate-100 bg-blue-50/30 px-5 py-4">
+      <p className="m-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">Employer / HR feedback</p>
+
+      {hasStructured && (
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <FeedbackRow label="Performance rating" value={RATING_LABELS[details.performanceRating]} />
+          <FeedbackRow label="Recommendation" value={RECOMMENDATION_LABELS[details.recommendation]} />
+          <FeedbackRow
+            label="Rehire eligible"
+            value={details.rehireEligible === true ? 'Yes' : details.rehireEligible === false ? 'No' : null}
+          />
+          <FeedbackRow label="Reporting manager" value={details.reportingManager} />
+          <FeedbackRow
+            label="Disciplinary issues"
+            value={
+              details.disciplinaryIssues === true
+                ? `Yes${details.disciplinaryDetails ? ` — ${details.disciplinaryDetails}` : ''}`
+                : details.disciplinaryIssues === false
+                  ? 'None reported'
+                  : null
+            }
+          />
+          <FeedbackRow label="Behavior / Conduct" value={details.behaviorRemarks} />
+        </div>
+      )}
+
+      {remarks && <p className="m-0 mt-3 text-sm leading-relaxed text-slate-700">{remarks}</p>}
+
+      {(verifierLine || verifierContact || docHref) && (
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-200/60 pt-3 text-xs text-slate-500">
+          {verifierLine && (
+            <span>
+              Verified by <strong className="text-slate-700">{verifierLine}</strong>
+            </span>
+          )}
+          {verifierContact && <span>{verifierContact}</span>}
+          {docHref && (
+            <a
+              href={docHref}
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-[#005fd6] no-underline hover:underline"
+            >
+              {details.supportingDocumentName || 'View supporting document'}
+            </a>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -122,7 +221,7 @@ function CompanyEmploymentCard({ job, canVerify, onVerify, defaultExpanded = fal
               {tagLabel}
             </span>
             {job.isReusable && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#1a3a8f]/10 px-2.5 py-1 text-[10px] font-bold uppercase text-[#1a3a8f]">
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#005fd6]/10 px-2.5 py-1 text-[10px] font-bold uppercase text-[#005fd6]">
                 ♻ Reusable record
               </span>
             )}
@@ -188,18 +287,8 @@ function CompanyEmploymentCard({ job, canVerify, onVerify, defaultExpanded = fal
         </div>
       )}
 
-      {/* HR feedback */}
-      {(job.verificationFeedback || job.verificationNotes) && (
-        <div className="border-t border-slate-100 bg-blue-50/30 px-5 py-4">
-          <p className="m-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">Employer / HR feedback</p>
-          {job.verificationFeedback && (
-            <p className="m-0 mt-2 text-sm leading-relaxed text-slate-700">{job.verificationFeedback}</p>
-          )}
-          {job.verificationNotes && job.verificationNotes !== job.verificationFeedback && (
-            <p className="m-0 mt-2 text-xs italic text-slate-500">{job.verificationNotes}</p>
-          )}
-        </div>
-      )}
+      {/* HR feedback — structured response submitted by the previous employer's HR */}
+      <HrFeedbackPanel job={job} />
 
       {/* Latest verification request */}
       {job.latestVerificationRequest && (
@@ -246,7 +335,7 @@ function CompanyEmploymentCard({ job, canVerify, onVerify, defaultExpanded = fal
                       href={href}
                       target="_blank"
                       rel="noreferrer"
-                      className="shrink-0 rounded-lg bg-white px-2.5 py-1 text-[10px] font-bold text-[#1a3a8f] no-underline shadow-sm hover:bg-blue-50"
+                      className="shrink-0 rounded-lg bg-white px-2.5 py-1 text-[10px] font-bold text-[#005fd6] no-underline shadow-sm hover:bg-blue-50"
                     >
                       View
                     </a>
@@ -272,7 +361,7 @@ function CompanyEmploymentCard({ job, canVerify, onVerify, defaultExpanded = fal
             <button
               type="button"
               onClick={() => onVerify?.(job)}
-              className="shrink-0 rounded-xl bg-[#1a3a8f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#152b6e]"
+              className="shrink-0 rounded-xl bg-[#005fd6] px-4 py-2 text-sm font-semibold text-white hover:bg-[#004bab]"
             >
               Start Verification
             </button>

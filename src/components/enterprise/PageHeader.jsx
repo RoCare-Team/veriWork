@@ -1,18 +1,18 @@
-function PageHeader({ title, subtitle, badge, action }) {
+/* {title, subtitle, badge, action} is the established contract — breadcrumb is additive. */
+function PageHeader({ title, subtitle, badge, action, breadcrumb }) {
   return (
-    <div className="mb-6 flex items-start justify-between gap-4">
-      <div>
-        <h2 className="m-0 text-xl font-extrabold tracking-tight text-slate-900 md:text-2xl">
-          {title}
-        </h2>
-        {subtitle && (
-          <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
-        )}
+    <div className="mb-6 flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
+      <div className="min-w-0">
+        {breadcrumb && <div className="mb-1.5 text-xs font-medium text-ink-muted">{breadcrumb}</div>}
+        <h2 className="m-0 text-2xl font-bold tracking-tight text-ink-strong md:text-[28px]">{title}</h2>
+        {subtitle && <p className="m-0 mt-1 text-sm text-ink-muted">{subtitle}</p>}
       </div>
-      <div className="flex shrink-0 items-center gap-2">
-        {badge}
-        {action}
-      </div>
+      {(badge || action) && (
+        <div className="flex shrink-0 items-center gap-2">
+          {badge}
+          {action}
+        </div>
+      )}
     </div>
   )
 }

@@ -25,7 +25,7 @@ function PrivacySecurity() {
         <div className="mt-5 flex flex-col gap-3">
           <div className="rounded-2xl border border-slate-100 bg-white p-4 md:p-5">
             <div className="flex items-start gap-3">
-              <LockIcon className="mt-0.5 h-5 w-5 shrink-0 text-[#1a3a8f]" />
+              <LockIcon className="mt-0.5 h-5 w-5 shrink-0 text-[#005fd6]" />
               <div className="flex-1">
                 <p className="m-0 text-sm font-bold text-slate-900">Recruiter Access</p>
                 <p className="m-0 mt-1 text-xs text-slate-500 md:text-sm">
@@ -37,7 +37,7 @@ function PrivacySecurity() {
                 role="switch"
                 aria-checked={recruiterAccess}
                 onClick={() => setRecruiterAccess(!recruiterAccess)}
-                className={`relative h-7 w-12 shrink-0 rounded-full transition ${recruiterAccess ? 'bg-[#1a3a8f]' : 'bg-slate-200'}`}
+                className={`relative h-7 w-12 shrink-0 rounded-full transition ${recruiterAccess ? 'bg-[#005fd6]' : 'bg-slate-200'}`}
               >
                 <span className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition ${recruiterAccess ? 'left-[22px]' : 'left-0.5'}`} />
               </button>
@@ -46,7 +46,7 @@ function PrivacySecurity() {
 
           <div className="rounded-2xl border border-slate-100 bg-white p-4 md:p-5">
             <div className="flex items-start gap-3">
-              <svg className="mt-0.5 h-5 w-5 shrink-0 text-[#1a3a8f]" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <svg className="mt-0.5 h-5 w-5 shrink-0 text-[#005fd6]" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path d="M3 10s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5Z" stroke="currentColor" strokeWidth="1.5" />
                 <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" stroke="currentColor" strokeWidth="1.5" />
                 <path d="M3 3l14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -62,7 +62,7 @@ function PrivacySecurity() {
                 role="switch"
                 aria-checked={documentPrivacy}
                 onClick={() => setDocumentPrivacy(!documentPrivacy)}
-                className={`relative h-7 w-12 shrink-0 rounded-full transition ${documentPrivacy ? 'bg-[#1a3a8f]' : 'bg-slate-200'}`}
+                className={`relative h-7 w-12 shrink-0 rounded-full transition ${documentPrivacy ? 'bg-[#005fd6]' : 'bg-slate-200'}`}
               >
                 <span className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition ${documentPrivacy ? 'left-[22px]' : 'left-0.5'}`} />
               </button>
@@ -71,7 +71,7 @@ function PrivacySecurity() {
 
           <div className="rounded-2xl border border-slate-100 bg-white p-4 md:p-5">
             <div className="flex items-start gap-3">
-              <svg className="mt-0.5 h-5 w-5 shrink-0 text-[#1a3a8f]" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <svg className="mt-0.5 h-5 w-5 shrink-0 text-[#005fd6]" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5" />
                 <path d="M10 6v4l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
@@ -86,7 +86,7 @@ function PrivacySecurity() {
                 role="switch"
                 aria-checked={accessHistory}
                 onClick={() => setAccessHistory(!accessHistory)}
-                className={`relative h-7 w-12 shrink-0 rounded-full transition ${accessHistory ? 'bg-[#1a3a8f]' : 'bg-slate-200'}`}
+                className={`relative h-7 w-12 shrink-0 rounded-full transition ${accessHistory ? 'bg-[#005fd6]' : 'bg-slate-200'}`}
               >
                 <span className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition ${accessHistory ? 'left-[22px]' : 'left-0.5'}`} />
               </button>
@@ -100,13 +100,13 @@ function PrivacySecurity() {
         <div className="mt-5 flex flex-col gap-3">
           <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-4 md:p-5">
             <div className="flex items-center gap-3">
-              <ShieldCheckIcon className="h-5 w-5 text-[#1a3a8f]" />
+              <ShieldCheckIcon className="h-5 w-5 text-[#005fd6]" />
               <div>
                 <p className="m-0 text-sm font-bold text-slate-900">Two-Factor Auth</p>
                 <p className="m-0 text-xs text-slate-500">Highly Recommended</p>
               </div>
             </div>
-            <button type="button" className="rounded-xl border border-[#1a3a8f] px-4 py-2 text-sm font-semibold text-[#1a3a8f] hover:bg-blue-50">
+            <button type="button" className="rounded-xl border border-[#005fd6] px-4 py-2 text-sm font-semibold text-[#005fd6] hover:bg-blue-50">
               Enable
             </button>
           </div>
@@ -166,7 +166,7 @@ function PrivacySecurity() {
 
       <Link
         to="/employee/settings"
-        className="mt-8 inline-block text-sm font-semibold text-[#1a3a8f] no-underline hover:underline"
+        className="mt-8 inline-block text-sm font-semibold text-[#005fd6] no-underline hover:underline"
       >
         ← Back to Settings
       </Link>

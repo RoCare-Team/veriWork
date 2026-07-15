@@ -50,7 +50,7 @@ function InvitationCard({ invitation, onAccept, onReject, isPending }) {
             type="button"
             onClick={() => onAccept(id)}
             disabled={isPending}
-            className="h-11 rounded-xl bg-[#1a3a8f] text-sm font-semibold text-white transition hover:bg-[#152b6e] disabled:opacity-50"
+            className="h-11 rounded-xl bg-[#005fd6] text-sm font-semibold text-white transition hover:bg-[#004bab] disabled:opacity-50"
           >
             Accept
           </button>

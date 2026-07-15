@@ -20,7 +20,7 @@ function FactorRow({ factor }) {
         <span className="text-xs font-bold text-slate-600">+{factor.points}/{factor.max}</span>
       </div>
       <div className="mt-3 h-2 rounded-full bg-slate-100">
-        <div className="h-full rounded-full bg-[#1a3a8f]" style={{ width: `${pct}%` }} />
+        <div className="h-full rounded-full bg-[#005fd6]" style={{ width: `${pct}%` }} />
       </div>
     </div>
   )

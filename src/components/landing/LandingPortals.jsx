@@ -25,7 +25,7 @@ function LandingPortals() {
             Choose your portal
           </h2>
           <p className="m-0 mt-4 text-base leading-relaxed text-slate-600 md:text-lg">
-            Whether you&apos;re hiring or building your career, VeriWork has a dedicated experience
+            Whether you&apos;re hiring or building your career, PagerLook has a dedicated experience
             for you.
           </p>
         </div>
@@ -61,7 +61,7 @@ function LandingPortals() {
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Link
                     to={portal.to}
-                    className="inline-flex h-12 flex-1 items-center justify-center rounded-2xl bg-[#1a3a8f] text-sm font-semibold text-white no-underline transition hover:bg-[#152b6e]"
+                    className="inline-flex h-12 flex-1 items-center justify-center rounded-2xl bg-[#005fd6] text-sm font-semibold text-white no-underline transition hover:bg-[#004bab]"
                   >
                     {portal.cta}
                   </Link>

@@ -24,3 +24,13 @@ export function submitPublicEmploymentVerification(token, body) {
     auth: false,
   })
 }
+
+export function uploadPublicVerificationDocument(token, file) {
+  const form = new FormData()
+  form.append('document', file)
+  return api(API.PUBLIC.EMPLOYMENT_VERIFICATION_DOCUMENT(token), {
+    method: 'POST',
+    body: form,
+    auth: false,
+  })
+}

@@ -10,7 +10,7 @@ function ProfessionalIdCard({ profile, photoUrl }) {
 
   return (
 
-    <div className="overflow-hidden rounded-3xl bg-gradient-to-b from-[#3b5fc7] via-[#1a3a8f] to-[#0f1f4d] p-6 text-white shadow-xl shadow-blue-900/25 md:p-8 lg:p-10">
+    <div className="overflow-hidden rounded-3xl bg-gradient-to-b from-[#3b5fc7] via-[#005fd6] to-[#0f1f4d] p-6 text-white shadow-xl shadow-blue-900/25 md:p-8 lg:p-10">
 
       <div className="flex flex-col items-center text-center">
 

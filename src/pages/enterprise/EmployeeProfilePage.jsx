@@ -83,7 +83,7 @@ function ScoreFactorsBreakdown({ factors = [], title = 'Score breakdown' }) {
             </div>
             {factor.tip && <p className="m-0 mt-1 text-xs text-slate-500">{factor.tip}</p>}
             <div className="mt-3 h-2 rounded-full bg-slate-100">
-              <div className="h-full rounded-full bg-[#1a3a8f]" style={{ width: `${pct}%` }} />
+              <div className="h-full rounded-full bg-[#005fd6]" style={{ width: `${pct}%` }} />
             </div>
           </div>
         )
@@ -259,7 +259,7 @@ function LockedSection({ pending, message, buttonLabel, onRequest }) {
         <button
           type="button"
           onClick={onRequest}
-          className="mt-4 rounded-xl bg-[#1a3a8f] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#152b6e]"
+          className="mt-4 rounded-xl bg-[#005fd6] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#004bab]"
         >
           {buttonLabel}
         </button>
@@ -292,7 +292,7 @@ function DocumentRow({ doc }) {
           href={href}
           target="_blank"
           rel="noreferrer"
-          className="shrink-0 rounded-lg bg-[#1a3a8f] px-3 py-1.5 text-xs font-semibold text-white no-underline hover:bg-[#152b6e]"
+          className="shrink-0 rounded-lg bg-[#005fd6] px-3 py-1.5 text-xs font-semibold text-white no-underline hover:bg-[#004bab]"
         >
           View
         </a>
@@ -409,7 +409,7 @@ function VerificationTab({ verificationSection, trustScore }) {
           <h3 className="m-0 text-sm font-bold text-slate-800">Verification hierarchy</h3>
           <div className="mt-3 flex flex-wrap gap-2">
             {tags.map((tag) => (
-              <span key={tag.id} className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold text-[#1a3a8f] shadow-sm">
+              <span key={tag.id} className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold text-[#005fd6] shadow-sm">
                 ✓ {tag.label}
               </span>
             ))}
@@ -421,7 +421,7 @@ function VerificationTab({ verificationSection, trustScore }) {
           <ProfileScoreRing score={trustScore ?? verificationSection?.trustScore} maxScore={SCORE_MAX} />
           <div>
             <p className="m-0 text-xs font-bold uppercase text-slate-400">Score rating</p>
-            <p className="m-0 mt-1 text-lg font-extrabold text-[#1a3a8f]">
+            <p className="m-0 mt-1 text-lg font-extrabold text-[#005fd6]">
               {verificationSection?.scoreRating?.label || verificationSection?.scoreRating || '—'}
             </p>
             {(verificationSection?.verifiedJobsCount != null || verificationSection?.totalJobsCount != null) && (
@@ -448,7 +448,7 @@ function VerificationTab({ verificationSection, trustScore }) {
                   <p className="m-0 text-sm font-bold text-slate-900">{job.company}</p>
                   <p className="m-0 text-xs text-slate-500">{job.title}</p>
                 </div>
-                <span className="rounded-full bg-[#1a3a8f]/10 px-3 py-1 text-xs font-bold text-[#1a3a8f]">
+                <span className="rounded-full bg-[#005fd6]/10 px-3 py-1 text-xs font-bold text-[#005fd6]">
                   {job.verificationTag?.label || 'Not verified'}
                 </span>
               </div>
@@ -558,7 +558,7 @@ function EmployeeProfilePage() {
           <button
             type="button"
             onClick={() => navigate(COMPANY_ROUTES.TEAM)}
-            className="mt-4 text-sm font-semibold text-[#1a3a8f] hover:underline"
+            className="mt-4 text-sm font-semibold text-[#005fd6] hover:underline"
           >
             ← Back to team
           </button>
@@ -573,7 +573,7 @@ function EmployeeProfilePage() {
         <button
           type="button"
           onClick={() => navigate(COMPANY_ROUTES.TEAM)}
-          className="mb-4 text-sm font-semibold text-[#1a3a8f] hover:underline"
+          className="mb-4 text-sm font-semibold text-[#005fd6] hover:underline"
         >
           ← Back to Team
         </button>
@@ -595,7 +595,7 @@ function EmployeeProfilePage() {
                   <button
                     type="button"
                     onClick={() => setShowAssign(true)}
-                    className="rounded-xl bg-[#1a3a8f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#152b6e]"
+                    className="rounded-xl bg-[#005fd6] px-4 py-2 text-sm font-semibold text-white hover:bg-[#004bab]"
                   >
                     Assign Department
                   </button>
@@ -618,7 +618,7 @@ function EmployeeProfilePage() {
               {photoSrc ? (
                 <img src={photoSrc} alt="" className="h-20 w-20 rounded-2xl object-cover" />
               ) : (
-                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-100 text-xl font-bold text-[#1a3a8f]">
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-100 text-xl font-bold text-[#005fd6]">
                   {getInitials(displayName)}
                 </div>
               )}
@@ -643,7 +643,7 @@ function EmployeeProfilePage() {
           </div>
           <dl className="m-0 mt-6 grid gap-3 border-t border-slate-100 pt-4 sm:grid-cols-2">
             <div>
-              <dt className="text-xs font-bold uppercase text-slate-400">VeriWork ID</dt>
+              <dt className="text-xs font-bold uppercase text-slate-400">PagerLook ID</dt>
               <dd className="m-0 mt-1 text-sm font-semibold text-slate-900">{preview.veriworkId || preview.pagerlookId || '—'}</dd>
             </div>
             <div>
@@ -733,7 +733,7 @@ function EmployeeProfilePage() {
             <button
               type="button"
               onClick={() => openRequest('full_profile_access')}
-              className="rounded-xl border border-[#1a3a8f] px-4 py-2.5 text-sm font-semibold text-[#1a3a8f] hover:bg-blue-50"
+              className="rounded-xl border border-[#005fd6] px-4 py-2.5 text-sm font-semibold text-[#005fd6] hover:bg-blue-50"
             >
               Request Access
             </button>
@@ -770,6 +770,12 @@ function EmployeeProfilePage() {
           companyName={verifyJob.company}
           previousCompanyOnPlatform={Boolean(verifyJob.previousCompanyOnPlatform)}
           matchedPlatformCompany={verifyJob.matchedPlatformCompany || null}
+          defaultHrEmail={verifyJob.hrEmail || ''}
+          defaultManagerEmail={verifyJob.managerEmail || ''}
+          defaultHrName={verifyJob.managerName || ''}
+          department={verifyJob.department || ''}
+          duration={verifyJob.duration || ''}
+          employmentType={verifyJob.employmentType || ''}
           onClose={() => setVerifyJob(null)}
           onSuccess={refreshProfile}
         />

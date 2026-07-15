@@ -37,13 +37,13 @@ function OnboardingLayout({
         >
           <BackIcon />
         </Link>
-        <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-[#1a3a8f]">
+        <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-[#005fd6]">
           Step {step} of {totalSteps}
         </span>
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="relative m-0 hidden overflow-hidden rounded-none bg-gradient-to-br from-[#152b6e] via-[#1a3a8f] to-[#2747b2] lg:m-4 lg:flex lg:flex-col lg:justify-between lg:rounded-3xl lg:p-10 xl:m-5 xl:rounded-[2rem] xl:p-12">
+      <aside className="relative m-0 hidden overflow-hidden rounded-none bg-gradient-to-br from-[#004bab] via-[#005fd6] to-[#0073fe] lg:m-4 lg:flex lg:flex-col lg:justify-between lg:rounded-3xl lg:p-10 xl:m-5 xl:rounded-[2rem] xl:p-12">
         <div
           className="pointer-events-none absolute inset-0 rounded-3xl opacity-[0.05]"
           style={{
@@ -83,7 +83,7 @@ function OnboardingLayout({
             <div>
               <Link
                 to={backTo}
-                className="mb-4 inline-flex items-center gap-1.5 rounded-xl px-2 py-1 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-[#1a3a8f]"
+                className="mb-4 inline-flex items-center gap-1.5 rounded-xl px-2 py-1 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-[#005fd6]"
               >
                 <BackIcon />
                 Back
@@ -97,7 +97,7 @@ function OnboardingLayout({
                 </p>
               )}
             </div>
-            <span className="shrink-0 rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-[#1a3a8f]">
+            <span className="shrink-0 rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-[#005fd6]">
               Step {step} of {totalSteps}
             </span>
           </div>

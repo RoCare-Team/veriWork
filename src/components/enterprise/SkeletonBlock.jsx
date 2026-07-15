@@ -1,13 +1,14 @@
 function SkeletonBlock({ className = '' }) {
-  return <div className={`animate-pulse rounded-2xl bg-slate-200/70 ${className}`} aria-hidden="true" />
+  return <div className={`animate-pulse rounded-ctl bg-hairline ${className}`} aria-hidden="true" />
 }
 
+/* Mirrors the StatCard geometry so the swap-in doesn't jump. */
 export function StatCardSkeleton() {
   return (
-    <div className="rounded-2xl border border-slate-100 border-l-4 border-l-slate-200 bg-white p-5 shadow-sm">
-      <SkeletonBlock className="h-10 w-10 rounded-xl" />
-      <SkeletonBlock className="mt-4 h-8 w-20" />
-      <SkeletonBlock className="mt-2 h-4 w-28" />
+    <div className="min-w-0 rounded-xl border border-hairline bg-surface p-4 shadow-sm md:p-5">
+      <SkeletonBlock className="h-9 w-9" />
+      <SkeletonBlock className="mt-4 h-7 w-20" />
+      <SkeletonBlock className="mt-2 h-4 w-24" />
     </div>
   )
 }

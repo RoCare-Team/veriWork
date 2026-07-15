@@ -43,6 +43,7 @@ import Activity from '../pages/employee/Activity'
 import EmployeeInvitations from '../pages/employee/EmployeeInvitations'
 import EmployeeAccessConsent from '../pages/employee/EmployeeAccessConsent'
 import EmployeeSettings from '../pages/employee/EmployeeSettings'
+import EmailSettings from '../pages/employee/EmailSettings'
 import PrivacySecurity from '../pages/employee/PrivacySecurity'
 import Support from '../pages/employee/Support'
 import {
@@ -111,9 +112,9 @@ function AppRoutes() {
           <Route path="/company/insights" element={<CompanyInsights />} />
           <Route path="/company/audit-logs" element={<AuditLogs />} />
           <Route path="/enterprise/team">
-            <Route index element={<TeamManagement />} />
-            <Route path="department/:department" element={<DepartmentDetails />} />
-            <Route path=":employeeId" element={<EmployeeProfilePage />} />
+          <Route index element={<TeamManagement />} />
+          <Route path="department/:department" element={<DepartmentDetails />} />
+          <Route path=":employeeId" element={<EmployeeProfilePage />} />
           </Route>
           <Route path="/enterprise/access-requests" element={<AccessRequests />} />
           <Route path="/enterprise/insights" element={<CompanyInsights />} />
@@ -148,6 +149,7 @@ function AppRoutes() {
           <Route path="/employee/access-consent" element={<Navigate to="/employee/access-requests" replace />} />
           <Route path="/employee/activity" element={<Activity />} />
           <Route path="/employee/settings" element={<EmployeeSettings />} />
+          <Route path="/employee/settings/email" element={<EmailSettings />} />
           <Route path="/employee/settings/privacy" element={<PrivacySecurity />} />
           <Route path="/employee/settings/support" element={<Support />} />
         </Route>

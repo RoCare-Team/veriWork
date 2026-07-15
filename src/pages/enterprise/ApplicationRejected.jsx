@@ -47,13 +47,13 @@ function ApplicationRejected() {
           </div>
         ) : (
           <p className="m-0 mt-3 max-w-md text-sm leading-relaxed text-slate-600">
-            Please update your documents and resubmit, or contact VeriWork support if you believe this was an error.
+            Please update your documents and resubmit, or contact PagerLook support if you believe this was an error.
           </p>
         )}
 
         <Link
           to="/enterprise/verify"
-          className="mt-8 inline-flex h-12 items-center justify-center rounded-2xl bg-[#1a3a8f] px-7 text-sm font-semibold text-white no-underline shadow-lg shadow-blue-900/20 transition hover:bg-[#152b6e]"
+          className="mt-8 inline-flex h-12 items-center justify-center rounded-2xl bg-[#005fd6] px-7 text-sm font-semibold text-white no-underline shadow-lg shadow-blue-900/20 transition hover:bg-[#004bab]"
         >
           Resubmit Documents
         </Link>

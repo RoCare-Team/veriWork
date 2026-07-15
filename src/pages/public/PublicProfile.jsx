@@ -58,9 +58,9 @@ function PublicProfile() {
         </p>
         <Link
           to="/"
-          className="mt-6 rounded-xl bg-[#1a3a8f] px-5 py-2.5 text-sm font-semibold text-white no-underline hover:bg-[#152b6e]"
+          className="mt-6 rounded-xl bg-[#005fd6] px-5 py-2.5 text-sm font-semibold text-white no-underline hover:bg-[#004bab]"
         >
-          Go to VeriWork
+          Go to PagerLook
         </Link>
       </div>
     )
@@ -79,7 +79,7 @@ function PublicProfile() {
             <button
               type="button"
               onClick={printResumePdf}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#1a3a8f] hover:text-[#1a3a8f]"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#005fd6] hover:text-[#005fd6]"
             >
               <DownloadIcon />
               Download Resume PDF
@@ -87,7 +87,7 @@ function PublicProfile() {
             <button
               type="button"
               onClick={() => setShowAccessModal(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#1a3a8f] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#152b6e]"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#005fd6] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#004bab]"
             >
               <LockIcon />
               Get Full Profile Access
@@ -106,7 +106,7 @@ function PublicProfile() {
         <div className="mb-6 flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
             <ShieldCheckIcon className="h-3.5 w-3.5" />
-            Verified on VeriWork
+            Verified on PagerLook
           </span>
           <span className="text-xs text-slate-400">Public profile · {data.veriworkId}</span>
         </div>
@@ -138,7 +138,7 @@ function PublicProfile() {
                 </dl>
               </div>
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/75 p-6 text-center backdrop-blur-[1px]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#1a3a8f]/10 text-[#1a3a8f]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#005fd6]/10 text-[#005fd6]">
                   <LockIcon />
                 </div>
                 <p className="m-0 mt-3 text-sm font-bold text-slate-900">Full profile is protected</p>
@@ -148,7 +148,7 @@ function PublicProfile() {
                 <button
                   type="button"
                   onClick={() => setShowAccessModal(true)}
-                  className="mt-4 rounded-xl bg-[#1a3a8f] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#152b6e]"
+                  className="mt-4 rounded-xl bg-[#005fd6] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#004bab]"
                 >
                   Get Full Profile Access
                 </button>
@@ -196,7 +196,7 @@ function PublicProfile() {
             </div>
 
             <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-xs leading-relaxed text-slate-600">
-              This resume is auto-generated from a VeriWork verified profile. Download the PDF for sharing, or request full access for hiring and background verification.
+              This resume is auto-generated from a PagerLook verified profile. Download the PDF for sharing, or request full access for hiring and background verification.
             </div>
           </aside>
         </div>

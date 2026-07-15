@@ -12,16 +12,16 @@ function Input({
   ...props
 }) {
   return (
-    <div className={`flex flex-col gap-2 ${className}`.trim()}>
+    <div className={`flex flex-col gap-1.5 ${className}`.trim()}>
       {label && (
-        <label htmlFor={id} className="text-sm font-semibold text-slate-800">
+        <label htmlFor={id} className="text-[13px] font-semibold text-ink-body">
           {label}
-          {required && <span className="text-red-500"> *</span>}
+          {required && <span className="text-danger"> *</span>}
         </label>
       )}
       <div className="relative">
         {leftIcon && (
-          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint">
             {leftIcon}
           </span>
         )}
@@ -31,22 +31,28 @@ function Input({
           required={required}
           aria-invalid={error ? 'true' : undefined}
           aria-describedby={hint || errorText ? `${id}-desc` : undefined}
-          className={`h-12 w-full rounded-2xl border bg-white px-4 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:h-[52px] md:text-base ${leftIcon ? 'pl-11' : ''} ${rightSlot ? 'pr-11' : ''} ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-50' : 'border-slate-200'}`}
+          className={`h-10 w-full rounded-ctl border bg-surface px-3 text-sm text-ink-strong outline-none transition duration-150 ease-swift placeholder:text-ink-faint disabled:cursor-not-allowed disabled:bg-canvas disabled:text-ink-faint ${
+            leftIcon ? 'pl-9' : ''
+          } ${rightSlot ? 'pr-10' : ''} ${
+            error
+              ? 'border-danger focus:border-danger focus:ring-2 focus:ring-danger/20'
+              : 'border-line hover:border-ink-faint focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25'
+          }`}
           {...props}
         />
         {rightSlot && (
-          <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint">
             {rightSlot}
           </span>
         )}
       </div>
       {error && errorText && (
-        <p id={`${id}-desc`} className="m-0 text-xs text-red-600" role="alert">
+        <p id={`${id}-desc`} className="m-0 text-xs text-danger" role="alert">
           {errorText}
         </p>
       )}
       {!error && hint && (
-        <p id={`${id}-desc`} className="m-0 text-xs text-slate-400">
+        <p id={`${id}-desc`} className="m-0 text-xs text-ink-muted">
           {hint}
         </p>
       )}

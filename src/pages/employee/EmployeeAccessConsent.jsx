@@ -27,6 +27,7 @@ function StatusBadge({ status }) {
 function AccessRequestCard({ request, onApprove, onReject, isPending }) {
   const id = request._id || request.id
   const canAct = request.status === 'pending'
+  const isApproved = request.status === 'approved'
   const typeLabel = request.requestTypeLabel || formatRequestType(request.requestType)
   const isFullProfile = request.requestType === 'full_profile_access'
 
@@ -35,7 +36,7 @@ function AccessRequestCard({ request, onApprove, onReject, isPending }) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="m-0 text-base font-bold text-slate-900">{request.companyName}</h3>
-          <p className={`m-0 mt-1 text-sm ${isFullProfile ? 'font-semibold text-[#1a3a8f]' : 'text-slate-600'}`}>
+          <p className={`m-0 mt-1 text-sm ${isFullProfile ? 'font-semibold text-[#005fd6]' : 'text-slate-600'}`}>
             {typeLabel}
           </p>
           {isFullProfile && (
@@ -57,7 +58,7 @@ function AccessRequestCard({ request, onApprove, onReject, isPending }) {
         <div className="mt-4 grid grid-cols-2 gap-3">
           <button
             type="button"
-            onClick={() => onReject(id)}
+            onClick={() => onReject({ id, wasApproved: false })}
             disabled={isPending}
             className="h-11 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
           >
@@ -67,9 +68,22 @@ function AccessRequestCard({ request, onApprove, onReject, isPending }) {
             type="button"
             onClick={() => onApprove(id)}
             disabled={isPending}
-            className="h-11 rounded-xl bg-[#1a3a8f] text-sm font-semibold text-white transition hover:bg-[#152b6e] disabled:opacity-50"
+            className="h-11 rounded-xl bg-[#005fd6] text-sm font-semibold text-white transition hover:bg-[#004bab] disabled:opacity-50"
           >
             Approve
+          </button>
+        </div>
+      )}
+
+      {isApproved && (
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => onReject({ id, wasApproved: true })}
+            disabled={isPending}
+            className="h-11 w-full rounded-xl border border-red-200 bg-white text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50"
+          >
+            Remove access
           </button>
         </div>
       )}
@@ -118,7 +132,7 @@ function VerificationConsentCard({ request, onApprove, onReject, isPending }) {
             type="button"
             onClick={() => onApprove(id)}
             disabled={isPending}
-            className="h-11 rounded-xl bg-[#1a3a8f] text-sm font-semibold text-white transition hover:bg-[#152b6e] disabled:opacity-50"
+            className="h-11 rounded-xl bg-[#005fd6] text-sm font-semibold text-white transition hover:bg-[#004bab] disabled:opacity-50"
           >
             Approve & send to HR
           </button>
@@ -158,12 +172,12 @@ function EmployeeAccessConsent() {
   })
 
   const rejectAccessMutation = useMutation({
-    mutationFn: rejectAccessRequest,
-    onSuccess: () => {
-      toast('Access request rejected', 'success')
+    mutationFn: ({ id }) => rejectAccessRequest(id),
+    onSuccess: (_data, variables) => {
+      toast(variables?.wasApproved ? 'Access removed' : 'Access request rejected', 'success')
       queryClient.invalidateQueries({ queryKey: employeeKeys.accessRequests })
     },
-    onError: (err) => toast(err.message || 'Failed to reject request', 'error'),
+    onError: (err) => toast(err.message || 'Failed to update request', 'error'),
   })
 
   const approveConsentMutation = useMutation({
@@ -234,7 +248,7 @@ function EmployeeAccessConsent() {
                 key={req._id || req.id}
                 request={req}
                 onApprove={(id) => approveAccessMutation.mutate(id)}
-                onReject={(id) => rejectAccessMutation.mutate(id)}
+                onReject={(payload) => rejectAccessMutation.mutate(payload)}
                 isPending={accessPending}
               />
             ))}

@@ -1,5 +1,4 @@
 import EmployeeBrandHeader from '../components/employee/EmployeeBrandHeader'
-import { ShieldCheckIcon } from '../components/common/Icons'
 
 const TRUST_POINTS = [
   { value: '300–900', label: 'VeriScore Range' },
@@ -11,12 +10,12 @@ function EmployeeAuthLayout({ children, heroTitle, heroSubtitle }) {
   return (
     <main className="min-h-screen bg-slate-50 lg:grid lg:grid-cols-2">
       {/* Mobile / tablet brand strip */}
-      <div className="flex items-center justify-center bg-gradient-to-r from-[#152b6e] to-[#1a3a8f] px-6 py-5 md:py-6 lg:hidden">
+      <div className="flex items-center justify-center bg-gradient-to-r from-[#004bab] to-[#005fd6] px-6 py-5 md:py-6 lg:hidden">
         <EmployeeBrandHeader badge="Professional Trust Platform" />
       </div>
 
       {/* Desktop hero */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#152b6e] via-[#1a3a8f] to-[#2747b2] lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16">
+      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#004bab] via-[#005fd6] to-[#0073fe] lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.05]"
           style={{
@@ -28,10 +27,15 @@ function EmployeeAuthLayout({ children, heroTitle, heroSubtitle }) {
         <div className="pointer-events-none absolute -right-20 top-20 h-72 w-72 rounded-full bg-green-400/10 blur-3xl" />
 
         <div className="relative z-10 text-white">
-          <div className="mb-6 grid h-14 w-14 place-items-center rounded-2xl bg-white/15 backdrop-blur-sm">
-            <ShieldCheckIcon className="h-7 w-7" />
+          <div className="mb-6 inline-flex w-fit items-center rounded-2xl bg-white px-4 py-2.5 shadow-lg shadow-black/20 ring-1 ring-black/5">
+            <img
+              src="/pagerLookLogo.png"
+              alt="PagerLook"
+              className="h-9 w-auto object-contain"
+              draggable="false"
+            />
           </div>
-          <p className="m-0 text-sm font-semibold text-white/70">VeriWork Employee</p>
+          <p className="m-0 text-sm font-semibold text-white/70">Employee Portal</p>
           <h2 className="m-0 mt-2 text-3xl font-extrabold leading-tight tracking-tight xl:text-4xl">
             {heroTitle || 'Verified Identity'}
           </h2>

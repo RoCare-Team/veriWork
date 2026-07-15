@@ -92,7 +92,7 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
       <div className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl">
         <h3 className="m-0 text-lg font-extrabold text-slate-900">Invite Employee</h3>
         <p className="mt-1 text-sm text-slate-500">
-          Email is required. Employee will register via link if not on VeriWork yet.
+          Email is required. Employee will register via link if not on PagerLook yet.
         </p>
 
         {lastResult?.registrationLink && (
@@ -102,7 +102,7 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
               href={lastResult.registrationLink}
               target="_blank"
               rel="noreferrer"
-              className="m-0 mt-1 block break-all text-[#1a3a8f] hover:underline"
+              className="m-0 mt-1 block break-all text-[#005fd6] hover:underline"
             >
               {lastResult.registrationLink}
             </a>

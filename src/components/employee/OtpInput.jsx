@@ -52,7 +52,7 @@ function OtpInput({ value, onChange, disabled = false }) {
             aria-label={`Digit ${index + 1}`}
             onChange={(e) => updateDigit(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
-            className="h-12 w-full max-w-[52px] rounded-xl border border-slate-300 bg-white text-center text-lg font-bold text-slate-900 outline-none transition focus:border-[#1a3a8f] focus:ring-4 focus:ring-blue-100 disabled:bg-slate-50 sm:h-14 sm:max-w-[56px] sm:text-xl"
+            className="h-12 w-full max-w-[52px] rounded-xl border border-slate-300 bg-white text-center text-lg font-bold text-slate-900 outline-none transition focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100 disabled:bg-slate-50 sm:h-14 sm:max-w-[56px] sm:text-xl"
           />
         ))}
       </div>
