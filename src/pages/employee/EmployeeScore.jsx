@@ -58,13 +58,13 @@ function EmployeeScore() {
 
   return (
     <EmployeeLayout>
-      <EmployeePageHeader title="Employee Score" subtitle="Your VeriScore — like CIBIL, but for your career" />
+      <EmployeePageHeader title="Employee Score" subtitle="Your PagerLook Score — like CIBIL, but for your career" />
 
       <div className="lg:grid lg:grid-cols-5 lg:gap-8">
         <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm lg:col-span-2">
           <EmployeeScoreGauge score={data.employeeScore} rating={data.scoreRating} size="lg" />
           <p className="mt-4 text-center text-sm text-slate-600">{data.scoreRating?.description}</p>
-          <p className="mt-2 text-center text-xs font-semibold text-[#ea7a3b]">{data.percentile}</p>
+          <p className="mt-2 text-center text-xs font-semibold text-[#005fd6]">{data.percentile}</p>
           <p className="mt-4 text-center text-xs text-slate-400">Range {data.minScore ?? SCORE_MIN}–{data.maxScore ?? SCORE_MAX}</p>
 
           {(data.verificationTags || []).length > 0 && (
@@ -83,7 +83,7 @@ function EmployeeScore() {
 
         <div className="mt-6 space-y-4 lg:col-span-3 lg:mt-0">
           <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-slate-600">
-            Employers use your VeriScore ({data.employeeScore}) for hiring and workforce decisions.
+            Employers use your PagerLook Score ({data.employeeScore}) for hiring and workforce decisions.
           </div>
 
           <h2 className="m-0 text-sm font-bold text-slate-800">Score breakdown</h2>

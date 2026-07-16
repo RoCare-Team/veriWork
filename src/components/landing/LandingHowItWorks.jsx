@@ -4,7 +4,7 @@ function StepBadge({ audience }) {
   const styles = {
     both: 'bg-slate-100 text-slate-600',
     employee: 'bg-blue-50 text-[#005fd6]',
-    enterprise: 'bg-orange-50 text-[#ea7a3b]',
+    enterprise: 'bg-brand-50 text-[#005fd6]',
   }
   const labels = {
     both: 'Everyone',
@@ -26,7 +26,7 @@ function LandingHowItWorks() {
     <section id="how-it-works" className="scroll-mt-24 bg-slate-50 py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-5 md:px-8 lg:px-10">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#ea7a3b]">
+          <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#005fd6]">
             How it works
           </p>
           <h2 className="m-0 mt-3 text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">
@@ -38,7 +38,7 @@ function LandingHowItWorks() {
         </div>
 
         <div className="relative mt-14">
-          <div className="absolute left-8 top-0 hidden h-full w-px bg-gradient-to-b from-[#005fd6]/30 via-[#ea7a3b]/30 to-transparent md:left-1/2 md:block md:-translate-x-px" />
+          <div className="absolute left-8 top-0 hidden h-full w-px bg-gradient-to-b from-[#005fd6]/30 via-[#005fd6]/30 to-transparent md:left-1/2 md:block md:-translate-x-px" />
 
           <div className="flex flex-col gap-8 md:gap-12">
             {LANDING_STEPS.map((item, index) => {

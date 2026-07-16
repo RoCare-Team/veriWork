@@ -30,7 +30,7 @@ function CandidateRequestCard({
         </div>
         <div className={`flex shrink-0 flex-col items-end rounded-xl border px-2.5 py-1.5 ${rating.bg} ${rating.border}`}>
           <span className={`text-base font-extrabold ${rating.color}`}>{score}</span>
-          <span className="text-[9px] font-bold uppercase text-slate-400">VeriScore</span>
+          <span className="text-[9px] font-bold uppercase text-slate-400">PagerLook Score</span>
         </div>
       </div>
 

@@ -4,7 +4,7 @@ import { ShieldCheckIcon, CheckCircleIcon } from '../common/Icons'
 function TrustConnectionVisual() {
   return (
     <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
-      <div className="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-[#005fd6]/15 via-transparent to-[#ea7a3b]/20 blur-3xl" />
+      <div className="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-[#005fd6]/15 via-transparent to-[#005fd6]/20 blur-3xl" />
 
       <div className="relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-white/90 p-6 shadow-2xl shadow-slate-300/25 backdrop-blur-sm md:p-8">
         <div className="mb-6 flex items-center justify-between">
@@ -46,20 +46,20 @@ function TrustConnectionVisual() {
 
           {/* Connection bridge */}
           <div className="relative flex flex-col items-center justify-center py-2 md:py-0">
-            <div className="hidden h-px w-full bg-gradient-to-r from-[#005fd6]/30 via-[#ea7a3b]/50 to-[#005fd6]/30 md:block" />
-            <div className="my-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#ea7a3b]/25 bg-gradient-to-br from-[#ea7a3b]/10 to-[#005fd6]/10 shadow-lg shadow-orange-200/30">
+            <div className="hidden h-px w-full bg-gradient-to-r from-[#005fd6]/30 via-[#005fd6]/50 to-[#005fd6]/30 md:block" />
+            <div className="my-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#005fd6]/25 bg-gradient-to-br from-[#005fd6]/10 to-[#005fd6]/10 shadow-lg shadow-brand-500/15">
               <ShieldCheckIcon className="h-7 w-7 text-[#005fd6]" />
             </div>
-            <div className="hidden h-px w-full bg-gradient-to-r from-[#005fd6]/30 via-[#ea7a3b]/50 to-[#005fd6]/30 md:block" />
+            <div className="hidden h-px w-full bg-gradient-to-r from-[#005fd6]/30 via-[#005fd6]/50 to-[#005fd6]/30 md:block" />
             <p className="m-0 mt-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400 md:mt-3">
               Verified trust
             </p>
           </div>
 
           {/* Professional */}
-          <div className="rounded-2xl border border-[#ea7a3b]/20 bg-gradient-to-br from-[#ea7a3b]/5 to-white p-4">
+          <div className="rounded-2xl border border-[#005fd6]/20 bg-gradient-to-br from-[#005fd6]/5 to-white p-4">
             <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#ea7a3b] to-[#d9682f] text-sm font-bold text-white">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#005fd6] to-[#004bab] text-sm font-bold text-white">
                 PS
               </div>
               <div>
@@ -70,7 +70,7 @@ function TrustConnectionVisual() {
             <div className="space-y-2">
               <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
                 <span className="text-slate-500">Trust score</span>
-                <span className="font-bold text-[#ea7a3b]">98</span>
+                <span className="font-bold text-[#005fd6]">98</span>
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
                 <span className="text-slate-500">Identity</span>
@@ -144,15 +144,15 @@ function LandingHero() {
         <div className="max-w-xl">
           <span className="inline-flex items-center gap-2 rounded-full border border-[#005fd6]/15 bg-white/80 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#005fd6] shadow-sm backdrop-blur-sm">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ea7a3b] opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#ea7a3b]" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#005fd6] opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#005fd6]" />
             </span>
             Company ↔ Professional trust platform
           </span>
 
           <h1 className="m-0 mt-7 text-[2rem] font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-4xl md:text-[2.75rem] lg:text-5xl">
             Connecting Talent{' '}
-            <span className="bg-gradient-to-r from-[#ea7a3b] to-[#d9682f] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#005fd6] to-[#004bab] bg-clip-text text-transparent">
               Faster
             </span>
             ,<br />

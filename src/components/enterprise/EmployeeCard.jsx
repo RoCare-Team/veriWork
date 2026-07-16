@@ -51,7 +51,7 @@ function EmployeeCard({
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="m-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              VeriScore
+              PagerLook Score
             </p>
             <div className="mt-1 flex items-center gap-1.5">
               <span className={`text-lg font-extrabold ${rating.color}`}>{score}</span>

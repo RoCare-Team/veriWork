@@ -5,7 +5,7 @@ function LandingTestimonials() {
     <section className="py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-5 md:px-8 lg:px-10">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#ea7a3b]">
+          <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#005fd6]">
             Testimonials
           </p>
           <h2 className="m-0 mt-3 text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">

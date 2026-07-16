@@ -5,7 +5,7 @@ function EmployeeBrandHeader({ badge = 'Professional Trust Platform' }) {
         <img
           src="/pagerLookLogo.png"
           alt="PagerLook"
-          className="h-9 w-auto object-contain"
+          className="h-11 w-auto object-contain"
           draggable="false"
         />
       </div>

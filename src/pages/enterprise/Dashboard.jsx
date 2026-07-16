@@ -272,7 +272,7 @@ function Dashboard() {
             accent="orange"
             trend={stats.pendingRequests > 0 ? 'Pending' : undefined}
           />
-          <StatCard icon={<ShieldIcon />} label="Avg VeriScore" value={String(stats.avgVeriScore || '—')} accent="red" />
+          <StatCard icon={<ShieldIcon />} label="Avg PagerLook Score" value={String(stats.avgVeriScore || '—')} accent="red" />
         </div>
 
         {/* Main trend + join requests */}
@@ -383,7 +383,7 @@ function Dashboard() {
             <DepartmentDonutChart data={departmentData} />
           </Card>
 
-          <Card title={trustChartTitle} subtitle="VeriScore breakdown for your workforce">
+          <Card title={trustChartTitle} subtitle="PagerLook Score breakdown for your workforce">
             <TrustScoreBarChart data={trustBars} />
           </Card>
         </div>

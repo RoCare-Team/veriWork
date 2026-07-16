@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import AuthLayout from '../../layouts/AuthLayout'
-import BrandLogo from '../../components/common/BrandLogo'
 import Button from '../../components/common/Button'
 import Input from '../../components/common/Input'
 import Loader from '../../components/common/Loader'
@@ -55,11 +54,8 @@ function EnterpriseLogin() {
 
   return (
     <AuthLayout>
+      {/* Single logo only: the hero (desktop) and mobile brand strip carry it. */}
       <div className="flex flex-col gap-7">
-        <header className="hidden justify-center lg:flex">
-          <BrandLogo size="md" showTagline />
-        </header>
-
         <section className="text-center">
           <h1 className="m-0 text-[30px] font-extrabold tracking-tight text-[#005fd6] sm:text-[34px]">
             Enterprise Login

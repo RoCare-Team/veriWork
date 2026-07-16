@@ -110,7 +110,7 @@ function ProfessionalId() {
               <p className="m-0 text-xs font-semibold uppercase tracking-wide text-amber-800">Your PagerLook ID</p>
               <p className="m-0 mt-1 text-lg font-extrabold text-slate-900">{data.veriworkId}</p>
               <p className="m-0 mt-2 text-xs text-slate-600">
-                Share this ID so colleagues and managers can endorse you on VeriScore.
+                Share this ID so colleagues and managers can endorse you on PagerLook Score.
               </p>
               <button
                 type="button"

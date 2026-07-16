@@ -262,7 +262,7 @@ export function buildDepartmentTrustTrend(teamData) {
     values: bars.map((b) => b.count),
     labels: bars.map((b) => b.department),
     title: 'Trust Score by Department',
-    subtitle: 'Average VeriScore across teams',
+    subtitle: 'Average PagerLook Score across teams',
   }
 }
 
@@ -280,7 +280,7 @@ export function buildEmployeeTrustTrend(teamData) {
   return {
     values: scored.map((e) => e.score),
     labels: scored.map((e) => e.name.split(' ')[0]),
-    title: 'Employee VeriScores',
+    title: 'Employee PagerLook Scores',
     subtitle: 'Trust score per linked employee',
   }
 }

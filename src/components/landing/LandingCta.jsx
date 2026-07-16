@@ -5,7 +5,7 @@ function LandingCta() {
     <section className="pb-20 md:pb-28">
       <div className="mx-auto max-w-7xl px-5 md:px-8 lg:px-10">
         <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#004bab] via-[#005fd6] to-[#0073fe] px-6 py-12 text-center md:px-12 md:py-16">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#ea7a3b]/20 blur-3xl" />
+          <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#005fd6]/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
 
           <div className="relative">

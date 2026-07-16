@@ -85,7 +85,7 @@ function EmployeeLogin() {
 
   return (
     <EmployeeAuthLayout
-      heroTitle={isReturningFlow ? 'Welcome Back' : 'Build Your VeriScore'}
+      heroTitle={isReturningFlow ? 'Welcome Back' : 'Build Your PagerLook Score'}
       heroSubtitle="Sign in with phone OTP. Dev mock code: 123456"
     >
       <div className="flex flex-col gap-7 md:gap-8">
@@ -94,7 +94,7 @@ function EmployeeLogin() {
             Sign In
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-slate-500 md:text-base">
-            Enter your phone number to access your profile and VeriScore.
+            Enter your phone number to access your profile and PagerLook Score.
           </p>
         </section>
 

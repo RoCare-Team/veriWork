@@ -87,7 +87,7 @@ export const JOIN_REQUESTS = [
 export const DASHBOARD_STATS = [
   { label: 'Total Employees', value: '1,284', change: '+12%' },
   { label: 'Pending Verifications', value: '38', change: '-5%' },
-  { label: 'Avg VeriScore', value: '782', change: '+3%' },
+  { label: 'Avg PagerLook Score', value: '782', change: '+3%' },
   { label: 'Join Requests', value: '14', change: '+8%' },
 ]
 

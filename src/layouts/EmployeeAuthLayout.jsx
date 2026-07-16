@@ -2,7 +2,7 @@ import EmployeeBrandHeader from '../components/employee/EmployeeBrandHeader'
 import AuthHero from '../components/common/AuthHero'
 
 const TRUST_POINTS = [
-  { value: '300–900', label: 'VeriScore Range' },
+  { value: '300–900', label: 'PagerLook Score Range' },
   { value: 'AES-256', label: 'Encryption' },
   { value: 'UIDAI', label: 'Aadhaar Ready' },
 ]

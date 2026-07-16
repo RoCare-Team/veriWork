@@ -127,7 +127,7 @@ function EmployeeSettings() {
             {profile?.employeeScore != null && (
               <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
                 <ShieldCheckIcon className="h-3.5 w-3.5" />
-                VeriScore {profile.employeeScore}
+                PagerLook Score {profile.employeeScore}
               </span>
             )}
           </div>

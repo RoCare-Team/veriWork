@@ -178,7 +178,7 @@ function EmployeeScoreGauge({ score, rating, size = 'lg', showRange = true, anim
           {displayScore}
         </span>
         <span className={`mt-1 font-semibold uppercase tracking-wider text-slate-400 ${s.sub}`}>
-          VeriScore
+          PagerLook Score
         </span>
       </div>
 

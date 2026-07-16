@@ -5,7 +5,7 @@ function SectionHeading({ eyebrow, title, subtitle }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
       {eyebrow && (
-        <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#ea7a3b]">{eyebrow}</p>
+        <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#005fd6]">{eyebrow}</p>
       )}
       <h2 className="m-0 mt-3 text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">
         {title}

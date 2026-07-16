@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import BrandLogo from '../common/BrandLogo'
+import PortalChooserModal from './PortalChooserModal'
 import { LANDING_NAV } from '../../utils/landingData'
 
 function MenuIcon({ open }) {
@@ -20,6 +21,12 @@ function MenuIcon({ open }) {
 function LandingNavbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [chooserOpen, setChooserOpen] = useState(false)
+
+  const openChooser = () => {
+    setMenuOpen(false)
+    setChooserOpen(true)
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
@@ -67,12 +74,13 @@ function LandingNavbar() {
           >
             Sign in
           </Link>
-          <Link
-            to="/enterprise/register"
-            className="rounded-xl bg-[#005fd6] px-5 py-2.5 text-sm font-semibold text-white no-underline shadow-lg shadow-blue-900/15 transition hover:bg-[#004bab]"
+          <button
+            type="button"
+            onClick={openChooser}
+            className="rounded-xl bg-[#005fd6] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/15 transition hover:bg-[#004bab]"
           >
             Get started
-          </Link>
+          </button>
         </div>
 
         <button
@@ -108,16 +116,18 @@ function LandingNavbar() {
             >
               Sign in
             </Link>
-            <Link
-              to="/enterprise/register"
-              onClick={() => setMenuOpen(false)}
-              className="rounded-xl bg-[#005fd6] py-3 text-center text-sm font-semibold text-white no-underline"
+            <button
+              type="button"
+              onClick={openChooser}
+              className="rounded-xl bg-[#005fd6] py-3 text-center text-sm font-semibold text-white"
             >
               Get started
-            </Link>
+            </button>
           </div>
         </div>
       )}
+
+      <PortalChooserModal open={chooserOpen} onClose={() => setChooserOpen(false)} />
     </header>
   )
 }

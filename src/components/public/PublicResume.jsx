@@ -41,7 +41,7 @@ function PublicResume({ profile, photoUrl, compact = false }) {
           </div>
         </div>
         <div className="score-box shrink-0 rounded-xl bg-gradient-to-br from-[#005fd6] to-[#0073fe] px-4 py-3 text-center text-white">
-          <p className="m-0 text-[10px] font-semibold uppercase tracking-wider text-white/70">VeriScore</p>
+          <p className="m-0 text-[10px] font-semibold uppercase tracking-wider text-white/70">PagerLook Score</p>
           <p className="m-0 text-3xl font-extrabold leading-none">{profile.employeeScore}</p>
           <p className="m-0 mt-1 text-xs font-medium text-white/80">{profile.scoreRating?.label}</p>
         </div>

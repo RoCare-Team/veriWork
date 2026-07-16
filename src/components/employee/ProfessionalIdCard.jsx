@@ -69,7 +69,7 @@ function ProfessionalIdCard({ profile, photoUrl }) {
 
           <p className="m-0 text-2xl font-extrabold md:text-3xl">{profile.employeeScore ?? profile.trustScore}</p>
 
-          <p className="m-0 mt-0.5 text-[11px] text-white/65">VeriScore</p>
+          <p className="m-0 mt-0.5 text-[11px] text-white/65">PagerLook Score</p>
 
         </div>
 

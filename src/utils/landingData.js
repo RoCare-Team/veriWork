@@ -27,7 +27,7 @@ export const LANDING_FEATURES = [
     description:
       'Monitor verification status, join requests, and trust scores across your entire organization.',
     icon: 'grid',
-    accent: 'bg-orange-50 text-[#ea7a3b]',
+    accent: 'bg-brand-50 text-[#005fd6]',
   },
   {
     id: 'job-history',

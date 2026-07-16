@@ -79,7 +79,7 @@ function JobHistory() {
     <EmployeeLayout>
       <EmployeePageHeader
         title="Job History"
-        subtitle="Verified employment records that power your VeriScore"
+        subtitle="Verified employment records that power your PagerLook Score"
         action={
           <Link
             to="/employee/job-history/add"
@@ -117,7 +117,7 @@ function JobHistory() {
               {verifiedCount} of {totalRoles} roles verified
             </p>
             <p className="m-0 mt-1 max-w-md text-sm text-white/70">
-              Each verified role adds trust to your profile and improves your VeriScore.
+              Each verified role adds trust to your profile and improves your PagerLook Score.
             </p>
           </div>
           <div className="relative flex h-[72px] w-[72px] shrink-0 items-center justify-center">

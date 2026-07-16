@@ -41,7 +41,7 @@ function VerifiedIdIllustration() {
           </span>
         </div>
 
-        {/* VeriScore ring */}
+        {/* PagerLook Score ring */}
         <div className="mt-6 flex items-center gap-5">
           <div className="relative h-24 w-24 shrink-0">
             <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
@@ -67,7 +67,7 @@ function VerifiedIdIllustration() {
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-2xl font-extrabold leading-none text-white">820</span>
               <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-wider text-white/55">
-                VeriScore
+                PagerLook Score
               </span>
             </div>
           </div>
@@ -135,7 +135,7 @@ function AuthHero({ eyebrow, title, subtitle, stats = [] }) {
       {/* Brand + copy */}
       <div className="relative z-10">
         <div className="inline-flex items-center rounded-2xl bg-white px-4 py-2.5 shadow-lg shadow-black/20 ring-1 ring-black/5">
-          <img src="/pagerLookLogo.png" alt="PagerLook" className="h-8 w-auto object-contain" draggable="false" />
+          <img src="/pagerLookLogo.png" alt="PagerLook" className="h-11 w-auto object-contain" draggable="false" />
         </div>
         {eyebrow && (
           <p className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-white/60">{eyebrow}</p>
