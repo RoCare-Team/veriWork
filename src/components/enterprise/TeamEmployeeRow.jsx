@@ -23,6 +23,17 @@ function TeamEmployeeRow({ employee, onRequestAccess, onRemoveAccess, onAssign }
   const stage = employee.onboardingStage || 'incoming'
   const stageStyle = getOnboardingStageStyle(stage)
 
+  const STAGE_ACCENT = {
+    active: { bar: 'bg-emerald-400', ring: 'ring-emerald-100' },
+    verified: { bar: 'bg-[#005fd6]', ring: 'ring-blue-100' },
+    pending_verification: { bar: 'bg-amber-400', ring: 'ring-amber-100' },
+    incoming: { bar: 'bg-slate-300', ring: 'ring-slate-100' },
+  }
+  const accent = STAGE_ACCENT[stage] || STAGE_ACCENT.incoming
+  const score = employee.trustScore
+  const scoreColor =
+    score == null ? 'text-slate-500' : score >= 750 ? 'text-emerald-600' : score >= 500 ? 'text-[#005fd6]' : 'text-amber-600'
+
   const renderAccessButton = () => {
     if (accessButton === 'remove_access') {
       return (
@@ -84,14 +95,15 @@ function TeamEmployeeRow({ employee, onRequestAccess, onRemoveAccess, onAssign }
   }
 
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:shadow-md md:p-5">
+    <article className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pl-5 shadow-sm transition hover:border-slate-300 hover:shadow-md md:p-5 md:pl-6">
+      <span className={`absolute inset-y-0 left-0 w-1.5 ${accent.bar}`} aria-hidden />
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 flex-1 items-center gap-4">
           {photoSrc ? (
             <img
               src={photoSrc}
               alt=""
-              className="h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-slate-100"
+              className={`h-12 w-12 shrink-0 rounded-full object-cover ring-2 ${accent.ring}`}
             />
           ) : (
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-slate-100 to-slate-200 text-sm font-semibold text-slate-600">
@@ -117,10 +129,10 @@ function TeamEmployeeRow({ employee, onRequestAccess, onRemoveAccess, onAssign }
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-3 sm:justify-end">
-          {employee.trustScore != null && (
-            <div className="rounded-lg bg-slate-50 px-3 py-2 text-center">
-              <p className="m-0 text-[10px] font-medium uppercase tracking-wide text-slate-400">Trust score</p>
-              <p className="m-0 text-base font-bold text-[#005fd6]">{employee.trustScore}</p>
+          {score != null && (
+            <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-2 text-center">
+              <p className="m-0 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Trust score</p>
+              <p className={`m-0 text-lg font-extrabold ${scoreColor}`}>{score}</p>
             </div>
           )}
           <div className="flex flex-wrap gap-2">

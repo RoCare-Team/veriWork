@@ -85,6 +85,11 @@ export function inviteEmployee(body) {
   return api(API.COMPANY.INVITE_EMPLOYEE, { method: 'POST', body })
 }
 
+export function searchCompanyEmployees(query) {
+  const params = new URLSearchParams({ q: query })
+  return api(`${API.COMPANY.EMPLOYEE_SEARCH}?${params}`)
+}
+
 export function fetchPendingInvitations() {
   return api(API.COMPANY.INVITATIONS_PENDING)
 }

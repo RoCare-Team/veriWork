@@ -9,6 +9,7 @@ import { enterpriseKeys, fetchWorkspace } from '../../api/enterprise'
 import { getInitials } from '../../utils/formatters'
 import Loader from '../../components/common/Loader'
 import SmtpSettingsSection from '../../components/enterprise/SmtpSettingsSection'
+import ChangePasswordSection from '../../components/enterprise/ChangePasswordSection'
 
 const TABS = [
   { id: 'general', label: 'General' },
@@ -246,6 +247,7 @@ function Settings() {
 
           {activeTab === 'security' && (
             <>
+              <ChangePasswordSection />
               <SecurityApiSection />
               <EnterprisePlanCard totalEmployees={workspace?.totalEmployees ?? company?.totalEmployees} />
               <DangerZoneSection />

@@ -10,6 +10,7 @@ export const API = {
     ADMIN_LOGIN: '/auth/admin/login',
     REFRESH: '/auth/refresh',
     LOGOUT: '/auth/logout',
+    CHANGE_PASSWORD: '/auth/change-password',
   },
 
   ADMIN: {
@@ -71,6 +72,7 @@ export const API = {
     TEAM: '/company/team',
     TEAM_DEPARTMENT: (department) => `/company/team/department/${encodeURIComponent(department)}`,
     INVITE_EMPLOYEE: '/company/invite-employee',
+    EMPLOYEE_SEARCH: '/company/employees/search',
     INVITATIONS_PENDING: '/company/invitations/pending',
     EMPLOYEE_PROFILE: (employeeId) => `/company/employees/${employeeId}/profile`,
     EMPLOYEE_DOCUMENTS: (employeeId) => `/company/employees/${employeeId}/documents`,

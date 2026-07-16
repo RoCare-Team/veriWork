@@ -1,4 +1,5 @@
 import EmployeeBrandHeader from '../components/employee/EmployeeBrandHeader'
+import AuthHero from '../components/common/AuthHero'
 
 const TRUST_POINTS = [
   { value: '300–900', label: 'VeriScore Range' },
@@ -8,55 +9,22 @@ const TRUST_POINTS = [
 
 function EmployeeAuthLayout({ children, heroTitle, heroSubtitle }) {
   return (
-    <main className="min-h-screen bg-slate-50 lg:grid lg:grid-cols-2">
+    <main className="min-h-screen bg-white lg:grid lg:grid-cols-2">
       {/* Mobile / tablet brand strip */}
-      <div className="flex items-center justify-center bg-gradient-to-r from-[#004bab] to-[#005fd6] px-6 py-5 md:py-6 lg:hidden">
+      <div className="flex items-center justify-center bg-gradient-to-br from-brand-950 via-brand-900 to-brand-600 px-6 py-5 md:py-6 lg:hidden">
         <EmployeeBrandHeader badge="Professional Trust Platform" />
       </div>
 
       {/* Desktop hero */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#004bab] via-[#005fd6] to-[#0073fe] lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
-        <div className="pointer-events-none absolute -right-20 top-20 h-72 w-72 rounded-full bg-green-400/10 blur-3xl" />
-
-        <div className="relative z-10 text-white">
-          <div className="mb-6 inline-flex w-fit items-center rounded-2xl bg-white px-4 py-2.5 shadow-lg shadow-black/20 ring-1 ring-black/5">
-            <img
-              src="/pagerLookLogo.png"
-              alt="PagerLook"
-              className="h-9 w-auto object-contain"
-              draggable="false"
-            />
-          </div>
-          <p className="m-0 text-sm font-semibold text-white/70">Employee Portal</p>
-          <h2 className="m-0 mt-2 text-3xl font-extrabold leading-tight tracking-tight xl:text-4xl">
-            {heroTitle || 'Verified Identity'}
-          </h2>
-          <p className="mt-4 max-w-md text-base leading-relaxed text-white/75">
-            {heroSubtitle ||
-              'Build a secure, encrypted professional profile that employers can trust instantly.'}
-          </p>
-        </div>
-
-        <ul className="relative z-10 m-0 grid list-none grid-cols-3 gap-3 p-0">
-          {TRUST_POINTS.map((item) => (
-            <li
-              key={item.label}
-              className="rounded-2xl border border-white/12 bg-white/10 px-4 py-4 backdrop-blur-sm"
-            >
-              <strong className="block text-sm font-bold text-white">{item.value}</strong>
-              <span className="mt-1 block text-[11px] text-white/65">{item.label}</span>
-            </li>
-          ))}
-        </ul>
-      </aside>
+      <AuthHero
+        eyebrow="Employee portal"
+        title={heroTitle || 'Your verified professional identity.'}
+        subtitle={
+          heroSubtitle ||
+          'Build a secure, encrypted professional profile that employers can trust instantly.'
+        }
+        stats={TRUST_POINTS}
+      />
 
       {/* Form panel */}
       <section className="flex flex-1 items-center justify-center px-5 py-8 sm:px-8 md:px-10 md:py-12 lg:min-h-screen lg:px-12 lg:py-12 xl:px-16">

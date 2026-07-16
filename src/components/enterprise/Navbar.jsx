@@ -33,14 +33,6 @@ function BellIcon() {
   )
 }
 
-function PlusIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path d="M8 3.5v9M3.5 8h9" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-    </svg>
-  )
-}
-
 function ChevronIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -273,14 +265,6 @@ function EnterpriseNavbar({ onMenuClick, companyName = 'Acme Technologies Pvt. L
           >
             <SearchIcon />
           </button>
-
-          <Link
-            to="/enterprise/qr-onboarding"
-            className="hidden h-9 items-center gap-1.5 rounded-ctl bg-brand-600 px-3 text-[13px] font-semibold text-white no-underline shadow-xs outline-none transition-colors duration-150 ease-swift hover:bg-brand-700 focus-visible:ring-2 focus-visible:ring-brand-500/40 lg:inline-flex"
-          >
-            <PlusIcon />
-            Invite
-          </Link>
 
           <NotificationsMenu />
 

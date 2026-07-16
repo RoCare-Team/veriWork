@@ -112,6 +112,13 @@ export function registerEnterprise(payload) {
   return api(API.AUTH.ENTERPRISE_REGISTER, { method: 'POST', body: payload, auth: false })
 }
 
+export function changePassword(currentPassword, newPassword) {
+  return api(API.AUTH.CHANGE_PASSWORD, {
+    method: 'POST',
+    body: { currentPassword, newPassword },
+  })
+}
+
 export function logoutApi(refreshToken) {
   if (refreshToken === 'dev-admin-mock-refresh') return Promise.resolve({ ok: true })
   return api(API.AUTH.LOGOUT, {
