@@ -1,6 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Home from '../pages/Home'
 import EnterpriseLogin from '../pages/auth/EnterpriseLogin'
+import ForgotPassword from '../pages/auth/ForgotPassword'
+import ResetPassword from '../pages/auth/ResetPassword'
 import BusinessBasicInfo from '../pages/auth/BusinessBasicInfo'
 import CompanyVerification from '../pages/auth/CompanyVerification'
 import ReviewSubmission from '../pages/auth/ReviewSubmission'
@@ -29,7 +31,6 @@ import AdminCompanies from '../pages/admin/AdminCompanies'
 import AdminCompanyReview from '../pages/admin/AdminCompanyReview'
 import AdminEmployees from '../pages/admin/AdminEmployees'
 import AdminEmployeeDetail from '../pages/admin/AdminEmployeeDetail'
-import EmployeeWelcome from '../pages/employee/EmployeeWelcome'
 import EmployeeJoin from '../pages/employee/EmployeeJoin'
 import EmployeeOtp from '../pages/employee/EmployeeOtp'
 import ProfileSetup from '../pages/employee/ProfileSetup'
@@ -73,6 +74,10 @@ function AppRoutes() {
         <Route path="/enterprise/accept-invite" element={<AcceptInvite />} />
         {/* Scanned QR onboarding — anyone with the code can apply */}
         <Route path="/join/:code" element={<QrJoin />} />
+
+        {/* Password reset — public, the emailed token is the proof */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Admin */}
         <Route element={<AdminGuestGuard />}>
@@ -132,9 +137,9 @@ function AppRoutes() {
           <Route path="/enterprise/settings" element={<Settings />} />
         </Route>
 
-        {/* Employee — guest */}
+        {/* Employee — guest. Land straight on the phone-number screen. */}
         <Route element={<EmployeeGuestGuard />}>
-          <Route path="/employee" element={<EmployeeWelcome />} />
+          <Route path="/employee" element={<Navigate to="/employee/otp" replace />} />
           <Route path="/employee/otp" element={<EmployeeOtp />} />
           <Route path="/employee/login" element={<Navigate to="/employee/otp" replace />} />
         </Route>

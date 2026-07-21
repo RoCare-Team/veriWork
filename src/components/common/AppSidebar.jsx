@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
-import BrandLogo from './BrandLogo'
+import BrandMark from './BrandMark'
 
 /*
  * The one sidebar. Both portals render this — enterprise and employee only
@@ -165,7 +165,8 @@ function AppSidebar({
             collapsed ? 'lg:justify-center lg:px-0' : ''
           }`}
         >
-          {/* White logo — the surface is a deep blue gradient. */}
+          {/* Crisp inline logo — sharp on the deep blue gradient, keeps the
+              blue "Look" accent the all-white PNG used to flatten. */}
           <Link
             to={homeTo}
             onClick={onClose}
@@ -174,7 +175,7 @@ function AppSidebar({
               collapsed ? 'lg:hidden' : ''
             }`}
           >
-            <BrandLogo size="md" variant="white" />
+            <BrandMark tone="light" size="md" showTagline />
           </Link>
 
           {/* Desktop-only: the mobile drawer is always full width. */}

@@ -23,3 +23,8 @@ createRoot(document.getElementById('root')).render(
     </GoogleOAuthProvider>
   </StrictMode>,
 )
+
+// Tell the landing splash (index.html) the app has mounted so it can fade out.
+if (typeof window !== 'undefined' && window.__plAppMounted) {
+  window.__plAppMounted()
+}

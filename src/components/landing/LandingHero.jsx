@@ -1,89 +1,158 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ShieldCheckIcon, CheckCircleIcon } from '../common/Icons'
 
+// One connected story: a Professional and an Employer forming a trusted
+// relationship, live. Two parties sit side-by-side with a verified-trust bridge
+// between them, and a caption narrates the exchange step by step — so the whole
+// idea reads at first glance.
+const RELATIONSHIP_STEPS = [
+  { cap: 'Acme Corp requests to connect with Priya', side: 'employer' },
+  { cap: 'Priya approves the request — consent granted', side: 'employee' },
+  { cap: 'Verified identity & Trust Score are shared', side: 'employee' },
+  { cap: 'Trust established — relationship secured', side: 'both' },
+]
+
+function MiniCheck({ className = 'h-3.5 w-3.5' }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M5 10.5l3.2 3.2L15 7" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+function PartyCard({ initials, name, role, rows, avatarClass, active }) {
+  return (
+    <div
+      className={`rounded-2xl border p-3.5 transition-all duration-300 ${
+        active
+          ? 'border-[#1e3a8a]/40 bg-[#1e3a8a]/[0.06] shadow-md shadow-blue-900/10'
+          : 'border-slate-200 bg-white'
+      }`}
+    >
+      <div className="mb-3 flex items-center gap-2.5">
+        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold text-white ${avatarClass}`}>
+          {initials}
+        </span>
+        <div className="min-w-0">
+          <p className="m-0 truncate text-sm font-bold text-slate-900">{name}</p>
+          <p className="m-0 text-[11px] font-medium text-slate-500">{role}</p>
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        {rows.map((r) => (
+          <div key={r.k} className="flex items-center justify-between rounded-lg bg-white px-2.5 py-1.5 text-[11px] ring-1 ring-slate-100">
+            <span className="text-slate-500">{r.k}</span>
+            <span className={`font-bold ${r.tone === 'green' ? 'text-emerald-600' : 'text-[#1e3a8a]'}`}>{r.v}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function TrustConnectionVisual() {
+  const [step, setStep] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setStep((s) => (s + 1) % RELATIONSHIP_STEPS.length), 1900)
+    return () => clearInterval(id)
+  }, [])
+
+  const { side, cap } = RELATIONSHIP_STEPS[step]
+  const leftActive = side === 'employee' || side === 'both'
+  const rightActive = side === 'employer' || side === 'both'
+  const secured = side === 'both'
+
   return (
     <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
+      <style>{`
+        @keyframes plflow { to { background-position: -200% 0; } }
+        .pl-wire { background: linear-gradient(90deg, rgba(30,58,138,.12) 0%, rgba(30,58,138,.55) 50%, rgba(30,58,138,.12) 100%); background-size: 200% 100%; animation: plflow 1.3s linear infinite; }
+        .pl-wire-ok { background: linear-gradient(90deg, rgba(16,185,129,.18) 0%, rgba(16,185,129,.65) 50%, rgba(16,185,129,.18) 100%); background-size: 200% 100%; animation: plflow 1.3s linear infinite; }
+        @media (prefers-reduced-motion: reduce) { .pl-wire, .pl-wire-ok { animation: none; } }
+      `}</style>
+
       <div className="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-[#1e3a8a]/15 via-transparent to-[#1e3a8a]/20 blur-3xl" />
 
       <div className="relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-white/90 p-6 shadow-2xl shadow-slate-300/25 backdrop-blur-sm md:p-8">
-        <div className="mb-6 flex items-center justify-between">
+        {/* Header — kept on the left so the floating badge never overlaps it. */}
+        <div className="mb-5 flex items-center gap-2.5">
           <span className="rounded-full bg-[#1e3a8a]/8 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#1e3a8a]">
-            Live connection
+            Employer ↔ Professional
           </span>
-          <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
             </span>
-            Trusted link active
+            Live
           </span>
         </div>
 
-        <div className="grid items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-3">
-          {/* Company */}
-          <div className="rounded-2xl border border-[#1e3a8a]/15 bg-gradient-to-br from-[#1e3a8a]/5 to-white p-4">
-            <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#1e3a8a] text-sm font-bold text-white">
-                AC
-              </div>
-              <div>
-                <p className="m-0 text-sm font-bold text-slate-900">Acme Corp</p>
-                <p className="m-0 text-[11px] font-medium text-slate-500">Employer</p>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
-                <span className="text-slate-500">Team verified</span>
-                <span className="font-bold text-[#1e3a8a]">94%</span>
-              </div>
-              <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
-                <span className="text-slate-500">Hiring speed</span>
-                <span className="font-bold text-emerald-600">3x faster</span>
-              </div>
-            </div>
-          </div>
+        {/* The relationship: two parties + a verified-trust bridge between them */}
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 md:gap-3">
+          <PartyCard
+            initials="PS"
+            name="Priya Sharma"
+            role="Professional"
+            avatarClass="bg-gradient-to-br from-[#1e3a8a] to-[#172554]"
+            active={leftActive}
+            rows={[
+              { k: 'Identity', v: 'Verified', tone: 'green' },
+              { k: 'Trust Score', v: '98' },
+            ]}
+          />
 
-          {/* Connection bridge */}
-          <div className="relative flex flex-col items-center justify-center py-2 md:py-0">
-            <div className="hidden h-px w-full bg-gradient-to-r from-[#1e3a8a]/30 via-[#1e3a8a]/50 to-[#1e3a8a]/30 md:block" />
-            <div className="my-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#1e3a8a]/25 bg-gradient-to-br from-[#1e3a8a]/10 to-[#1e3a8a]/10 shadow-lg shadow-brand-500/15">
-              <ShieldCheckIcon className="h-7 w-7 text-[#1e3a8a]" />
-            </div>
-            <div className="hidden h-px w-full bg-gradient-to-r from-[#1e3a8a]/30 via-[#1e3a8a]/50 to-[#1e3a8a]/30 md:block" />
-            <p className="m-0 mt-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400 md:mt-3">
-              Verified trust
+          {/* Trust bridge */}
+          <div className="flex flex-col items-center gap-1.5 px-0.5">
+            <div className={`hidden h-1 w-8 rounded-full md:block ${secured ? 'pl-wire-ok' : 'pl-wire'}`} />
+            <span
+              className={`flex items-center justify-center rounded-2xl border transition-all duration-300 ${
+                secured ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-[#1e3a8a]/20 bg-[#1e3a8a]/5 text-[#1e3a8a]'
+              }`}
+              style={{ height: '3.25rem', width: '3.25rem' }}
+            >
+              {secured ? <MiniCheck className="h-6 w-6" /> : <ShieldCheckIcon className="h-6 w-6" />}
+            </span>
+            <div className={`hidden h-1 w-8 rounded-full md:block ${secured ? 'pl-wire-ok' : 'pl-wire'}`} />
+            <p className={`m-0 text-center text-[9px] font-bold uppercase tracking-widest ${secured ? 'text-emerald-600' : 'text-slate-400'}`}>
+              {secured ? 'Secured' : 'Trust'}
             </p>
           </div>
 
-          {/* Professional */}
-          <div className="rounded-2xl border border-[#1e3a8a]/20 bg-gradient-to-br from-[#1e3a8a]/5 to-white p-4">
-            <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#1e3a8a] to-[#172554] text-sm font-bold text-white">
-                PS
-              </div>
-              <div>
-                <p className="m-0 text-sm font-bold text-slate-900">Priya Sharma</p>
-                <p className="m-0 text-[11px] font-medium text-slate-500">Professional</p>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
-                <span className="text-slate-500">Trust score</span>
-                <span className="font-bold text-[#1e3a8a]">98</span>
-              </div>
-              <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
-                <span className="text-slate-500">Identity</span>
-                <span className="font-bold text-emerald-600">Verified</span>
-              </div>
-            </div>
-          </div>
+          <PartyCard
+            initials="AC"
+            name="Acme Corp"
+            role="Employer"
+            avatarClass="bg-[#1e3a8a]"
+            active={rightActive}
+            rows={[
+              { k: 'Team verified', v: '94%' },
+              { k: 'Hiring', v: '3x faster', tone: 'green' },
+            ]}
+          />
         </div>
 
-        <div className="mt-6 grid grid-cols-3 gap-2 border-t border-slate-100 pt-5">
+        {/* Live narration of the relationship forming */}
+        <div className="mt-5 flex items-center gap-2.5 rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-3">
+          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white transition-colors ${secured ? 'bg-emerald-500' : 'bg-[#1e3a8a]'}`}>
+            <MiniCheck className="h-3 w-3" />
+          </span>
+          <p className="m-0 flex-1 text-[13px] font-semibold text-slate-700">{cap}</p>
+        </div>
+        <div className="mt-3 flex justify-center gap-1.5">
+          {RELATIONSHIP_STEPS.map((s, i) => (
+            <span
+              key={s.cap}
+              className={`h-1.5 rounded-full transition-all duration-300 ${i === step ? 'w-5 bg-[#1e3a8a]' : 'w-1.5 bg-slate-200'}`}
+            />
+          ))}
+        </div>
+
+        <div className="mt-5 grid grid-cols-3 gap-2 border-t border-slate-100 pt-4">
           {[
-            { label: 'Avg. connect', value: '< 2 min' },
-            { label: 'Mutual trust', value: '100%' },
+            { label: 'Verify time', value: '< 2 min' },
+            { label: 'Reusable', value: '1 profile' },
             { label: 'Fraud blocked', value: '98%' },
           ].map((item) => (
             <div key={item.label} className="text-center">
@@ -94,19 +163,19 @@ function TrustConnectionVisual() {
         </div>
       </div>
 
-      <div className="absolute -right-2 -top-3 hidden rounded-2xl border border-emerald-100 bg-white px-4 py-3 shadow-xl md:block lg:-right-6">
+      <div className="absolute -right-4 -top-4 hidden rounded-2xl border border-emerald-100 bg-white px-4 py-3 shadow-xl md:block lg:-right-6">
         <div className="flex items-center gap-2">
           <CheckCircleIcon className="h-5 w-5 text-emerald-500" filled />
           <div>
-            <p className="m-0 text-xs font-bold text-slate-800">Relationship secured</p>
-            <p className="m-0 text-[11px] text-slate-500">Consent-based sharing</p>
+            <p className="m-0 text-xs font-bold text-slate-800">Consent-based</p>
+            <p className="m-0 text-[11px] text-slate-500">You control every share</p>
           </div>
         </div>
       </div>
 
       <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-[#1e3a8a]/10 bg-white px-4 py-3 shadow-xl md:block lg:-left-6">
-        <p className="m-0 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Connection time</p>
-        <p className="m-0 text-lg font-extrabold text-[#1e3a8a]">Under 2 minutes</p>
+        <p className="m-0 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Verify once</p>
+        <p className="m-0 text-lg font-extrabold text-[#1e3a8a]">Use everywhere</p>
       </div>
     </div>
   )

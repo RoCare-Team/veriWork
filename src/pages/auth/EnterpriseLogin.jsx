@@ -5,7 +5,6 @@ import AuthLayout from '../../layouts/AuthLayout'
 import Button from '../../components/common/Button'
 import Input from '../../components/common/Input'
 import Loader from '../../components/common/Loader'
-import { GoogleIcon, MicrosoftIcon } from '../../components/common/Icons'
 import { isValidEmail } from '../../utils/validators'
 import { loginEnterprise } from '../../api/auth'
 import { useAuth } from '../../context/AuthContext'
@@ -94,6 +93,12 @@ function EnterpriseLogin() {
               Enter a valid company email address.
             </p>
           )}
+
+          <div className="-mt-1 flex justify-end">
+            <Link to="/forgot-password" className="text-[13px] font-semibold text-[#1e3a8a] no-underline hover:underline">
+              Forgot password?
+            </Link>
+          </div>
 
           <Button type="submit" disabled={loginMutation.isPending || !password}>
             {loginMutation.isPending ? 'Signing you in...' : 'Continue to Dashboard'}

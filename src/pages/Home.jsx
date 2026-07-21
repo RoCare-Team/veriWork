@@ -1,6 +1,7 @@
 import LandingNavbar from '../components/landing/LandingNavbar'
 import LandingHero from '../components/landing/LandingHero'
 import LandingStats from '../components/landing/LandingStats'
+import LandingProductDemo from '../components/landing/LandingProductDemo'
 import LandingFeatures from '../components/landing/LandingFeatures'
 import LandingHowItWorks from '../components/landing/LandingHowItWorks'
 import LandingPortals from '../components/landing/LandingPortals'
@@ -16,6 +17,7 @@ function Home() {
       <main>
         <LandingHero />
         <LandingStats />
+        <LandingProductDemo />
         <LandingFeatures />
         <LandingHowItWorks />
         <LandingPortals />

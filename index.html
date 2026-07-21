@@ -22,8 +22,188 @@
       rel="stylesheet"
     />
     <title>PagerLook — Enterprise Login</title>
+
+    <!-- ── Landing splash: shows at 0ms (before the app JS parses) and fades out
+         once React mounts. Self-contained so it needs no fonts/JS to appear. ── -->
+    <style>
+      #pl-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483647;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 26px;
+        background:
+          radial-gradient(120% 90% at 50% 0%, #16294a 0%, #0e203c 45%, #0b1b34 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        transition: opacity .6s ease, visibility .6s ease;
+      }
+      #pl-splash.pl-hide { opacity: 0; visibility: hidden; }
+
+      .pl-stage {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* Pulsing radar rings emanating from the shield */
+      .pl-ring {
+        position: absolute;
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(59, 150, 246, .5);
+        animation: pl-ring 2.6s ease-out infinite;
+      }
+      .pl-ring.r2 { animation-delay: .85s; }
+      .pl-ring.r3 { animation-delay: 1.7s; }
+
+      /* Rotating scan sweep, masked into a thin ring */
+      .pl-scan {
+        position: absolute;
+        width: 132px;
+        height: 132px;
+        border-radius: 50%;
+        background: conic-gradient(from 0deg, rgba(0,134,236,0) 0deg 290deg, rgba(0,134,236,.75) 350deg, rgba(0,134,236,0) 360deg);
+        -webkit-mask: radial-gradient(farthest-side, transparent 61%, #000 63%);
+                mask: radial-gradient(farthest-side, transparent 61%, #000 63%);
+        animation: pl-scan 2.2s linear infinite;
+      }
+
+      .pl-shield {
+        width: 92px;
+        height: 92px;
+        overflow: visible;
+        filter: drop-shadow(0 8px 22px rgba(0, 134, 236, .45));
+        animation: pl-float 3.2s ease-in-out infinite;
+      }
+      .pl-shield__body {
+        fill: url(#plGrad);
+        fill-opacity: 0;
+        stroke: #3b96f6;
+        stroke-width: 2;
+        stroke-linejoin: round;
+        stroke-dasharray: 210;
+        stroke-dashoffset: 210;
+        animation: pl-draw 1s ease forwards, pl-fill .6s ease .75s forwards;
+      }
+      .pl-check {
+        fill: none;
+        stroke: #ffffff;
+        stroke-width: 5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 40;
+        stroke-dashoffset: 40;
+        animation: pl-draw .55s ease 1.05s forwards;
+      }
+
+      .pl-word {
+        font-size: 27px;
+        font-weight: 800;
+        letter-spacing: .5px;
+        background: linear-gradient(90deg, #ffffff 0%, #7fc4ff 45%, #ffffff 75%);
+        background-size: 220% auto;
+        -webkit-background-clip: text;
+                background-clip: text;
+        color: transparent;
+        opacity: 0;
+        animation: pl-up .6s ease .55s forwards, pl-shimmer 2.6s linear 1s infinite;
+      }
+      .pl-tag {
+        margin-top: -14px;
+        font-size: 12.5px;
+        font-weight: 600;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: rgba(148, 181, 224, .8);
+        opacity: 0;
+        animation: pl-up .6s ease .8s forwards;
+      }
+      .pl-bar {
+        position: relative;
+        width: 168px;
+        height: 3px;
+        border-radius: 99px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, .08);
+        opacity: 0;
+        animation: pl-up .5s ease 1s forwards;
+      }
+      .pl-bar > span {
+        position: absolute;
+        inset: 0;
+        width: 45%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, #0086ec, #7fc4ff);
+        animation: pl-bar 1.3s cubic-bezier(.65,.05,.36,1) infinite;
+      }
+
+      @keyframes pl-draw   { to { stroke-dashoffset: 0; } }
+      @keyframes pl-fill   { to { fill-opacity: 1; } }
+      @keyframes pl-ring   { 0% { transform: scale(.55); opacity: .6; } 70% { opacity: 0; } 100% { transform: scale(2.1); opacity: 0; } }
+      @keyframes pl-scan   { to { transform: rotate(360deg); } }
+      @keyframes pl-float  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+      @keyframes pl-up     { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes pl-shimmer{ to { background-position: 220% center; } }
+      @keyframes pl-bar    { 0% { transform: translateX(-120%); } 100% { transform: translateX(266%); } }
+
+      @media (prefers-reduced-motion: reduce) {
+        .pl-ring, .pl-scan, .pl-shield, .pl-shield__body, .pl-check, .pl-word, .pl-tag, .pl-bar, .pl-bar > span {
+          animation-duration: .01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="pl-splash" role="status" aria-label="Loading PagerLook">
+      <div class="pl-stage">
+        <span class="pl-ring r1"></span>
+        <span class="pl-ring r2"></span>
+        <span class="pl-ring r3"></span>
+        <span class="pl-scan"></span>
+        <svg class="pl-shield" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="plGrad" x1="12" y1="8" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#0086ec" />
+              <stop offset="1" stop-color="#1e2172" />
+            </linearGradient>
+          </defs>
+          <path class="pl-shield__body" d="M32 8l20 7.6v15.4C52 43 43.6 52 32 55 20.4 52 12 43 12 31V15.6L32 8Z" />
+          <path class="pl-check" d="M23 32.5l6 6 12-12" />
+        </svg>
+      </div>
+      <div class="pl-word">PagerLook</div>
+      <div class="pl-tag">Verify. Trust. Grow.</div>
+      <div class="pl-bar"><span></span></div>
+    </div>
+
+    <script>
+      /* Keep the splash visible a minimum time so the animation reads, then fade
+         it out once the app has mounted. Hard caps guarantee it never sticks. */
+      (function () {
+        var MIN_MS = 1700, start = Date.now(), mounted = false, hidden = false;
+        function remove() {
+          if (hidden) return; hidden = true;
+          var el = document.getElementById('pl-splash');
+          if (!el) return;
+          el.classList.add('pl-hide');
+          setTimeout(function () { if (el && el.parentNode) el.parentNode.removeChild(el); }, 650);
+        }
+        function scheduleHide() {
+          setTimeout(remove, Math.max(0, MIN_MS - (Date.now() - start)));
+        }
+        window.__plAppMounted = function () { if (!mounted) { mounted = true; scheduleHide(); } };
+        window.addEventListener('load', function () { setTimeout(function () { if (!mounted) scheduleHide(); }, 300); });
+        setTimeout(remove, 7000); // absolute safety cap
+      })();
+    </script>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

@@ -1,28 +1,20 @@
+import BrandMark from './BrandMark'
+
 /**
- * @param {'default'|'white'} variant - `white` uses the light logo asset, for dark surfaces.
+ * PagerLook logo. Thin wrapper over the crisp inline-SVG {@link BrandMark} so
+ * every existing call site gets the same sharp, background-free logo.
+ *
+ * Legacy props are mapped to BrandMark's `tone`:
+ *  - `variant="white"` (light logo for dark surfaces) → tone `light`
+ *  - `theme="light"`    (was a white chip on dark hero) → tone `light`
+ *  - otherwise (dark logo on a light surface)          → tone `dark`
+ *
+ * @param {'default'|'white'} variant
+ * @param {'dark'|'light'} theme
  */
 function BrandLogo({ size = 'md', showTagline = false, theme = 'dark', variant = 'default' }) {
-  const heights = {
-    sm: 'h-8',
-    md: 'h-10',
-    lg: 'h-12',
-  }
-
-  const h = heights[size] || heights.md
-  const isLight = theme === 'light'
-  const src = variant === 'white' ? '/pagerLookLogo-white.png' : '/pagerLookLogo.png'
-
-  return (
-    <div
-      className={`inline-flex w-fit items-center ${
-        isLight
-          ? 'rounded-2xl bg-white px-4 py-2.5 shadow-lg shadow-black/20 ring-1 ring-black/5'
-          : ''
-      }`}
-    >
-      <img src={src} alt="PagerLook" className={`${h} w-auto object-contain`} draggable="false" />
-    </div>
-  )
+  const tone = variant === 'white' || theme === 'light' ? 'light' : 'dark'
+  return <BrandMark tone={tone} size={size} showTagline={showTagline} />
 }
 
 export default BrandLogo

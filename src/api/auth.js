@@ -119,6 +119,22 @@ export function changePassword(currentPassword, newPassword) {
   })
 }
 
+export function requestPasswordReset(email) {
+  return api(API.AUTH.FORGOT_PASSWORD, {
+    method: 'POST',
+    body: { email },
+    auth: false,
+  })
+}
+
+export function resetPassword(token, newPassword) {
+  return api(API.AUTH.RESET_PASSWORD, {
+    method: 'POST',
+    body: { token, newPassword },
+    auth: false,
+  })
+}
+
 export function logoutApi(refreshToken) {
   if (refreshToken === 'dev-admin-mock-refresh') return Promise.resolve({ ok: true })
   return api(API.AUTH.LOGOUT, {

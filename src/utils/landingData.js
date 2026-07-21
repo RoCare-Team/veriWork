@@ -1,5 +1,6 @@
 export const LANDING_NAV = [
   { label: 'Features', href: '#features' },
+  { label: 'Demo', href: '#demo' },
   { label: 'How it works', href: '#how-it-works' },
   { label: 'Security', href: '#security' },
   { label: 'Portals', href: '#portals' },

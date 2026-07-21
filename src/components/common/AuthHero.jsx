@@ -1,3 +1,5 @@
+import BrandMark from './BrandMark'
+
 /*
  * Shared auth hero — the left panel on every login/onboarding screen.
  *
@@ -134,9 +136,8 @@ function AuthHero({ eyebrow, title, subtitle, stats = [] }) {
 
       {/* Brand + copy */}
       <div className="relative z-10">
-        <div className="inline-flex items-center rounded-2xl bg-white px-4 py-2.5 shadow-lg shadow-black/20 ring-1 ring-black/5">
-          <img src="/pagerLookLogo.png" alt="PagerLook" className="h-11 w-auto object-contain" draggable="false" />
-        </div>
+        {/* Crisp inline logo — no white chip needed on the dark hero. */}
+        <BrandMark tone="light" size="lg" showTagline />
         {eyebrow && (
           <p className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-white/60">{eyebrow}</p>
         )}
