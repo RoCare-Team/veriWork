@@ -12,14 +12,14 @@ function FooterColumn({ title, links }) {
             {link.to ? (
               <Link
                 to={link.to}
-                className="text-sm text-slate-500 no-underline transition hover:text-[#005fd6]"
+                className="text-sm text-slate-500 no-underline transition hover:text-[#1e3a8a]"
               >
                 {link.label}
               </Link>
             ) : (
               <a
                 href={link.href}
-                className="text-sm text-slate-500 no-underline transition hover:text-[#005fd6]"
+                className="text-sm text-slate-500 no-underline transition hover:text-[#1e3a8a]"
               >
                 {link.label}
               </a>

@@ -137,7 +137,7 @@ function HrResponseReviewModal({ request, onClose, onSuccess }) {
                   href={mediaUrl(details.supportingDocumentUrl)}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-sm font-semibold text-[#005fd6] no-underline hover:underline"
+                  className="text-sm font-semibold text-[#1e3a8a] no-underline hover:underline"
                 >
                   {details.supportingDocumentName || 'View document'}
                 </a>
@@ -157,7 +157,7 @@ function HrResponseReviewModal({ request, onClose, onSuccess }) {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             disabled={pending}
-            className="w-full resize-y rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
+            className="w-full resize-y rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100"
           />
         </div>
 

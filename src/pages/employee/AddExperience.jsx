@@ -64,7 +64,7 @@ function TextArea({ label, id, leftIcon, className = '', ...props }) {
         <textarea
           id={id}
           rows={4}
-          className={`w-full resize-none rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100 md:text-base ${leftIcon ? 'pl-10' : ''}`}
+          className={`w-full resize-none rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100 md:text-base ${leftIcon ? 'pl-10' : ''}`}
           {...props}
         />
       </div>
@@ -336,7 +336,7 @@ function AddExperience() {
                   type="checkbox"
                   checked={form.isPresent}
                   onChange={handlePresentChange}
-                  className="h-4 w-4 rounded border-slate-300 text-[#005fd6] focus:ring-[#005fd6]"
+                  className="h-4 w-4 rounded border-slate-300 text-[#1e3a8a] focus:ring-[#1e3a8a]"
                   disabled={isSubmitting}
                 />
                 Currently working here

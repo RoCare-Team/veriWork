@@ -5,7 +5,7 @@ function SectionHeading({ eyebrow, title, subtitle }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
       {eyebrow && (
-        <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#005fd6]">{eyebrow}</p>
+        <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#1e3a8a]">{eyebrow}</p>
       )}
       <h2 className="m-0 mt-3 text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">
         {title}
@@ -31,7 +31,7 @@ function LandingFeatures() {
           {LANDING_FEATURES.map((feature) => (
             <article
               key={feature.id}
-              className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#005fd6]/20 hover:shadow-lg md:p-7"
+              className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#1e3a8a]/20 hover:shadow-lg md:p-7"
             >
               <div
                 className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl ${feature.accent}`}

@@ -5,7 +5,15 @@ import AdminLayout from '../../layouts/AdminLayout'
 import Loader from '../../components/common/Loader'
 import Button from '../../components/common/Button'
 import ReviewRow from '../../components/common/ReviewRow'
-import { adminKeys, fetchAdminCompany, reviewAdminCompany } from '../../api/admin'
+import {
+  adminKeys,
+  fetchAdminCompany,
+  fetchAdminCompanyMessages,
+  postAdminCompanyMessage,
+  reviewAdminCompany,
+  reviewAdminCompanyDocument,
+} from '../../api/admin'
+import MessageThread from '../../components/common/MessageThread'
 import { useToast } from '../../context/ToastContext'
 import { mediaUrl } from '../../lib/mediaUrl'
 import {
@@ -47,7 +55,7 @@ function RejectModal({ open, onClose, onConfirm, busy }) {
           placeholder="e.g. GST certificate is unclear, please re-upload..."
           rows={4}
           required
-          className="mt-4 w-full resize-none rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
+          className="mt-4 w-full resize-none rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100"
         />
         <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Button type="button" variant="ghost" fullWidth={false} onClick={onClose} disabled={busy}>
@@ -62,24 +70,111 @@ function RejectModal({ open, onClose, onConfirm, busy }) {
   )
 }
 
-function DocumentLink({ label, url }) {
+/**
+ * One uploaded document with its own verdict. Rejecting asks for a reason and
+ * sends the application back for that file only — the rest stays intact.
+ */
+function DocumentLink({ label, url, documentKey, review, onReview, isReviewing }) {
+  const [rejecting, setRejecting] = useState(false)
+  const [reason, setReason] = useState('')
+
   if (!url) return null
   const href = mediaUrl(url)
   const fileName = typeof url === 'string' ? url.split('/').pop() : label
+  const status = review?.status || 'pending'
+
+  const STATUS_BADGE = {
+    approved: 'bg-emerald-50 text-emerald-700',
+    rejected: 'bg-red-50 text-red-600',
+    pending: 'bg-slate-100 text-slate-500',
+  }
+
   return (
-    <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/50 px-4 py-3">
-      <div className="min-w-0">
-        <p className="m-0 text-sm font-semibold text-slate-800">{label}</p>
-        <p className="m-0 mt-0.5 truncate text-xs text-slate-500">{fileName}</p>
+    <div className="rounded-2xl border border-slate-100 bg-slate-50/50 px-4 py-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="m-0 text-sm font-semibold text-slate-800">{label}</p>
+          <p className="m-0 mt-0.5 truncate text-xs text-slate-500">{fileName}</p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <span
+            className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${STATUS_BADGE[status]}`}
+          >
+            {status}
+          </span>
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-xl border border-brand-600/20 px-3 py-1.5 text-xs font-semibold text-brand-600 no-underline hover:bg-brand-600/5"
+          >
+            View
+          </a>
+        </div>
       </div>
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="shrink-0 rounded-xl border border-[#005fd6]/20 px-3 py-1.5 text-xs font-semibold text-[#005fd6] no-underline hover:bg-blue-50"
-      >
-        View
-      </a>
+
+      {review?.status === 'rejected' && review.reason && (
+        <p className="m-0 mt-2 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
+          Sent back: {review.reason}
+        </p>
+      )}
+
+      {onReview && (
+        <div className="mt-3">
+          {rejecting ? (
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <input
+                type="text"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="What's wrong with this document?"
+                className="h-9 flex-1 rounded-lg border border-slate-200 px-3 text-xs outline-none focus:border-brand-500"
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={isReviewing || !reason.trim()}
+                  onClick={() =>
+                    onReview({ documentKey, status: 'rejected', reason: reason.trim() }, () => {
+                      setRejecting(false)
+                      setReason('')
+                    })
+                  }
+                  className="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  Send back
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRejecting(false)}
+                  className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-white"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={isReviewing || status === 'approved'}
+                onClick={() => onReview({ documentKey, status: 'approved' })}
+                className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-40"
+              >
+                {status === 'approved' ? 'Approved' : 'Approve doc'}
+              </button>
+              <button
+                type="button"
+                disabled={isReviewing}
+                onClick={() => setRejecting(true)}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:border-red-200 hover:text-red-600 disabled:opacity-50"
+              >
+                Reject doc
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -94,6 +189,34 @@ function AdminCompanyReview() {
   const { data: app, isLoading, error } = useQuery({
     queryKey: adminKeys.company(id),
     queryFn: () => fetchAdminCompany(id),
+  })
+
+  const messagesQuery = useQuery({
+    queryKey: adminKeys.companyMessages(id),
+    queryFn: () => fetchAdminCompanyMessages(id),
+    retry: false,
+  })
+  const messages = messagesQuery.data?.data?.messages || messagesQuery.data?.messages || []
+
+  const docReviewMutation = useMutation({
+    mutationFn: (payload) => reviewAdminCompanyDocument(id, payload),
+    onSuccess: (_, vars) => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.company(id) })
+      queryClient.invalidateQueries({ queryKey: adminKeys.companyMessages(id) })
+      toast(
+        vars.status === 'approved'
+          ? 'Document approved'
+          : 'Sent back to the company for re-upload',
+        vars.status === 'approved' ? 'success' : 'info',
+      )
+    },
+    onError: (err) => toast(err.message || 'Could not review document', 'error'),
+  })
+
+  const sendMessageMutation = useMutation({
+    mutationFn: (body) => postAdminCompanyMessage(id, body),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: adminKeys.companyMessages(id) }),
+    onError: (err) => toast(err.message || 'Could not send message', 'error'),
   })
 
   const reviewMutation = useMutation({
@@ -116,7 +239,7 @@ function AdminCompanyReview() {
       <AdminLayout>
         <div className="px-8 py-12 text-center">
           <p className="text-red-600">{error?.message || 'Company not found'}</p>
-          <Link to="/admin/companies" className="mt-4 inline-block text-sm font-semibold text-[#005fd6]">
+          <Link to="/admin/companies" className="mt-4 inline-block text-sm font-semibold text-[#1e3a8a]">
             Back to list
           </Link>
         </div>
@@ -134,13 +257,17 @@ function AdminCompanyReview() {
     .join(', ')
 
   const uploadedDocs = Object.entries(documents).filter(([, url]) => Boolean(url))
+  const documentReviews = onboarding?.documentReviews || app.documentReviews || {}
+
+  const handleDocReview = (payload, onDone) =>
+    docReviewMutation.mutate(payload, { onSuccess: () => onDone?.() })
 
   return (
     <AdminLayout>
       <div className="px-4 py-6 md:px-8 md:py-8">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <Link to="/admin/companies" className="text-sm font-semibold text-[#005fd6] no-underline hover:underline">
+            <Link to="/admin/companies" className="text-sm font-semibold text-[#1e3a8a] no-underline hover:underline">
               ← Back to companies
             </Link>
             <h2 className="m-0 mt-2 text-2xl font-extrabold text-slate-900">
@@ -191,23 +318,58 @@ function AdminCompanyReview() {
 
         <section className="mt-6 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:p-7">
           <h3 className="m-0 text-base font-bold text-slate-900">Uploaded Documents</h3>
+          <p className="m-0 mt-1 text-xs text-slate-500">
+            Reject a single document to send just that one back — the rest of the application stays
+            as it is.
+          </p>
           <div className="mt-4 flex flex-col gap-3">
             {docDefs.map((doc) => {
-              const url =
-                documents[doc.id] ||
-                documents[doc.id === 'taxCertificate' ? 'tax' : doc.id]
-              return <DocumentLink key={doc.id} label={doc.title} url={url} />
+              // Stored key can differ from the UI id (taxCertificate -> tax).
+              const storedKey = documents[doc.id] ? doc.id : doc.id === 'taxCertificate' ? 'tax' : doc.id
+              const url = documents[storedKey]
+              return (
+                <DocumentLink
+                  key={doc.id}
+                  label={doc.title}
+                  url={url}
+                  documentKey={storedKey}
+                  review={documentReviews[storedKey]}
+                  onReview={canReview ? handleDocReview : null}
+                  isReviewing={docReviewMutation.isPending}
+                />
+              )
             })}
             {uploadedDocs
               .filter(([key]) => !docDefs.some((d) => d.id === key || (key === 'tax' && d.id === 'taxCertificate')))
               .map(([key, url]) => (
-                <DocumentLink key={key} label={DOC_LABELS[key] || key} url={url} />
+                <DocumentLink
+                  key={key}
+                  label={DOC_LABELS[key] || key}
+                  url={url}
+                  documentKey={key}
+                  review={documentReviews[key]}
+                  onReview={canReview ? handleDocReview : null}
+                  isReviewing={docReviewMutation.isPending}
+                />
               ))}
             {uploadedDocs.length === 0 && (
               <p className="m-0 text-sm text-slate-500">No documents uploaded</p>
             )}
           </div>
         </section>
+
+        <div className="mt-6">
+          <MessageThread
+            messages={messages}
+            viewerRole="admin"
+            isLoading={messagesQuery.isLoading}
+            isSending={sendMessageMutation.isPending}
+            onSend={(text, clear) => sendMessageMutation.mutate(text, { onSuccess: clear })}
+            title="Messages with this company"
+            subtitle="They see these replies on their application status page."
+            placeholder="Reply to the company…"
+          />
+        </div>
 
         {rejectionReason && (
           <section className="mt-6 rounded-3xl border border-red-100 bg-red-50/50 p-5 md:p-7">

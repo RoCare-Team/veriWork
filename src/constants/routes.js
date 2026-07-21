@@ -19,6 +19,8 @@ export const API = {
     COMPANIES: '/admin/companies',
     COMPANY: (id) => `/admin/companies/${id}`,
     REVIEW: (id) => `/admin/companies/${id}/review`,
+    REVIEW_DOCUMENT: (id) => `/admin/companies/${id}/documents/review`,
+    COMPANY_MESSAGES: (id) => `/admin/companies/${id}/messages`,
     EMPLOYEES: '/admin/employees',
     EMPLOYEE: (id) => `/admin/employees/${id}`,
   },
@@ -65,6 +67,10 @@ export const API = {
     EMPLOYMENT_VERIFICATION: (token) => `/public/employment-verification/${encodeURIComponent(token)}`,
     EMPLOYMENT_VERIFICATION_DOCUMENT: (token) =>
       `/public/employment-verification/${encodeURIComponent(token)}/document`,
+    COMPANY_INVITE: (token) => `/public/company-invite/${encodeURIComponent(token)}`,
+    COMPANY_INVITE_ACCEPT: (token) => `/public/company-invite/${encodeURIComponent(token)}/accept`,
+    QR_JOIN: (code) => `/public/qr/${encodeURIComponent(code)}`,
+    QR_JOIN_SUBMIT: (code) => `/public/qr/${encodeURIComponent(code)}/join`,
   },
 
   COMPANY: {
@@ -98,6 +104,15 @@ export const API = {
     AUDIT_LOGS: '/company/audit-logs',
     SMTP_SETTINGS: '/company/settings/smtp',
     SMTP_TEST: '/company/settings/smtp/test',
+    ME_PERMISSIONS: '/company/me/permissions',
+    ROLES: '/company/roles',
+    ROLE: (roleId) => `/company/roles/${roleId}`,
+    USERS: '/company/users',
+    USER_PASSWORD: (userId) => `/company/users/${userId}/password`,
+    USER_INVITE: '/company/users/invite',
+    USER_INVITE_REVOKE: (inviteId) => `/company/users/invites/${inviteId}/revoke`,
+    USER_ROLE: (userId) => `/company/users/${userId}/role`,
+    USER_REMOVE: (userId) => `/company/users/${userId}`,
   },
 
   ENTERPRISE: {
@@ -110,7 +125,12 @@ export const API = {
     WORKFORCE: '/enterprise/workforce',
     JOIN_REQUESTS: '/enterprise/join-requests',
     JOIN_REQUEST: (id) => `/enterprise/join-requests/${id}`,
+    APPLICATION_STATUS: '/enterprise/application/status',
+    APPLICATION_RESUBMIT: '/enterprise/application/resubmit',
+    APPLICATION_MESSAGES: '/enterprise/application/messages',
     QR_ONBOARDING: '/enterprise/qr-onboarding',
+    QR_ONBOARDING_ACTIVE: (id) => `/enterprise/qr-onboarding/${id}/active`,
+    QR_ONBOARDING_DELETE: (id) => `/enterprise/qr-onboarding/${id}`,
   },
 }
 

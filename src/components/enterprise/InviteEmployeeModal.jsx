@@ -17,7 +17,7 @@ function EmployeeInitial({ name, photoUrl }) {
     return <img src={photoUrl} alt="" className="h-9 w-9 shrink-0 rounded-full object-cover" />
   }
   return (
-    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#005fd6]/10 text-sm font-bold text-[#005fd6]">
+    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1e3a8a]/10 text-sm font-bold text-[#1e3a8a]">
       {(name || '?').charAt(0).toUpperCase()}
     </div>
   )
@@ -206,7 +206,7 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="e.g. VW-IEDM-05 or 7740847114"
-                  className="mt-2 h-11 w-full rounded-xl border border-slate-200 px-3.5 text-sm outline-none focus:border-[#005fd6]"
+                  className="mt-2 h-11 w-full rounded-xl border border-slate-200 px-3.5 text-sm outline-none focus:border-[#1e3a8a]"
                 />
                 {searchQuery.trim() && !looksComplete && (
                   <p className="m-0 mt-2 text-xs text-slate-400">
@@ -226,7 +226,7 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
                         <button
                           type="button"
                           onClick={() => setSelectedEmployee(emp)}
-                          className="flex w-full items-center gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2.5 text-left hover:border-[#005fd6] hover:bg-blue-50/40"
+                          className="flex w-full items-center gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2.5 text-left hover:border-[#1e3a8a] hover:bg-blue-50/40"
                         >
                           <EmployeeInitial name={emp.name} photoUrl={emp.photoUrl} />
                           <div className="min-w-0 flex-1">
@@ -247,7 +247,7 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-3 rounded-xl border border-[#005fd6]/30 bg-blue-50/50 px-3 py-3">
+              <div className="flex items-center gap-3 rounded-xl border border-[#1e3a8a]/30 bg-blue-50/50 px-3 py-3">
                 <EmployeeInitial name={selectedEmployee.name} photoUrl={selectedEmployee.photoUrl} />
                 <div className="min-w-0 flex-1">
                   <p className="m-0 truncate text-sm font-semibold text-slate-900">{selectedEmployee.name}</p>
@@ -322,7 +322,7 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
                   <button
                     type="button"
                     onClick={copyLink}
-                    className="shrink-0 rounded-md bg-[#005fd6] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0b4fb0]"
+                    className="shrink-0 rounded-md bg-[#1e3a8a] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#172554]"
                   >
                     {copied ? 'Copied!' : 'Copy'}
                   </button>

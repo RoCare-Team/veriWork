@@ -11,6 +11,8 @@ import SecurityFooter from '../../components/employee/SecurityFooter'
 import { LockIcon, IdCardIcon } from '../../components/common/Icons'
 import VerificationStepBar, { VerificationBackLink } from '../../components/employee/VerificationStepBar'
 import { employeeKeys, verifyAadhaar } from '../../api/employee'
+import { useAuth } from '../../context/AuthContext'
+import { getCompletedJourneySteps } from '../../utils/employeeJourney'
 
 function formatAadhaar(value) {
   const digits = value.replace(/\D/g, '').slice(0, 12)
@@ -20,6 +22,8 @@ function formatAadhaar(value) {
 function AadhaarVerification() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { profile } = useAuth()
+  const journeyCompleted = getCompletedJourneySteps(profile)
   const [method, setMethod] = useState('digilocker')
   const [aadhaar, setAadhaar] = useState('')
   const [consent, setConsent] = useState(false)
@@ -49,14 +53,14 @@ function AadhaarVerification() {
   return (
     <EmployeeLayout footer={<SecurityFooter variant="shield" text="Bank-Grade Security Protocol" />}>
       <VerificationBackLink />
-      <VerificationStepBar currentStep="aadhaar" className="mb-6" />
-      <EmployeePageHeader title="Step 2 — Aadhaar Linking" subtitle="Verify via DigiLocker or OTP" />
+      <VerificationStepBar currentStep="identity" completed={journeyCompleted} className="mb-6" />
+      <EmployeePageHeader title="Aadhaar verification" subtitle="Identity check 1 of 2 — verify via DigiLocker or OTP" />
 
       {error && <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
       <div className="lg:grid lg:grid-cols-2 lg:gap-8">
         <div className="rounded-2xl border border-blue-100 bg-blue-50/80 p-4">
-          <LockIcon className="h-5 w-5 text-[#005fd6]" />
+          <LockIcon className="h-5 w-5 text-[#1e3a8a]" />
           <p className="mt-2 text-sm text-slate-600">Aadhaar data is encrypted and never stored in plain text.</p>
         </div>
 
@@ -64,7 +68,7 @@ function AadhaarVerification() {
           {method === 'digilocker' ? (
             <div className="flex flex-col gap-4">
               <DigiLockerButton onClick={handleDigiLocker} loading={mutation.isPending} />
-              <button type="button" onClick={() => setMethod('otp')} className="text-sm font-semibold text-[#005fd6] hover:underline">
+              <button type="button" onClick={() => setMethod('otp')} className="text-sm font-semibold text-[#1e3a8a] hover:underline">
                 Other Verification Methods
               </button>
             </div>
@@ -76,7 +80,7 @@ function AadhaarVerification() {
                 I authorize PagerLook to fetch my identity from UIDAI.
               </label>
               <Button type="submit" disabled={!otpValid || mutation.isPending}>Verify via OTP</Button>
-              <button type="button" onClick={() => setMethod('digilocker')} className="text-sm font-semibold text-[#005fd6] hover:underline">
+              <button type="button" onClick={() => setMethod('digilocker')} className="text-sm font-semibold text-[#1e3a8a] hover:underline">
                 Back to DigiLocker
               </button>
             </form>

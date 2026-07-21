@@ -92,7 +92,7 @@ function DocumentVault() {
       <EmployeePageHeader title="Document Vault" subtitle="Securely store and manage your verified documents" />
       {error && <p className="mb-4 text-sm text-red-600">{error.message}</p>}
 
-      <div className="rounded-3xl bg-gradient-to-br from-[#005fd6] via-[#0073fe] to-[#004bab] p-5 text-white shadow-xl shadow-blue-900/20 md:p-6 lg:p-7">
+      <div className="rounded-3xl bg-gradient-to-br from-[#1e3a8a] via-[#2748a6] to-[#172554] p-5 text-white shadow-xl shadow-blue-900/20 md:p-6 lg:p-7">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <p className="m-0 text-sm text-white/70 md:text-base">Vault Storage</p>
@@ -133,7 +133,7 @@ function DocumentVault() {
                 key={doc._id}
                 className="flex items-center gap-3.5 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm md:p-5"
               >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#005fd6]">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#1e3a8a]">
                   <DocumentIcon className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -172,7 +172,7 @@ function DocumentVault() {
           ))}
         </select>
         {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#005fd6] px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/20 transition hover:bg-[#004bab] md:px-6 md:text-base">
+        <label className="relative inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#1e3a8a] px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/20 transition hover:bg-[#172554] md:px-6 md:text-base">
           <input
             type="file"
             className="sr-only"
@@ -186,7 +186,7 @@ function DocumentVault() {
       </div>
 
       <div className="mt-4 text-center lg:hidden">
-        <Link to="/employee/job-history/add" className="text-sm font-semibold text-[#005fd6] no-underline hover:underline">
+        <Link to="/employee/job-history/add" className="text-sm font-semibold text-[#1e3a8a] no-underline hover:underline">
           Upload experience documents →
         </Link>
       </div>

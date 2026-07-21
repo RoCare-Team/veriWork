@@ -7,6 +7,8 @@ import Button from '../../components/common/Button'
 import Loader from '../../components/common/Loader'
 import { employeeKeys, fetchScore } from '../../api/employee'
 import { SCORE_MAX, SCORE_MIN } from '../../utils/employeeScoreUtils'
+import { useAuth } from '../../context/AuthContext'
+import { getMissingJourneySteps } from '../../utils/employeeJourney'
 
 function FactorRow({ factor }) {
   const pct = factor.max > 0 ? (factor.points / factor.max) * 100 : 0
@@ -20,17 +22,21 @@ function FactorRow({ factor }) {
         <span className="text-xs font-bold text-slate-600">+{factor.points}/{factor.max}</span>
       </div>
       <div className="mt-3 h-2 rounded-full bg-slate-100">
-        <div className="h-full rounded-full bg-[#005fd6]" style={{ width: `${pct}%` }} />
+        <div className="h-full rounded-full bg-[#1e3a8a]" style={{ width: `${pct}%` }} />
       </div>
     </div>
   )
 }
 
 function EmployeeScore() {
+  const { profile } = useAuth()
   const { data, isLoading, error } = useQuery({
     queryKey: employeeKeys.score,
     queryFn: fetchScore,
   })
+
+  // Optional journey steps not done yet — surfaced here as the "what next".
+  const missingSteps = getMissingJourneySteps(profile)
 
   if (isLoading) return <Loader variant="fullPage" label="Loading your score..." />
 
@@ -64,7 +70,7 @@ function EmployeeScore() {
         <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm lg:col-span-2">
           <EmployeeScoreGauge score={data.employeeScore} rating={data.scoreRating} size="lg" />
           <p className="mt-4 text-center text-sm text-slate-600">{data.scoreRating?.description}</p>
-          <p className="mt-2 text-center text-xs font-semibold text-[#005fd6]">{data.percentile}</p>
+          <p className="mt-2 text-center text-xs font-semibold text-[#1e3a8a]">{data.percentile}</p>
           <p className="mt-4 text-center text-xs text-slate-400">Range {data.minScore ?? SCORE_MIN}–{data.maxScore ?? SCORE_MAX}</p>
 
           {(data.verificationTags || []).length > 0 && (
@@ -82,6 +88,43 @@ function EmployeeScore() {
         </div>
 
         <div className="mt-6 space-y-4 lg:col-span-3 lg:mt-0">
+          {/* Anything they skipped during setup, with what it's worth. This is
+              why finishing setup lands here — it turns a skip into a next step. */}
+          {missingSteps.length > 0 && (
+            <section className="rounded-2xl border border-amber-200 bg-amber-50/70 p-5">
+              <h3 className="m-0 text-sm font-bold text-slate-900">
+                Boost your score by up to +{missingSteps.reduce((sum, s) => sum + s.points, 0)} points
+              </h3>
+              <p className="m-0 mt-1 text-xs text-slate-600">
+                You skipped these during setup — add them any time to earn the points.
+              </p>
+              <div className="mt-4 flex flex-col gap-3">
+                {missingSteps.map((s) => (
+                  <div
+                    key={s.id}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white px-4 py-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="m-0 text-sm font-bold text-slate-900">
+                        {s.title}{' '}
+                        <span className="ml-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                          +{s.points} pts
+                        </span>
+                      </p>
+                      <p className="m-0 mt-0.5 text-xs text-slate-500">{s.description}</p>
+                    </div>
+                    <Link
+                      to={s.path}
+                      className="shrink-0 rounded-ctl bg-brand-600 px-4 py-2 text-xs font-semibold text-white no-underline hover:bg-brand-700"
+                    >
+                      Add now
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
           <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-slate-600">
             Employers use your PagerLook Score ({data.employeeScore}) for hiring and workforce decisions.
           </div>

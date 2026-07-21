@@ -30,12 +30,15 @@ function VerificationRequestModal({
   const [hrName, setHrName] = useState(defaultHrName || '')
   const [companySearch, setCompanySearch] = useState('')
   const [selectedPlatformCompany, setSelectedPlatformCompany] = useState(matchedPlatformCompany)
+  // The auto-match is a guess off the company name. If it's wrong, the requester
+  // can override it and verify through the HR contacts on record instead.
+  const [forceEmail, setForceEmail] = useState(false)
 
   useEffect(() => {
     setSelectedPlatformCompany(matchedPlatformCompany)
   }, [matchedPlatformCompany])
 
-  const isCaseA = Boolean(selectedPlatformCompany?.id || previousCompanyOnPlatform)
+  const isCaseA = !forceEmail && Boolean(selectedPlatformCompany?.id || previousCompanyOnPlatform)
 
   const { data: searchResults, isFetching: searching } = useQuery({
     queryKey: ['platform-companies', companySearch],
@@ -50,7 +53,11 @@ function VerificationRequestModal({
       createVerificationRequest({
         employeeId,
         jobExperienceId,
-        ...(selectedPlatformCompany?.id ? { targetCompanyId: selectedPlatformCompany.id } : {}),
+        ...(forceEmail
+          ? { forceEmail: true }
+          : selectedPlatformCompany?.id
+            ? { targetCompanyId: selectedPlatformCompany.id }
+            : {}),
         ...(hrEmail.trim() ? { hrEmail: hrEmail.trim() } : {}),
         ...(managerEmail.trim() ? { managerEmail: managerEmail.trim() } : {}),
         ...(hrName.trim() ? { hrName: hrName.trim() } : {}),
@@ -114,8 +121,8 @@ function VerificationRequestModal({
             <p className="mt-2 text-sm text-slate-600">
               Verify <strong>{jobTitle}</strong> at <strong>{companyName}</strong>.
             </p>
-            <div className="mt-4 rounded-xl border border-[#005fd6]/20 bg-blue-50/50 px-4 py-3 text-sm">
-              <p className="m-0 font-semibold text-[#005fd6]">Case A — Direct platform verification</p>
+            <div className="mt-4 rounded-xl border border-[#1e3a8a]/20 bg-blue-50/50 px-4 py-3 text-sm">
+              <p className="m-0 font-semibold text-[#1e3a8a]">Case A — Direct platform verification</p>
               <p className="m-0 mt-2 text-slate-700">
                 <strong>{platformName}</strong> is registered on PagerLook.
               </p>
@@ -134,12 +141,47 @@ function VerificationRequestModal({
                 Change selected company
               </button>
             )}
+
+            {/* The match is made from the company name, so it can be wrong
+                ("Wipro technology" vs "Wipro Tech"). Always offer the way out. */}
+            <div className="mt-3 rounded-xl border border-amber-100 bg-amber-50/60 px-4 py-3">
+              <p className="m-0 text-xs text-slate-700">
+                Is <strong>{platformName}</strong> not the same company{' '}
+                {jobTitle ? <>they worked at</> : null}? We matched it by name, so it can be wrong.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setForceEmail(true)
+                  setSelectedPlatformCompany(null)
+                }}
+                className="mt-2 text-xs font-bold text-brand-600 underline"
+              >
+                Verify by HR email instead →
+              </button>
+            </div>
           </>
         ) : (
           <>
             <p className="mt-2 text-sm text-slate-600">
               Verify <strong>{jobTitle}</strong> at <strong>{companyName}</strong>.
             </p>
+
+            {forceEmail && (
+              <div className="mt-4 flex items-start justify-between gap-3 rounded-xl border border-brand-600/20 bg-brand-600/5 px-4 py-3">
+                <p className="m-0 text-xs text-slate-700">
+                  Sending to the HR contacts on this employment record instead of the matched
+                  company.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setForceEmail(false)}
+                  className="shrink-0 text-xs font-semibold text-slate-500 underline"
+                >
+                  Undo
+                </button>
+              </div>
+            )}
 
             <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
               <p className="m-0 font-semibold text-slate-900">Is {companyName} on PagerLook?</p>

@@ -1,4 +1,7 @@
-function BrandLogo({ size = 'md', showTagline = false, theme = 'dark' }) {
+/**
+ * @param {'default'|'white'} variant - `white` uses the light logo asset, for dark surfaces.
+ */
+function BrandLogo({ size = 'md', showTagline = false, theme = 'dark', variant = 'default' }) {
   const heights = {
     sm: 'h-8',
     md: 'h-10',
@@ -7,6 +10,7 @@ function BrandLogo({ size = 'md', showTagline = false, theme = 'dark' }) {
 
   const h = heights[size] || heights.md
   const isLight = theme === 'light'
+  const src = variant === 'white' ? '/pagerLookLogo-white.png' : '/pagerLookLogo.png'
 
   return (
     <div
@@ -16,12 +20,7 @@ function BrandLogo({ size = 'md', showTagline = false, theme = 'dark' }) {
           : ''
       }`}
     >
-      <img
-        src="/pagerLookLogo.png"
-        alt="PagerLook"
-        className={`${h} w-auto object-contain`}
-        draggable="false"
-      />
+      <img src={src} alt="PagerLook" className={`${h} w-auto object-contain`} draggable="false" />
     </div>
   )
 }

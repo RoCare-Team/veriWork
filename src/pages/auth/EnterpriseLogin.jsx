@@ -57,7 +57,7 @@ function EnterpriseLogin() {
       {/* Single logo only: the hero (desktop) and mobile brand strip carry it. */}
       <div className="flex flex-col gap-7">
         <section className="text-center">
-          <h1 className="m-0 text-[30px] font-extrabold tracking-tight text-[#005fd6] sm:text-[34px]">
+          <h1 className="m-0 text-[30px] font-extrabold tracking-tight text-[#1e3a8a] sm:text-[34px]">
             Enterprise Login
           </h1>
           <p className="mt-2 text-[15px] leading-relaxed text-slate-500">
@@ -107,13 +107,13 @@ function EnterpriseLogin() {
         <footer className="flex flex-col items-center gap-3 border-t border-slate-100 pt-6 text-center text-[13px] text-slate-500">
           <p className="m-0">
             New company?{' '}
-            <Link to="/enterprise/register" className="font-bold text-[#005fd6] no-underline hover:underline">
+            <Link to="/enterprise/register" className="font-bold text-[#1e3a8a] no-underline hover:underline">
               Register Now
             </Link>
           </p>
           <p className="m-0">
             Professional?{' '}
-            <Link to="/employee/login" className="font-bold text-[#005fd6] no-underline hover:underline">
+            <Link to="/employee/login" className="font-bold text-[#1e3a8a] no-underline hover:underline">
               Employee Portal
             </Link>
           </p>

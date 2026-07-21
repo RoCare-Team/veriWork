@@ -12,7 +12,7 @@ import PhoneInput from '../../components/employee/PhoneInput'
 import VerificationStepBar from '../../components/employee/VerificationStepBar'
 import SecurityFooter from '../../components/employee/SecurityFooter'
 import { BriefcaseIcon, BuildingIcon } from '../../components/common/Icons'
-import { employeeKeys, fetchCompanySuggestions, fetchRoleSuggestions } from '../../api/employee'
+import { employeeKeys, fetchRoleSuggestions } from '../../api/employee'
 import { useAuth } from '../../context/AuthContext'
 import { normalizePhone } from '../../lib/api'
 import { getProfile, setupProfile } from '../../lib/employeeProfile'
@@ -47,6 +47,33 @@ const STREAM_OPTIONS = [
   { value: 'Commerce', label: 'Commerce' },
   { value: 'Arts', label: 'Arts' },
   { value: 'Vocational', label: 'Vocational' },
+]
+
+/** Score per completed education level — mirrors scoreService. */
+const EDU_POINTS = 15
+
+/*
+ * This page owns the first two steps of the shared journey (see
+ * utils/employeeJourney.js). Aadhaar and Face are steps 3 and 4 and live on
+ * their own pages — the progress bar is the same on all of them, so the journey
+ * never appears to change shape as you move between screens.
+ */
+const STEPS = [
+  {
+    id: 'profile',
+    optional: false,
+    subtitle: 'Step 1 of 3 — the essentials employers need to find and verify you',
+  },
+  {
+    id: 'education',
+    optional: true,
+    subtitle: 'Step 2 of 3 — optional, adds +45 to your PagerLook score',
+  },
+  {
+    id: 'identity',
+    optional: true,
+    subtitle: 'Step 3 of 3 — optional, the biggest score boost (+200)',
+  },
 ]
 
 const EMPTY_EDUCATION = {
@@ -105,7 +132,7 @@ function AddressTextarea({ id, label, value, onChange, error, errorText, disable
         onChange={onChange}
         disabled={disabled}
         aria-invalid={error ? 'true' : undefined}
-        className={`w-full resize-y rounded-2xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:text-base ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-50' : 'border-slate-200'}`}
+        className={`w-full resize-y rounded-2xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:text-base ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-50' : 'border-slate-200'}`}
       />
       {error && errorText && (
         <p className="m-0 text-xs text-red-600" role="alert">
@@ -194,6 +221,9 @@ function applyProfileToForm(data, setters) {
       (!permanentAddress || permanentAddress.trim() === currentAddress.trim()),
   )
   setters.setPhotoUrl(data.photoUrl || '')
+  // Drives the tick on the identity step — verification happens on its own pages.
+  setters.setAadhaarVerified?.(Boolean(data.aadhaarVerified))
+  setters.setBiometricVerified?.(Boolean(data.biometricVerified))
   setters.setEducation({
     class10: {
       board: data.education?.class10?.board || '',
@@ -246,6 +276,12 @@ function ProfileSetup() {
   const [education, setEducation] = useState(EMPTY_EDUCATION)
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState({})
+  // Wizard position. Step 2 (education) and 3 (identity) are skippable.
+  const [step, setStep] = useState(0)
+  // Only surface "what's missing" after they try to continue — not while typing.
+  const [showStep1Errors, setShowStep1Errors] = useState(false)
+  const [aadhaarVerified, setAadhaarVerified] = useState(false)
+  const [biometricVerified, setBiometricVerified] = useState(false)
   const [generalErrors, setGeneralErrors] = useState([])
 
   const setters = {
@@ -264,6 +300,8 @@ function ProfileSetup() {
     setSameAsCurrentAddress,
     setPhotoUrl,
     setEducation,
+    setAadhaarVerified,
+    setBiometricVerified,
   }
 
   useEffect(() => {
@@ -334,28 +372,21 @@ function ProfileSetup() {
       if (!sameAsCurrentAddress) {
         formData.append('permanentAddress', permanentAddress.trim())
       }
-      formData.append('education', JSON.stringify({
-        class10: {
-          board: education.class10.board.trim(),
-          school: education.class10.school.trim(),
-          passingYear: education.class10.passingYear.trim(),
-          percentage: education.class10.percentage.trim(),
-        },
-        class12: {
-          board: education.class12.board.trim(),
-          school: education.class12.school.trim(),
-          stream: education.class12.stream.trim(),
-          passingYear: education.class12.passingYear.trim(),
-          percentage: education.class12.percentage.trim(),
-        },
-        graduation: {
-          degree: education.graduation.degree.trim(),
-          college: education.graduation.college.trim(),
-          university: education.graduation.university.trim(),
-          passingYear: education.graduation.passingYear.trim(),
-          percentage: education.graduation.percentage.trim(),
-        },
-      }))
+      // Only send education if something was actually filled — sending empty
+      // strings would otherwise wipe a level the user added earlier.
+      const trimLevel = (obj) =>
+        Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, (v || '').trim()]))
+      const eduPayload = {
+        class10: trimLevel(education.class10),
+        class12: trimLevel(education.class12),
+        graduation: trimLevel(education.graduation),
+      }
+      const anyEducation = Object.values(eduPayload).some((lvl) =>
+        Object.values(lvl).some(Boolean),
+      )
+      if (anyEducation) {
+        formData.append('education', JSON.stringify(eduPayload))
+      }
       if (photo) formData.append('photo', photo)
       const invitationToken = getInvitationToken()
       if (invitationToken) formData.append('invitationToken', invitationToken)
@@ -373,9 +404,10 @@ function ProfileSetup() {
           photoUrl: data.photoUrl ?? profile?.photoUrl,
         })
         queryClient.invalidateQueries({ queryKey: employeeKeys.profile })
+        queryClient.invalidateQueries({ queryKey: employeeKeys.score })
         clearInvitationSession()
         toast(`You have been added to ${companyName} team!`, 'success')
-        navigate('/employee/verification')
+        navigate('/employee/score')
         return
       }
 
@@ -385,11 +417,10 @@ function ProfileSetup() {
         photoUrl: data.photoUrl ?? profile?.photoUrl,
       })
       queryClient.invalidateQueries({ queryKey: employeeKeys.profile })
-      navigate(
-        isEditing
-          ? '/employee/professional-id'
-          : data.nextRoute || '/employee/verification',
-      )
+      queryClient.invalidateQueries({ queryKey: employeeKeys.score })
+      // Finishing setup lands on the score — it's the payoff, and it shows
+      // exactly what the skipped steps would still be worth.
+      navigate(isEditing ? '/employee/professional-id' : '/employee/score')
     },
     onError: (err) => {
       const { fieldErrors: nextFieldErrors, general } = extractFieldErrors(err.details)
@@ -399,30 +430,52 @@ function ProfileSetup() {
     },
   })
 
-  const isEducationValid =
-    education.class10.board.trim().length >= 2 &&
-    education.class10.school.trim().length >= 2 &&
-    /^\d{4}$/.test(education.class10.passingYear.trim()) &&
-    education.class12.board.trim().length >= 2 &&
-    education.class12.school.trim().length >= 2 &&
-    /^\d{4}$/.test(education.class12.passingYear.trim()) &&
-    education.graduation.degree.trim().length >= 2 &&
-    education.graduation.college.trim().length >= 2 &&
-    /^\d{4}$/.test(education.graduation.passingYear.trim())
+  /*
+   * Education is optional. A level is only validated once the user has started
+   * filling it — an untouched level is "skipped", a half-filled one is an error,
+   * because a partial record looks complete on a profile but isn't.
+   */
+  const EDU_KEYS = {
+    class10: ['board', 'school'],
+    class12: ['board', 'school'],
+    graduation: ['degree', 'college'],
+  }
 
-  const isValid =
-    name.trim().length >= 2 &&
-    phoneDigits.length >= 10 &&
-    email.trim().length > 0 &&
-    dateOfBirth &&
-    gender &&
-    role.trim().length >= 2 &&
-    company.trim().length >= 1 &&
-    totalExperience &&
-    currentCity.trim().length >= 2 &&
-    currentAddress.trim().length >= 5 &&
-    (sameAsCurrentAddress || permanentAddress.trim().length >= 5) &&
-    isEducationValid
+  const eduLevelState = (level) => {
+    const data = education[level]
+    const keys = EDU_KEYS[level]
+    const touched = Object.values(data).some((v) => v?.trim())
+    if (!touched) return 'empty'
+    const complete = keys.every((k) => data[k]?.trim().length >= 2)
+    return complete ? 'complete' : 'partial'
+  }
+
+  const eduStates = {
+    class10: eduLevelState('class10'),
+    class12: eduLevelState('class12'),
+    graduation: eduLevelState('graduation'),
+  }
+  const completedEduLevels = Object.values(eduStates).filter((s) => s === 'complete').length
+  const hasPartialEdu = Object.values(eduStates).some((s) => s === 'partial')
+
+  /** Step 1 — the only genuinely required information. */
+  const step1Missing = [
+    [name.trim().length >= 2, 'Full name'],
+    [phoneDigits.length >= 10, 'Phone number'],
+    [email.trim().length > 0, 'Email'],
+    [Boolean(dateOfBirth), 'Date of birth'],
+    [Boolean(gender), 'Gender'],
+    [role.trim().length >= 2, 'Current role'],
+    [company.trim().length >= 1, 'Current company'],
+    [Boolean(totalExperience), 'Total experience'],
+    [currentCity.trim().length >= 2, 'Current city'],
+    [currentAddress.trim().length >= 5, 'Current address'],
+    [sameAsCurrentAddress || permanentAddress.trim().length >= 5, 'Permanent address'],
+  ]
+    .filter(([ok]) => !ok)
+    .map(([, label]) => label)
+
+  const isStep1Valid = step1Missing.length === 0
 
   const updateEducation = (level, field, value) => {
     setEducation((prev) => ({
@@ -452,13 +505,64 @@ function ProfileSetup() {
     if (checked) setPermanentAddress('')
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!isValid || mutation.isPending || loading) return
+  const submitProfile = () => {
+    if (mutation.isPending || loading) return
     setError('')
     setFieldErrors({})
     setGeneralErrors([])
     mutation.mutate()
+  }
+
+  /**
+   * Advance a step. Step 1 must be valid; optional steps just must not be
+   * half-filled. On the LAST step there is nowhere to advance to — "skip" there
+   * means "finish without doing this", so it submits.
+   */
+  const goNext = () => {
+    if (step === 0) {
+      if (!isStep1Valid) {
+        setShowStep1Errors(true)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        return
+      }
+      setShowStep1Errors(false)
+    }
+    if (step === 1 && hasPartialEdu) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    if (step === STEPS.length - 1) {
+      submitProfile()
+      return
+    }
+    setStep((s) => s + 1)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  // Ticks on the shared journey bar. Aadhaar/Face come from the saved profile —
+  // they're done on their own pages, but must still show as complete here.
+  const completedSteps = [
+    ...(isStep1Valid ? ['profile'] : []),
+    ...(completedEduLevels > 0 && !hasPartialEdu ? ['education'] : []),
+    ...(aadhaarVerified && biometricVerified ? ['identity'] : []),
+  ]
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (mutation.isPending || loading) return
+    if (!isStep1Valid) {
+      // Send them back to the step that's actually blocking, and say why.
+      setShowStep1Errors(true)
+      setStep(0)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    if (hasPartialEdu) {
+      setStep(1)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    submitProfile()
   }
 
   const fieldError = (key) => Boolean(fieldErrors[key])
@@ -477,11 +581,14 @@ function ProfileSetup() {
 
   return (
     <EmployeeLayout fullWidth footer={<SecurityFooter variant="shield" text="Your profile is private & encrypted" />}>
-      <VerificationStepBar currentStep="profile" className="mb-6" />
       <EmployeePageHeader
         title={isEditing ? 'Edit Your Profile' : 'Create Your Profile'}
-        subtitle={isEditing ? 'Update your identity details' : 'Step 1 of 3 — This account is unique to you'}
+        subtitle={STEPS[step].subtitle}
       />
+
+      <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <VerificationStepBar currentStep={STEPS[step].id} completed={completedSteps} />
+      </div>
 
       {(error || generalErrors.length > 0) && (
         <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
@@ -496,8 +603,25 @@ function ProfileSetup() {
         </div>
       )}
 
+      {/* Tell them exactly what is still missing, instead of a dead button. */}
+      {showStep1Errors && step === 0 && step1Missing.length > 0 && (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800" role="alert">
+          <p className="m-0 font-semibold">Still needed to continue:</p>
+          <ul className="m-0 mt-1 list-disc pl-5">
+            {step1Missing.map((label) => (
+              <li key={label}>{label}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <form className="flex w-full flex-col gap-6" onSubmit={handleSubmit} noValidate>
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* items-start: without it the grid stretches every card to the tallest
+            in its row, which left big dead gaps and made the page shift as
+            content (photo preview, address field) appeared. */}
+        <div className={`grid grid-cols-1 items-start gap-6 ${step === 0 ? 'lg:grid-cols-2' : ''}`}>
+        {step === 0 && (
+          <>
         <FormSection title="Personal details" description="Basic identity information for your PagerLook account">
           <Input
             id="full-name"
@@ -585,21 +709,20 @@ function ProfileSetup() {
             hint="Start typing to see role suggestions"
           />
 
-          <AutocompleteInput
+          {/* Plain input, no lookup: people work at companies that aren't on
+              PagerLook, and a dropdown fighting their typing was worse than useless. */}
+          <Input
             id="company"
             label="Current Company"
             required
             value={company}
-            onChange={setCompany}
-            fetchSuggestions={fetchCompanySuggestions}
-            minChars={3}
-            placeholder="e.g. Acme Technologies"
+            onChange={(e) => setCompany(e.target.value)}
+            placeholder="Type any company name, or None"
             leftIcon={<BuildingIcon className="h-[18px] w-[18px]" />}
             disabled={mutation.isPending}
             error={fieldError('company')}
             errorText={fieldErrorText('company')}
-            hint="Type at least 3 characters for company suggestions"
-            emptyHint="No match found — you can enter any company name"
+            hint="Not working right now? Just type None"
           />
 
           <Select
@@ -649,7 +772,7 @@ function ProfileSetup() {
               checked={sameAsCurrentAddress}
               onChange={(e) => handleSameAddressChange(e.target.checked)}
               disabled={mutation.isPending}
-              className="h-4 w-4 rounded border-slate-300 text-[#005fd6] focus:ring-[#005fd6]"
+              className="h-4 w-4 rounded border-slate-300 text-[#1e3a8a] focus:ring-[#1e3a8a]"
             />
             Permanent address same as current address
           </label>
@@ -669,18 +792,22 @@ function ProfileSetup() {
         </FormSection>
 
         <FormSection title="Profile photo" description="Optional — upload a clear photo for your professional ID">
-          <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-            <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 md:h-32 md:w-32">
+          <div className="flex items-center gap-4">
+            {/* Fixed square, never grows with the image — keeps the row stable. */}
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50">
               {displayPhoto ? (
                 <img src={displayPhoto} alt="Profile preview" className="h-full w-full object-cover" />
               ) : (
                 <UserIcon className="h-10 w-10 text-slate-300" />
               )}
             </div>
-            <div className="flex flex-1 flex-col gap-2 text-center sm:text-left">
+            {/* relative: the file input is `sr-only`, which is position:absolute.
+                Without a positioned ancestor it lands at the top of the document,
+                so focusing it (clicking the label) scrolled the page up. */}
+            <div className="relative flex flex-1 flex-col gap-2 text-left">
               <label
                 htmlFor="photo"
-                className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-[#005fd6]/30 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-[#005fd6] transition hover:bg-blue-100 sm:w-fit"
+                className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-[#1e3a8a]/30 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-[#1e3a8a] transition hover:bg-blue-100 sm:w-fit"
               >
                 Choose photo
               </label>
@@ -706,13 +833,34 @@ function ProfileSetup() {
             </div>
           </div>
         </FormSection>
+          </>
+        )}
         </div>
 
+        {step === 1 && (
         <FormSection
           title="Education"
-          description="10th, 12th and graduation details for verification and your professional profile"
+          description="Optional — add what you have. Each completed level adds +15 to your PagerLook score."
           className="w-full"
         >
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-100 bg-amber-50/60 px-4 py-3">
+            <p className="m-0 text-xs text-slate-700">
+              You can skip this and add it later — but you'll earn{' '}
+              <strong>+{completedEduLevels * EDU_POINTS} pts</strong> of a possible{' '}
+              <strong>+{3 * EDU_POINTS}</strong> right now.
+            </p>
+            <span className="rounded-full bg-white px-3 py-1 text-[11px] font-bold text-amber-700">
+              {completedEduLevels}/3 completed
+            </span>
+          </div>
+
+          {hasPartialEdu && (
+            <p className="m-0 mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
+              One of your education levels is half-filled. Complete it (board/school, or
+              degree/college) or clear it to skip.
+            </p>
+          )}
+
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <EducationLevelCard title="Class 10th" subtitle="Secondary school">
               <Input
@@ -877,15 +1025,118 @@ function ProfileSetup() {
             </EducationLevelCard>
           </div>
         </FormSection>
+        )}
+
+        {/* Step 3 — Identity. The two checks run on their own pages (DigiLocker,
+            camera), so this step launches them and never blocks finishing. */}
+        {step === 2 && (
+          <FormSection
+            title="Identity verification"
+            description="Optional — verify Aadhaar and your face to unlock the biggest score boost."
+            className="w-full"
+          >
+            <div className="rounded-xl border border-amber-100 bg-amber-50/60 px-4 py-3">
+              <p className="m-0 text-xs text-slate-700">
+                Both checks together add <strong>+200 pts</strong> and unlock the{' '}
+                <strong>Identity Verified</strong> badge employers look for. Skip now and you can do
+                it any time — you just won't get these points until you do.
+              </p>
+            </div>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {[
+                {
+                  key: 'aadhaar',
+                  title: 'Aadhaar verification',
+                  desc: 'Secure e-KYC via DigiLocker or OTP.',
+                  done: aadhaarVerified,
+                  to: '/employee/verification/aadhaar',
+                },
+                {
+                  key: 'face',
+                  title: 'Face verification',
+                  desc: 'A quick liveness selfie matched to your ID.',
+                  done: biometricVerified,
+                  to: '/employee/verification/biometric',
+                },
+              ].map((c) => (
+                <div key={c.key} className="rounded-2xl border border-slate-200 p-5">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="m-0 text-sm font-bold text-slate-900">{c.title}</p>
+                    {c.done && (
+                      <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700">
+                        Done
+                      </span>
+                    )}
+                  </div>
+                  <p className="m-0 mt-1 text-xs text-slate-500">{c.desc}</p>
+                  <button
+                    type="button"
+                    onClick={() => navigate(c.to)}
+                    disabled={c.done}
+                    className="mt-4 w-full rounded-ctl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:bg-slate-100 disabled:text-slate-400"
+                  >
+                    {c.done ? 'Verified' : `Verify ${c.key === 'aadhaar' ? 'Aadhaar' : 'face'}`}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </FormSection>
+        )}
 
         <div className="sticky bottom-0 z-10 -mx-4 border-t border-slate-200 bg-slate-50/95 px-4 py-4 backdrop-blur md:-mx-6 md:px-6 lg:-mx-8 lg:px-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="m-0 text-sm text-slate-500">
-              All fields marked with <span className="text-red-500">*</span> are required
-            </p>
-            <Button type="submit" disabled={!isValid || mutation.isPending} className="w-full shadow-lg sm:w-auto sm:min-w-[200px]">
-              {mutation.isPending ? 'Saving...' : isEditing ? 'Save Changes' : 'Save & Continue'}
-            </Button>
+            <div className="flex items-center gap-3">
+              {step > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setStep((s) => s - 1)}
+                  disabled={mutation.isPending}
+                  className="rounded-ctl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                >
+                  Back
+                </button>
+              )}
+              <p className="m-0 text-sm text-slate-500">
+                {step === 0
+                  ? 'Fields marked * are required'
+                  : "Optional — skip now, add it later from your score page"}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {STEPS[step].optional && (
+                <button
+                  type="button"
+                  onClick={goNext}
+                  disabled={mutation.isPending}
+                  className="rounded-ctl px-4 py-2.5 text-sm font-semibold text-slate-500 underline hover:text-slate-700 disabled:opacity-50"
+                >
+                  Skip for now
+                </button>
+              )}
+
+              {step < STEPS.length - 1 ? (
+                <Button
+                  type="button"
+                  onClick={goNext}
+                  disabled={mutation.isPending}
+                  className="w-full shadow-lg sm:w-auto sm:min-w-[200px]"
+                >
+                  Continue
+                </Button>
+              ) : (
+                // Not disabled on purpose: submitting jumps to whichever step is
+                // blocking and explains it, which beats a dead button.
+                <Button
+                  type="submit"
+                  disabled={mutation.isPending}
+                  className="w-full shadow-lg sm:w-auto sm:min-w-[200px]"
+                >
+                  {mutation.isPending ? 'Saving...' : isEditing ? 'Save Changes' : 'Finish setup'}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </form>

@@ -27,6 +27,19 @@ export function getEnterpriseDocType(docId) {
   return ENTERPRISE_DOC_TYPES[docId] || docId
 }
 
+/**
+ * Read an uploaded document out of the onboarding `documents` map.
+ *
+ * The UI id and the stored key are not always the same (`taxCertificate` is
+ * stored as `tax`), and older records may use either. Always look up through
+ * this instead of indexing the map directly, or a document that IS uploaded
+ * shows as "Missing".
+ */
+export function getUploadedDocument(documents, docId) {
+  if (!documents) return null
+  return documents[docId] || documents[getEnterpriseDocType(docId)] || null
+}
+
 const IMAGE_MIME_TYPES = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp']
 

@@ -1,7 +1,7 @@
 function ResumeSection({ title, children }) {
   return (
     <section className="mb-5">
-      <h2 className="m-0 border-b-2 border-[#005fd6] pb-1 text-[11px] font-bold uppercase tracking-[0.15em] text-[#005fd6]">
+      <h2 className="m-0 border-b-2 border-[#1e3a8a] pb-1 text-[11px] font-bold uppercase tracking-[0.15em] text-[#1e3a8a]">
         {title}
       </h2>
       <div className="mt-3">{children}</div>
@@ -28,19 +28,19 @@ function PublicResume({ profile, photoUrl, compact = false }) {
               className="h-20 w-20 shrink-0 rounded-xl object-cover ring-2 ring-slate-100"
             />
           ) : (
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-[#005fd6] text-2xl font-bold text-white">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-[#1e3a8a] text-2xl font-bold text-white">
               {profile.initials}
             </div>
           )}
           <div>
             <h1 className="m-0 text-2xl font-extrabold tracking-tight text-slate-900">{profile.name}</h1>
-            <p className="m-0 mt-1 text-base font-semibold text-[#005fd6]">{profile.role}</p>
+            <p className="m-0 mt-1 text-base font-semibold text-[#1e3a8a]">{profile.role}</p>
             <p className="m-0 mt-1 text-sm text-slate-500">
               {[profile.company, profile.currentCity, profile.totalExperience].filter(Boolean).join(' · ')}
             </p>
           </div>
         </div>
-        <div className="score-box shrink-0 rounded-xl bg-gradient-to-br from-[#005fd6] to-[#0073fe] px-4 py-3 text-center text-white">
+        <div className="score-box shrink-0 rounded-xl bg-gradient-to-br from-[#1e3a8a] to-[#2748a6] px-4 py-3 text-center text-white">
           <p className="m-0 text-[10px] font-semibold uppercase tracking-wider text-white/70">PagerLook Score</p>
           <p className="m-0 text-3xl font-extrabold leading-none">{profile.employeeScore}</p>
           <p className="m-0 mt-1 text-xs font-medium text-white/80">{profile.scoreRating?.label}</p>
@@ -82,7 +82,7 @@ function PublicResume({ profile, photoUrl, compact = false }) {
           <div className="space-y-4">
             {jobs.map((job) => (
               <div key={job.id} className="relative border-l-2 border-slate-200 pl-4">
-                <div className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-[#005fd6]" />
+                <div className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-[#1e3a8a]" />
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="m-0 text-sm font-bold text-slate-900">{job.title}</p>

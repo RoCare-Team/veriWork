@@ -89,7 +89,7 @@ function TeamEmployeeCard({ employee, department, onRequestAccess, onRemoveAcces
           stop(e)
           onRequestAccess?.(employee)
         }}
-        className="rounded-xl border border-[#005fd6] px-4 py-2 text-sm font-semibold text-[#005fd6] transition hover:bg-blue-50"
+        className="rounded-xl border border-[#1e3a8a] px-4 py-2 text-sm font-semibold text-[#1e3a8a] transition hover:bg-blue-50"
       >
         Request Access
       </button>
@@ -120,7 +120,7 @@ function TeamEmployeeCard({ employee, department, onRequestAccess, onRemoveAcces
           {photoSrc ? (
             <img src={photoSrc} alt="" className="h-12 w-12 shrink-0 rounded-full object-cover" />
           ) : (
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-[#005fd6]">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-[#1e3a8a]">
               {getInitials(name)}
             </div>
           )}
@@ -148,7 +148,7 @@ function TeamEmployeeCard({ employee, department, onRequestAccess, onRemoveAcces
               if (profilePath) navigate(profilePath)
             }}
             disabled={!profilePath}
-            className="rounded-xl bg-[#005fd6] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#004bab] disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl bg-[#1e3a8a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#172554] disabled:cursor-not-allowed disabled:opacity-50"
           >
             View Profile
           </button>

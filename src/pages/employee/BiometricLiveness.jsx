@@ -11,12 +11,14 @@ import { ShieldCheckIcon } from '../../components/common/Icons'
 import VerificationStepBar, { VerificationBackLink } from '../../components/employee/VerificationStepBar'
 import { employeeKeys, verifyBiometric } from '../../api/employee'
 import { useAuth } from '../../context/AuthContext'
+import { getCompletedJourneySteps } from '../../utils/employeeJourney'
 import { dataUrlToFile } from '../../utils/employeeRoutes'
 
 function BiometricLiveness() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { profile, updateProfileState } = useAuth()
+  const journeyCompleted = getCompletedJourneySteps(profile)
   const firstName = profile?.name?.split(' ')[0] || 'there'
   const [capturedImage, setCapturedImage] = useState(null)
   const [error, setError] = useState('')
@@ -47,8 +49,8 @@ function BiometricLiveness() {
   return (
     <EmployeeLayout footer={<SecurityFooter variant="shield" text="Bank-Grade Security Protocol" />}>
       <VerificationBackLink />
-      <VerificationStepBar currentStep="biometric" className="mb-6" />
-      <EmployeePageHeader title="Step 3 — Biometric Liveness" subtitle={`Hi ${firstName}, follow the on-screen prompts`} />
+      <VerificationStepBar currentStep="identity" completed={journeyCompleted} className="mb-6" />
+      <EmployeePageHeader title="Face verification" subtitle={`Identity check 2 of 2 — hi ${firstName}, follow the on-screen prompts`} />
 
       {error && <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 

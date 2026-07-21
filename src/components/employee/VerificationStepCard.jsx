@@ -42,7 +42,7 @@ function VerificationStepCard({ step, onClick }) {
 
           className={`text-[10px] font-bold uppercase tracking-wider ${
 
-            isCompleted ? 'text-green-600' : isCurrent ? 'text-[#005fd6]' : 'text-slate-400'
+            isCompleted ? 'text-green-600' : isCurrent ? 'text-[#1e3a8a]' : 'text-slate-400'
 
           }`}
 
@@ -62,7 +62,7 @@ function VerificationStepCard({ step, onClick }) {
 
               : isCurrent
 
-                ? 'bg-[#005fd6] text-white'
+                ? 'bg-[#1e3a8a] text-white'
 
                 : isLocked
 
@@ -90,7 +90,7 @@ function VerificationStepCard({ step, onClick }) {
 
           {isCurrent && (
 
-            <span className="rounded-full bg-[#005fd6]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#005fd6]">
+            <span className="rounded-full bg-[#1e3a8a]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#1e3a8a]">
 
               Current
 
@@ -150,7 +150,7 @@ function VerificationStepCard({ step, onClick }) {
 
       : isCurrent
 
-        ? 'border-[#005fd6]/30 shadow-md shadow-blue-900/5 ring-1 ring-[#005fd6]/10'
+        ? 'border-[#1e3a8a]/30 shadow-md shadow-blue-900/5 ring-1 ring-[#1e3a8a]/10'
 
         : isLocked
 
@@ -158,7 +158,7 @@ function VerificationStepCard({ step, onClick }) {
 
           : isPending && step.to
 
-            ? 'border-slate-200 hover:border-[#005fd6]/30 hover:shadow-sm'
+            ? 'border-slate-200 hover:border-[#1e3a8a]/30 hover:shadow-sm'
 
             : 'border-slate-100'
 

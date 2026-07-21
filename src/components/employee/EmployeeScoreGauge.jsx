@@ -10,7 +10,7 @@ const SCORE_SEGMENTS = [
   { min: 300, max: 450, color: '#dc2626', label: 'Poor' },
   { min: 450, max: 600, color: '#ea580c', label: 'Low' },
   { min: 600, max: 700, color: '#ca8a04', label: 'Fair' },
-  { min: 700, max: 800, color: '#2563eb', label: 'Good' },
+  { min: 700, max: 800, color: '#1e3a8a', label: 'Good' },
   { min: 800, max: 1000, color: '#16a34a', label: 'Excellent' },
 ]
 

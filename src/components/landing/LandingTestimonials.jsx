@@ -5,7 +5,7 @@ function LandingTestimonials() {
     <section className="py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-5 md:px-8 lg:px-10">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#005fd6]">
+          <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#1e3a8a]">
             Testimonials
           </p>
           <h2 className="m-0 mt-3 text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">
@@ -23,7 +23,7 @@ function LandingTestimonials() {
                 &ldquo;{item.quote}&rdquo;
               </p>
               <footer className="mt-6 flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#0073fe] to-[#005fd6] text-sm font-bold text-white">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#2748a6] to-[#1e3a8a] text-sm font-bold text-white">
                   {item.initials}
                 </div>
                 <div>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { FIELD_LABEL, FIELD_WRAP, fieldControlClass } from './fieldStyles'
 
 function AutocompleteInput({
   id,
@@ -19,6 +20,7 @@ function AutocompleteInput({
 }) {
   const listId = useId()
   const wrapRef = useRef(null)
+  const skipNextLoadRef = useRef(false)
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [suggestions, setSuggestions] = useState([])
@@ -49,6 +51,13 @@ function AutocompleteInput({
   )
 
   useEffect(() => {
+    // Picking a suggestion changes `value`, which would re-trigger this fetch and
+    // pop the dropdown straight back open — making it look like the click never
+    // registered. Skip exactly one cycle after a pick.
+    if (skipNextLoadRef.current) {
+      skipNextLoadRef.current = false
+      return undefined
+    }
     const timer = window.setTimeout(() => {
       loadSuggestions(value)
     }, 280)
@@ -67,6 +76,7 @@ function AutocompleteInput({
 
   const pick = (item) => {
     const labelText = typeof item === 'string' ? item : item.name
+    skipNextLoadRef.current = true
     onChange(labelText)
     onSelect?.(item)
     setOpen(false)
@@ -92,16 +102,16 @@ function AutocompleteInput({
   const showDropdown = open && (loading || suggestions.length > 0 || value.trim().length >= minChars)
 
   return (
-    <div ref={wrapRef} className="relative flex flex-col gap-2">
+    <div ref={wrapRef} className={`relative ${FIELD_WRAP}`}>
       {label && (
-        <label htmlFor={id} className="text-sm font-semibold text-slate-800">
+        <label htmlFor={id} className={FIELD_LABEL}>
           {label}
-          {required && <span className="text-red-500"> *</span>}
+          {required && <span className="text-danger"> *</span>}
         </label>
       )}
       <div className="relative">
         {leftIcon && (
-          <span className="pointer-events-none absolute left-3.5 top-1/2 z-10 -translate-y-1/2 text-slate-400">
+          <span className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-ink-faint">
             {leftIcon}
           </span>
         )}
@@ -120,10 +130,10 @@ function AutocompleteInput({
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => value.trim().length >= minChars && suggestions.length > 0 && setOpen(true)}
           onKeyDown={handleKeyDown}
-          className={`h-12 w-full rounded-2xl border bg-white px-4 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:h-[52px] md:text-base ${leftIcon ? 'pl-11' : ''} ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-50' : 'border-slate-200'}`}
+          className={fieldControlClass({ error, leftIcon: Boolean(leftIcon), rightSlot: loading })}
         />
         {loading && (
-          <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400">
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-faint">
             ...
           </span>
         )}

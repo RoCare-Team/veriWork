@@ -5,7 +5,7 @@ import { useToast } from '../../context/ToastContext'
 import Button from '../common/Button'
 
 const inputClass =
-  'mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-800 outline-none focus:border-[#005fd6]'
+  'mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-800 outline-none focus:border-[#1e3a8a]'
 
 function ChangePasswordSection() {
   const { toast } = useToast()

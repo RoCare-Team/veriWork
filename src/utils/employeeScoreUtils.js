@@ -41,10 +41,10 @@ export function getScoreRating(score) {
     return {
       label: 'Good',
       tier: 'A',
-      color: 'text-[#005fd6]',
+      color: 'text-[#1e3a8a]',
       bg: 'bg-blue-50',
       border: 'border-blue-200',
-      bar: 'bg-[#005fd6]',
+      bar: 'bg-[#1e3a8a]',
       description: 'Strong identity and work history. Reliable for hiring decisions.',
     }
   }

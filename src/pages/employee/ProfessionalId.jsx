@@ -98,7 +98,7 @@ function ProfessionalId() {
           <ProfessionalIdCard profile={profile} photoUrl={mediaUrl(data.photoUrl)} />
         </div>
         <div className="mt-6 space-y-5 lg:col-span-2 lg:mt-0">
-          <Link to="/employee/profile-setup" className="block text-center text-sm font-semibold text-[#005fd6] no-underline hover:underline">
+          <Link to="/employee/profile-setup" className="block text-center text-sm font-semibold text-[#1e3a8a] no-underline hover:underline">
             Edit Identity Details
           </Link>
           <p className="m-0 flex items-start gap-2 text-xs text-slate-500">
@@ -115,7 +115,7 @@ function ProfessionalId() {
               <button
                 type="button"
                 onClick={handleCopyId}
-                className="mt-3 text-sm font-semibold text-[#005fd6] hover:underline"
+                className="mt-3 text-sm font-semibold text-[#1e3a8a] hover:underline"
               >
                 {idCopied ? 'Copied!' : 'Copy PagerLook ID'}
               </button>
@@ -129,18 +129,18 @@ function ProfessionalId() {
                   href={publicProfileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="m-0 block truncate text-sm font-semibold text-[#005fd6] no-underline hover:underline"
+                  className="m-0 block truncate text-sm font-semibold text-[#1e3a8a] no-underline hover:underline"
                 >
                   {publicProfileUrl}
                 </a>
               </div>
-              <button type="button" onClick={handleCopy} className="shrink-0 text-sm font-semibold text-[#005fd6]">
+              <button type="button" onClick={handleCopy} className="shrink-0 text-sm font-semibold text-[#1e3a8a]">
                 Copy
               </button>
             </div>
           )}
           {copied && <p className="m-0 text-center text-xs font-semibold text-green-600">Link copied!</p>}
-          <Link to="/employee/job-history" className="flex h-12 items-center justify-center rounded-2xl bg-[#005fd6] text-sm font-semibold text-white no-underline hover:bg-[#004bab]">
+          <Link to="/employee/job-history" className="flex h-12 items-center justify-center rounded-2xl bg-[#1e3a8a] text-sm font-semibold text-white no-underline hover:bg-[#172554]">
             View Job History
           </Link>
         </div>

@@ -162,10 +162,10 @@ function Activity() {
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <h2 className="m-0 text-sm font-bold text-slate-800">Pending Requests</h2>
               <div className="flex gap-3">
-                <Link to="/employee/invitations" className="text-xs font-semibold text-[#005fd6] no-underline hover:underline">
+                <Link to="/employee/invitations" className="text-xs font-semibold text-[#1e3a8a] no-underline hover:underline">
                   All invitations
                 </Link>
-                <Link to="/employee/access-requests" className="text-xs font-semibold text-[#005fd6] no-underline hover:underline">
+                <Link to="/employee/access-requests" className="text-xs font-semibold text-[#1e3a8a] no-underline hover:underline">
                   All access requests
                 </Link>
               </div>
@@ -177,7 +177,7 @@ function Activity() {
                   <article key={`inv-${id}`} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm md:p-5">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="m-0 text-xs font-bold uppercase tracking-wide text-[#005fd6]">Company Invitation</p>
+                        <p className="m-0 text-xs font-bold uppercase tracking-wide text-[#1e3a8a]">Company Invitation</p>
                         <h3 className="m-0 mt-1 text-base font-bold text-slate-900">{inv.companyName}</h3>
                         <p className="m-0 mt-1 text-sm text-slate-600">{inv.department} · {inv.designation}</p>
                       </div>
@@ -196,7 +196,7 @@ function Activity() {
                         type="button"
                         onClick={() => acceptInvitationMutation.mutate(id)}
                         disabled={actionPending}
-                        className="h-11 rounded-xl bg-[#005fd6] text-sm font-semibold text-white disabled:opacity-50"
+                        className="h-11 rounded-xl bg-[#1e3a8a] text-sm font-semibold text-white disabled:opacity-50"
                       >
                         Accept
                       </button>
@@ -231,7 +231,7 @@ function Activity() {
                         type="button"
                         onClick={() => approveAccessMutation.mutate(id)}
                         disabled={actionPending}
-                        className="h-11 rounded-xl bg-[#005fd6] text-sm font-semibold text-white disabled:opacity-50"
+                        className="h-11 rounded-xl bg-[#1e3a8a] text-sm font-semibold text-white disabled:opacity-50"
                       >
                         Approve
                       </button>

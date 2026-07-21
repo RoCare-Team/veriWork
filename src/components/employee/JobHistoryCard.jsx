@@ -76,7 +76,7 @@ function JobHistoryCard({ job }) {
           {showVerify ? (
             <Link
               to={`/employee/jobs/${job.id}/verify`}
-              className="inline-flex items-center gap-1 rounded-lg bg-[#005fd6] px-3 py-1.5 text-xs font-semibold text-white no-underline transition hover:bg-[#004bab]"
+              className="inline-flex items-center gap-1 rounded-lg bg-[#1e3a8a] px-3 py-1.5 text-xs font-semibold text-white no-underline transition hover:bg-[#172554]"
             >
               Verify employment
             </Link>
@@ -89,7 +89,7 @@ function JobHistoryCard({ job }) {
               )}
               <Link
                 to={`/employee/jobs/${job.id}/verify`}
-                className="text-xs font-semibold text-[#005fd6] no-underline hover:underline"
+                className="text-xs font-semibold text-[#1e3a8a] no-underline hover:underline"
               >
                 View details →
               </Link>
@@ -97,7 +97,7 @@ function JobHistoryCard({ job }) {
           ) : job.status === 'in_process' ? (
             <Link
               to={`/employee/jobs/${job.id}/verify`}
-              className="text-xs font-semibold text-[#005fd6] no-underline hover:underline"
+              className="text-xs font-semibold text-[#1e3a8a] no-underline hover:underline"
             >
               View status →
             </Link>

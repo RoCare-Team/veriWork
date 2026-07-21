@@ -67,8 +67,8 @@ function VerificationTrendChart({ data = [], labels = [], height = 240 }) {
       <svg viewBox={`0 0 ${w} ${h}`} className="h-auto w-full" role="img" aria-label="Trend line chart">
         <defs>
           <linearGradient id="dash-trend-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#005fd6" stopOpacity="0.18" />
-            <stop offset="100%" stopColor="#005fd6" stopOpacity="0" />
+            <stop offset="0%" stopColor="#1e3a8a" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#1e3a8a" stopOpacity="0" />
           </linearGradient>
         </defs>
 
@@ -103,7 +103,7 @@ function VerificationTrendChart({ data = [], labels = [], height = 240 }) {
           <polyline
             points={linePoints}
             fill="none"
-            stroke="#005fd6"
+            stroke="#1e3a8a"
             strokeWidth="3.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -122,8 +122,8 @@ function VerificationTrendChart({ data = [], labels = [], height = 240 }) {
             >
               {p.v}
             </text>
-            <circle cx={p.x} cy={p.y} r="7" fill="#005fd6" fillOpacity="0.12" />
-            <circle cx={p.x} cy={p.y} r="5" fill="#005fd6" stroke="#fff" strokeWidth="2.5" />
+            <circle cx={p.x} cy={p.y} r="7" fill="#1e3a8a" fillOpacity="0.12" />
+            <circle cx={p.x} cy={p.y} r="5" fill="#1e3a8a" stroke="#fff" strokeWidth="2.5" />
           </g>
         ))}
       </svg>

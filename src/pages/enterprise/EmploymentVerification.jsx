@@ -113,7 +113,7 @@ function RequestCard({ request, onApprove, onReject, onCompleteEmail, onReviewHr
                 type="button"
                 onClick={() => onApprove(id)}
                 disabled={actionPending}
-                className="rounded-xl bg-[#005fd6] px-4 py-2 text-sm font-semibold text-white hover:bg-[#004bab] disabled:opacity-50"
+                className="rounded-xl bg-[#1e3a8a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#172554] disabled:opacity-50"
               >
                 Approve
               </button>
@@ -124,7 +124,7 @@ function RequestCard({ request, onApprove, onReject, onCompleteEmail, onReviewHr
               type="button"
               onClick={() => onCompleteEmail(request)}
               disabled={actionPending}
-              className="rounded-xl border border-[#005fd6] px-4 py-2 text-sm font-semibold text-[#005fd6] hover:bg-blue-50 disabled:opacity-50"
+              className="rounded-xl border border-[#1e3a8a] px-4 py-2 text-sm font-semibold text-[#1e3a8a] hover:bg-blue-50 disabled:opacity-50"
             >
               Complete / Document Verify
             </button>

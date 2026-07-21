@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import BrandLogo from './BrandLogo'
 
 /*
@@ -60,7 +60,7 @@ export function Tooltip({ label }) {
   return (
     <span
       role="tooltip"
-      className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 hidden -translate-y-1/2 whitespace-nowrap rounded-md bg-ink-strong px-2 py-1 text-xs font-medium text-white opacity-0 shadow-md transition-opacity duration-150 ease-swift group-hover:opacity-100 group-focus-visible:opacity-100 lg:block"
+      className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 hidden -translate-y-1/2 whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow-md transition-opacity duration-150 ease-swift group-hover:opacity-100 group-focus-visible:opacity-100 lg:block"
     >
       {label}
     </span>
@@ -77,7 +77,7 @@ function NavItem({ item, collapsed, onNavigate }) {
   if (item.disabled) {
     return (
       <span
-        className={`${ROW} cursor-not-allowed text-ink-faint ${rail}`}
+        className={`${ROW} cursor-not-allowed text-white/35 ${rail}`}
         title={item.disabledHint || 'Locked'}
         aria-disabled="true"
       >
@@ -99,11 +99,11 @@ function NavItem({ item, collapsed, onNavigate }) {
       className={({ isActive }) =>
         [
           ROW,
-          'transition-colors duration-150 ease-swift focus-visible:ring-2 focus-visible:ring-brand-500/40',
+          'transition-colors duration-150 ease-swift focus-visible:ring-2 focus-visible:ring-white/40',
           rail,
           isActive
-            ? 'bg-brand-50 font-semibold text-brand-600'
-            : 'text-ink-body hover:bg-ink-strong/[0.04] hover:text-ink-strong',
+            ? 'bg-white/15 font-semibold text-white shadow-sm'
+            : 'text-white/70 hover:bg-white/10 hover:text-white',
         ]
           .filter(Boolean)
           .join(' ')
@@ -114,10 +114,10 @@ function NavItem({ item, collapsed, onNavigate }) {
           {isActive && (
             <span
               aria-hidden="true"
-              className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-brand-600"
+              className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-white"
             />
           )}
-          <span className={`shrink-0 ${isActive ? 'text-brand-600' : 'text-ink-muted group-hover:text-ink-body'}`}>
+          <span className={`shrink-0 ${isActive ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>
             {item.icon}
           </span>
           <span className={`truncate ${collapsed ? 'lg:hidden' : ''}`}>{item.label}</span>
@@ -138,6 +138,8 @@ function AppSidebar({
   identityName,
   onSignOut,
   navAriaLabel = 'Main',
+  /** Where the logo takes you. */
+  homeTo = '/',
 }) {
   return (
     <>
@@ -151,7 +153,7 @@ function AppSidebar({
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col border-r border-hairline bg-sidebar transition-[transform,width] duration-200 ease-swift lg:static lg:z-auto lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col bg-gradient-to-b from-[#0d1631] via-[#172554] to-[#1e3a8a] transition-[transform,width] duration-200 ease-swift lg:static lg:z-auto lg:translate-x-0 ${
           collapsed ? 'lg:w-16' : 'lg:w-64'
         } ${open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
@@ -159,14 +161,21 @@ function AppSidebar({
             The collapse toggle lives up here, paired with the logo — it's
             chrome, not an afterthought at the bottom of the nav list. */}
         <div
-          className={`flex h-16 shrink-0 items-center gap-2 border-b border-hairline px-4 ${
+          className={`flex h-16 shrink-0 items-center gap-2 border-b border-white/10 px-4 ${
             collapsed ? 'lg:justify-center lg:px-0' : ''
           }`}
         >
-          {/* No white chip — the surface is light, the logo just sits on it. */}
-          <span className={`min-w-0 ${collapsed ? 'lg:hidden' : ''}`}>
-            <BrandLogo size="sm" />
-          </span>
+          {/* White logo — the surface is a deep blue gradient. */}
+          <Link
+            to={homeTo}
+            onClick={onClose}
+            aria-label="PagerLook home"
+            className={`min-w-0 no-underline outline-none transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-white/40 ${
+              collapsed ? 'lg:hidden' : ''
+            }`}
+          >
+            <BrandLogo size="md" variant="white" />
+          </Link>
 
           {/* Desktop-only: the mobile drawer is always full width. */}
           <button
@@ -174,7 +183,7 @@ function AppSidebar({
             onClick={onToggleCollapse}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             aria-pressed={collapsed}
-            className={`group relative ml-auto hidden h-8 w-8 shrink-0 items-center justify-center rounded-ctl text-ink-faint outline-none transition-colors duration-150 ease-swift hover:bg-ink-strong/[0.04] hover:text-ink-strong focus-visible:ring-2 focus-visible:ring-brand-500/40 lg:flex ${
+            className={`group relative ml-auto hidden h-8 w-8 shrink-0 items-center justify-center rounded-ctl text-white/60 outline-none transition-colors duration-150 ease-swift hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/40 lg:flex ${
               collapsed ? 'lg:ml-0' : ''
             }`}
           >
@@ -183,23 +192,24 @@ function AppSidebar({
           </button>
         </div>
 
-        <div className={`shrink-0 px-6 pb-1 pt-4 ${collapsed ? 'lg:hidden' : ''}`}>
-          <p className="m-0 text-[11px] font-semibold uppercase tracking-wider text-ink-faint">{portalLabel}</p>
-          {identityName && (
-            <p className="mt-0.5 truncate text-sm font-semibold text-ink-strong">{identityName}</p>
-          )}
+        {/* Identity card — reads as the workspace you're inside. */}
+        <div className={`shrink-0 px-3 pb-1 pt-4 ${collapsed ? 'lg:hidden' : ''}`}>
+          <div className="rounded-xl bg-white/10 px-3 py-2.5 ring-1 ring-white/10">
+            <p className="m-0 text-[10px] font-semibold uppercase tracking-wider text-white/50">
+              {portalLabel}
+            </p>
+            {identityName && (
+              <p className="mt-0.5 truncate text-sm font-bold text-white">{identityName}</p>
+            )}
+          </div>
         </div>
 
+        {/* Groups are kept as data (they order the nav) but their headings are not
+            rendered — the icons + labels carry enough meaning on their own. A thin
+            divider is all that separates one group from the next. */}
         <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label={navAriaLabel}>
-          {groups.map((group) => (
-            <div key={group.label} className="mb-4 last:mb-0">
-              <p
-                className={`m-0 px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-ink-faint ${
-                  collapsed ? 'lg:hidden' : ''
-                }`}
-              >
-                {group.label}
-              </p>
+          {groups.map((group, index) => (
+            <div key={group.label} className={index > 0 ? 'mt-2 border-t border-white/10 pt-2' : ''}>
               <div className="space-y-0.5">
                 {group.items.map((item) => (
                   <NavItem key={item.label} item={item} collapsed={collapsed} onNavigate={onClose} />
@@ -209,12 +219,12 @@ function AppSidebar({
           ))}
         </nav>
 
-        <div className="shrink-0 border-t border-hairline p-3">
+        <div className="shrink-0 border-t border-white/10 p-3">
           <button
             type="button"
             onClick={onSignOut}
             aria-label="Sign out"
-            className={`${ROW} w-full text-ink-muted transition-colors duration-150 ease-swift hover:bg-danger-bg hover:text-danger focus-visible:ring-2 focus-visible:ring-brand-500/40 ${
+            className={`${ROW} w-full text-white/70 transition-colors duration-150 ease-swift hover:bg-red-500/20 hover:text-white focus-visible:ring-2 focus-visible:ring-white/40 ${
               collapsed ? 'lg:justify-center lg:px-0' : ''
             }`}
           >

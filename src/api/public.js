@@ -25,6 +25,26 @@ export function submitPublicEmploymentVerification(token, body) {
   })
 }
 
+export function fetchQrJoinInfo(code) {
+  return api(API.PUBLIC.QR_JOIN(code), { auth: false })
+}
+
+export function submitQrJoinRequest(code, body) {
+  return api(API.PUBLIC.QR_JOIN_SUBMIT(code), { method: 'POST', body, auth: false })
+}
+
+export function fetchCompanyInvite(token) {
+  return api(API.PUBLIC.COMPANY_INVITE(token), { auth: false })
+}
+
+export function acceptCompanyInvite(token, password) {
+  return api(API.PUBLIC.COMPANY_INVITE_ACCEPT(token), {
+    method: 'POST',
+    body: { password },
+    auth: false,
+  })
+}
+
 export function uploadPublicVerificationDocument(token, file) {
   const form = new FormData()
   form.append('document', file)

@@ -18,6 +18,7 @@ export const adminKeys = {
   company: (id) => ['admin', 'company', id],
   employees: (status, q) => ['admin', 'employees', status || 'all', q || ''],
   employee: (id) => ['admin', 'employee', id],
+  companyMessages: (id) => ['admin', 'company', id, 'messages'],
 }
 
 export function fetchAdminDashboard() {
@@ -50,6 +51,22 @@ export function reviewAdminCompany(id, status, reason) {
     method: 'PATCH',
     body: { status, ...(reason ? { reason } : {}) },
   })
+}
+
+/** Approve or reject a single uploaded document. */
+export function reviewAdminCompanyDocument(id, { documentKey, status, reason }) {
+  return api(API.ADMIN.REVIEW_DOCUMENT(id), {
+    method: 'PATCH',
+    body: { documentKey, status, ...(reason ? { reason } : {}) },
+  })
+}
+
+export function fetchAdminCompanyMessages(id) {
+  return api(API.ADMIN.COMPANY_MESSAGES(id))
+}
+
+export function postAdminCompanyMessage(id, body) {
+  return api(API.ADMIN.COMPANY_MESSAGES(id), { method: 'POST', body: { body } })
 }
 
 export async function fetchAdminEmployees({ status = 'all', q = '' } = {}) {

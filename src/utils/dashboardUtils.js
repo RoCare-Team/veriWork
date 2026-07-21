@@ -423,12 +423,12 @@ function resolveApiEmployeeOnboardingTrend(dashboard, insights) {
 }
 
 const ONBOARDING_SERIES_COLORS = {
-  new: '#005fd6',
+  new: '#1e3a8a',
   pending: '#f59e0b',
   approved: '#22c55e',
 }
 
-const ONBOARDING_SERIES_FALLBACK = ['#005fd6', '#f59e0b', '#22c55e', '#ef4444']
+const ONBOARDING_SERIES_FALLBACK = ['#1e3a8a', '#f59e0b', '#22c55e', '#ef4444']
 
 function applyOnboardingSeriesColors(series) {
   return series.map((s, i) => ({

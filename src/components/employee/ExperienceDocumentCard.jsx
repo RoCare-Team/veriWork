@@ -4,7 +4,7 @@ function PlusCircleIcon({ uploaded }) {
       className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition ${
         uploaded
           ? 'border-green-200 bg-green-50 text-green-600'
-          : 'border-slate-200 bg-slate-50 text-[#005fd6] hover:border-[#005fd6]/30 hover:bg-blue-50'
+          : 'border-slate-200 bg-slate-50 text-[#1e3a8a] hover:border-[#1e3a8a]/30 hover:bg-blue-50'
       }`}
     >
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
@@ -48,7 +48,7 @@ function ExperienceDocumentCard({ doc, fileName, onUpload }) {
 
   return (
     <div className="flex items-center gap-3.5 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm md:p-5">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#005fd6]">
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#1e3a8a]">
         {DOC_ICONS[doc.icon]}
       </div>
 
@@ -59,7 +59,7 @@ function ExperienceDocumentCard({ doc, fileName, onUpload }) {
         </p>
       </div>
 
-      <label className="cursor-pointer">
+      <label className="relative cursor-pointer">
         <input
           type="file"
           className="sr-only"

@@ -1,34 +1,75 @@
-function Select({ label, id, options, placeholder, error, required = false, className = '', ...props }) {
+import { FIELD_LABEL, FIELD_MESSAGE, FIELD_WRAP, fieldControlClass } from './fieldStyles'
+
+function ChevronIcon() {
   return (
-    <div className={`flex flex-col gap-2 ${className}`.trim()}>
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+function Select({
+  label,
+  id,
+  options = [],
+  placeholder,
+  hint,
+  error,
+  errorText,
+  required = false,
+  className = '',
+  ...props
+}) {
+  const hasMessageSlot = hint !== undefined || errorText !== undefined
+  const showError = Boolean(error && errorText)
+  const message = showError ? errorText : error ? '' : hint
+
+  return (
+    <div className={`${FIELD_WRAP} ${className}`.trim()}>
       {label && (
-        <label htmlFor={id} className="text-sm font-semibold text-slate-800">
+        <label htmlFor={id} className={FIELD_LABEL}>
           {label}
-          {required && <span className="text-red-500"> *</span>}
+          {required && <span className="text-danger"> *</span>}
         </label>
       )}
-      <select
-        id={id}
-        required={required}
-        aria-invalid={error ? 'true' : undefined}
-        className={`h-12 w-full appearance-none rounded-2xl border bg-white px-4 text-[15px] text-slate-900 outline-none transition focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:h-[52px] md:text-base ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-50' : 'border-slate-200'}`}
-        {...props}
-      >
-        {placeholder && (
-          <option value="" disabled>
-            {placeholder}
-          </option>
-        )}
-        {options.map((opt) => {
-          const value = typeof opt === 'string' ? opt : opt.value
-          const label = typeof opt === 'string' ? opt : opt.label
-          return (
-            <option key={value} value={value}>
-              {label}
+      <div className="relative">
+        <select
+          id={id}
+          required={required}
+          aria-invalid={error ? 'true' : undefined}
+          aria-describedby={hasMessageSlot ? `${id}-desc` : undefined}
+          // appearance-none strips the native arrow, so we draw our own below.
+          className={`${fieldControlClass({ error, rightSlot: true })} appearance-none`}
+          {...props}
+        >
+          {placeholder && (
+            <option value="" disabled>
+              {placeholder}
             </option>
-          )
-        })}
-      </select>
+          )}
+          {options.map((opt) => {
+            const value = typeof opt === 'string' ? opt : opt.value
+            const optLabel = typeof opt === 'string' ? opt : opt.label
+            return (
+              <option key={value} value={value}>
+                {optLabel}
+              </option>
+            )
+          })}
+        </select>
+        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint">
+          <ChevronIcon />
+        </span>
+      </div>
+      {hasMessageSlot && (
+        <p
+          id={`${id}-desc`}
+          className={`${FIELD_MESSAGE} ${showError ? 'text-danger' : 'text-ink-muted'}`}
+          role={showError ? 'alert' : undefined}
+        >
+          {message}
+        </p>
+      )}
     </div>
   )
 }

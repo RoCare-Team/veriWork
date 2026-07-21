@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import AppSidebar from '../common/AppSidebar'
 import { useAuth } from '../../context/AuthContext'
+import { usePermissions } from '../../hooks/usePermissions'
 import { COMPANY_ROUTES } from '../../constants/companyRoutes'
 
 /* Icons: 20x20, 1.5 stroke, round caps/joins — one optical weight across the set. */
@@ -132,32 +133,48 @@ function SettingsIcon() {
   )
 }
 
-/* Routes and labels are load-bearing — they match the existing router exactly. */
+/* Person with a shield — staff accounts and what they're allowed to do. */
+function CompanyUsersIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <circle cx="7.5" cy="6.5" r="2.75" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M2.75 16.25c0-2.75 2.13-4.5 4.75-4.5 .9 0 1.74.2 2.46.58" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M14.75 10.5l3 1.15v2.3c0 1.75-1.28 3.1-3 3.55-1.72-.45-3-1.8-3-3.55v-2.3l3-1.15Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+/* Routes and labels are load-bearing — they match the existing router exactly.
+   `module` maps each item to a backend permission module so a role only ever
+   sees what it is allowed to open. */
 const NAV_GROUPS = [
   {
     label: 'Overview',
-    items: [{ to: COMPANY_ROUTES.DASHBOARD, label: 'Dashboard', end: true, icon: <DashboardIcon /> }],
+    items: [
+      { to: COMPANY_ROUTES.DASHBOARD, label: 'Dashboard', end: true, icon: <DashboardIcon />, module: 'dashboard' },
+    ],
   },
   {
     label: 'People',
     items: [
-      { to: COMPANY_ROUTES.TEAM, label: 'Team Management', icon: <TeamIcon /> },
-      { to: '/enterprise/workforce', label: 'Workforce', icon: <WorkforceIcon /> },
-      { to: '/enterprise/join-requests', label: 'Join Requests', icon: <JoinRequestIcon /> },
+      { to: COMPANY_ROUTES.TEAM, label: 'Team Management', icon: <TeamIcon />, module: 'team' },
+      { to: '/enterprise/workforce', label: 'Workforce', icon: <WorkforceIcon />, module: 'workforce' },
+      { to: '/enterprise/join-requests', label: 'Join Requests', icon: <JoinRequestIcon />, module: 'join_requests' },
     ],
   },
   {
     label: 'Trust',
     items: [
-      { to: COMPANY_ROUTES.ACCESS_REQUESTS, label: 'Access Requests', icon: <AccessIcon /> },
-      { to: COMPANY_ROUTES.VERIFICATION, label: 'Verification', icon: <VerificationIcon /> },
+      { to: COMPANY_ROUTES.ACCESS_REQUESTS, label: 'Access Requests', icon: <AccessIcon />, module: 'access_requests' },
+      { to: COMPANY_ROUTES.VERIFICATION, label: 'Verification', icon: <VerificationIcon />, module: 'verification' },
     ],
   },
   {
     label: 'Setup',
     items: [
-      { to: '/enterprise/qr-onboarding', label: 'QR & Onboarding', icon: <QrIcon /> },
-      { to: '/enterprise/settings', label: 'Settings', icon: <SettingsIcon /> },
+      { to: '/enterprise/qr-onboarding', label: 'QR & Onboarding', icon: <QrIcon />, module: 'qr_onboarding' },
+      { to: '/enterprise/users', label: 'Company Users', icon: <CompanyUsersIcon />, module: 'company_users' },
+      { to: '/enterprise/settings', label: 'Settings', icon: <SettingsIcon />, module: 'settings' },
     ],
   },
 ]
@@ -165,6 +182,7 @@ const NAV_GROUPS = [
 function Sidebar({ open, onClose, collapsed = false, onToggleCollapse }) {
   const navigate = useNavigate()
   const { logout, company } = useAuth()
+  const { can, ready, roleLabel } = usePermissions()
 
   const handleSignOut = async () => {
     await logout()
@@ -172,14 +190,24 @@ function Sidebar({ open, onClose, collapsed = false, onToggleCollapse }) {
     navigate('/enterprise/login')
   }
 
+  // Only filter once we actually know the role. If permissions are still loading
+  // — or the call failed — show the full nav rather than an empty sidebar; the
+  // backend guards every route regardless, so this hides nothing sensitive.
+  const groups = !ready
+    ? NAV_GROUPS
+    : NAV_GROUPS.map((group) => ({
+        ...group,
+        items: group.items.filter((item) => !item.module || can(item.module, 'view')),
+      })).filter((group) => group.items.length > 0)
+
   return (
     <AppSidebar
       open={open}
       onClose={onClose}
       collapsed={collapsed}
       onToggleCollapse={onToggleCollapse}
-      groups={NAV_GROUPS}
-      portalLabel="Employer Portal"
+      groups={groups}
+      portalLabel={roleLabel ? `Employer · ${roleLabel}` : 'Employer Portal'}
       identityName={company?.name}
       onSignOut={handleSignOut}
       navAriaLabel="Enterprise"

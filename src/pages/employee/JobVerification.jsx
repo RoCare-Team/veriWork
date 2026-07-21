@@ -241,7 +241,7 @@ function HrResponsePanel({ details }) {
                 href={mediaUrl(details.supportingDocumentUrl)}
                 target="_blank"
                 rel="noreferrer"
-                className="text-sm font-semibold text-[#005fd6] no-underline hover:underline"
+                className="text-sm font-semibold text-[#1e3a8a] no-underline hover:underline"
               >
                 {details.supportingDocumentName || 'View document'}
               </a>
@@ -342,7 +342,7 @@ function JobVerification() {
         title="Verify Employment"
         subtitle={job.company}
         action={
-          <Link to="/employee/job-history" className="text-sm font-semibold text-[#005fd6] no-underline">
+          <Link to="/employee/job-history" className="text-sm font-semibold text-[#1e3a8a] no-underline">
             ← Back
           </Link>
         }
@@ -398,7 +398,7 @@ function JobVerification() {
                     type="button"
                     onClick={() => setUploadType(t.id)}
                     className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                      uploadType === t.id ? 'bg-[#005fd6] text-white' : 'bg-slate-100 text-slate-600'
+                      uploadType === t.id ? 'bg-[#1e3a8a] text-white' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
                     {t.label}
@@ -407,7 +407,7 @@ function JobVerification() {
               </div>
 
               <label className="mt-4 flex cursor-pointer flex-col items-center rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center">
-                <span className="text-sm font-semibold text-[#005fd6]">Choose file to upload</span>
+                <span className="text-sm font-semibold text-[#1e3a8a]">Choose file to upload</span>
                 <input
                   type="file"
                   className="hidden"

@@ -55,7 +55,7 @@ const INITIAL_FORM = {
 }
 
 const fieldClass =
-  'mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-[#005fd6]'
+  'mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-[#1e3a8a]'
 
 function Field({ label, children }) {
   return (
@@ -214,7 +214,7 @@ function VerifyEmployment() {
                     href={mediaUrl(doc.url)}
                     target="_blank"
                     rel="noreferrer"
-                    className="shrink-0 text-sm font-semibold text-[#005fd6] no-underline hover:underline"
+                    className="shrink-0 text-sm font-semibold text-[#1e3a8a] no-underline hover:underline"
                   >
                     View
                   </a>
@@ -239,7 +239,7 @@ function VerifyEmployment() {
               type="button"
               onClick={() => setForm((f) => ({ ...f, workedHere: true }))}
               className={`flex-1 rounded-xl border py-2.5 text-sm font-semibold ${
-                form.workedHere ? 'border-[#005fd6] bg-slate-50 text-[#005fd6]' : 'border-slate-200 text-slate-600'
+                form.workedHere ? 'border-[#1e3a8a] bg-slate-50 text-[#1e3a8a]' : 'border-slate-200 text-slate-600'
               }`}
             >
               Yes, worked here
@@ -432,7 +432,7 @@ function VerifyEmployment() {
 
         <p className="mt-6 text-center text-xs text-slate-400">
           Secure verification powered by{' '}
-          <Link to="/" className="font-semibold text-[#005fd6] no-underline">
+          <Link to="/" className="font-semibold text-[#1e3a8a] no-underline">
             PagerLook
           </Link>
         </p>

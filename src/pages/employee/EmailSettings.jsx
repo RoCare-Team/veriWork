@@ -12,7 +12,7 @@ function EmailSettings() {
         action={
           <Link
             to="/employee/settings"
-            className="text-sm font-semibold text-[#005fd6] no-underline"
+            className="text-sm font-semibold text-[#1e3a8a] no-underline"
           >
             ← Back
           </Link>
@@ -21,7 +21,7 @@ function EmailSettings() {
 
       <div className="space-y-6">
         <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-slate-700 md:p-5">
-          <p className="m-0 font-semibold text-[#005fd6]">How self-verification works</p>
+          <p className="m-0 font-semibold text-[#1e3a8a]">How self-verification works</p>
           <ol className="m-0 mt-2 list-decimal space-y-1 pl-4 text-xs text-slate-600">
             <li>You request verification of a past job from Job History.</li>
             <li>A secure request email is sent from your mailbox to your previous HR.</li>
@@ -34,7 +34,7 @@ function EmailSettings() {
 
         <Link
           to="/employee/settings"
-          className="inline-block text-sm font-semibold text-[#005fd6] no-underline hover:underline"
+          className="inline-block text-sm font-semibold text-[#1e3a8a] no-underline hover:underline"
         >
           ← Back to Settings
         </Link>

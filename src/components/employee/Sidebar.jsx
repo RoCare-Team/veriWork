@@ -144,7 +144,13 @@ const NAV_GROUPS = [
     label: 'Overview',
     items: [
       { to: '/employee/verification', label: 'Verification', end: true, icon: <VerificationIcon /> },
-      { to: '/employee/score', label: 'Employee Score', requiresVerification: true, icon: <ScoreIcon /> },
+      {
+        // Not gated: the score is what motivates verification. Locking it until
+        // you're verified hides the very thing that tells you what to do next.
+        to: '/employee/score',
+        label: 'Employee Score',
+        icon: <ScoreIcon />,
+      },
     ],
   },
   {

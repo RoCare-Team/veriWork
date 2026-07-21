@@ -36,7 +36,7 @@ function DepartmentDetails() {
   return (
     <EnterpriseLayout>
       <div className="px-4 py-5 md:px-6 md:py-8 lg:px-8">
-        <Link to={COMPANY_ROUTES.TEAM} className="mb-4 inline-block text-sm font-semibold text-[#005fd6] no-underline hover:underline">
+        <Link to={COMPANY_ROUTES.TEAM} className="mb-4 inline-block text-sm font-semibold text-[#1e3a8a] no-underline hover:underline">
           ← Back to Team
         </Link>
 

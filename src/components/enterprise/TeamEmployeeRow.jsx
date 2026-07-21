@@ -11,6 +11,12 @@ import {
 import { getInitials, formatDate } from '../../utils/formatters'
 import { mediaUrl } from '../../lib/mediaUrl'
 
+/* One shared button shape so the three actions never drift apart. */
+const BTN = 'rounded-ctl px-3 py-2 text-xs font-semibold transition disabled:opacity-50'
+const BTN_PRIMARY = `${BTN} bg-brand-600 text-white hover:bg-brand-700`
+const BTN_TINTED = `${BTN} bg-brand-600/10 text-brand-600 hover:bg-brand-600/15`
+const BTN_NEUTRAL = `${BTN} bg-slate-100 text-slate-600 hover:bg-slate-200`
+
 function TeamEmployeeRow({ employee, onRequestAccess, onRemoveAccess, onAssign }) {
   const navigate = useNavigate()
   const profilePath = getEmployeeProfilePath(employee)
@@ -23,70 +29,44 @@ function TeamEmployeeRow({ employee, onRequestAccess, onRemoveAccess, onAssign }
   const stage = employee.onboardingStage || 'incoming'
   const stageStyle = getOnboardingStageStyle(stage)
 
-  const STAGE_ACCENT = {
-    active: { bar: 'bg-emerald-400', ring: 'ring-emerald-100' },
-    verified: { bar: 'bg-[#005fd6]', ring: 'ring-blue-100' },
-    pending_verification: { bar: 'bg-amber-400', ring: 'ring-amber-100' },
-    incoming: { bar: 'bg-slate-300', ring: 'ring-slate-100' },
-  }
-  const accent = STAGE_ACCENT[stage] || STAGE_ACCENT.incoming
   const score = employee.trustScore
   const scoreColor =
-    score == null ? 'text-slate-500' : score >= 750 ? 'text-emerald-600' : score >= 500 ? 'text-[#005fd6]' : 'text-amber-600'
+    score == null ? 'text-slate-500' : score >= 750 ? 'text-emerald-600' : score >= 500 ? 'text-brand-600' : 'text-amber-600'
 
   const renderAccessButton = () => {
     if (accessButton === 'remove_access') {
       return (
-        <button
-          type="button"
-          onClick={() => onRemoveAccess?.(employee)}
-          className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
-        >
+        <button type="button" onClick={() => onRemoveAccess?.(employee)} className={BTN_NEUTRAL}>
           Remove access
         </button>
       )
     }
     if (accessButton === 'pending') {
       return (
-        <button
-          type="button"
-          disabled
-          className="cursor-not-allowed rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-400"
-        >
+        <button type="button" disabled className={`${BTN_NEUTRAL} cursor-not-allowed`}>
           Access pending
         </button>
       )
     }
     return (
-      <button
-        type="button"
-        onClick={() => onRequestAccess?.(employee)}
-        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-      >
+      <button type="button" onClick={() => onRequestAccess?.(employee)} className={BTN_TINTED}>
         Request access
       </button>
     )
   }
 
+  // The one action that moves this person forward, if any.
   const renderStageAction = () => {
     if (stage === 'verified') {
       return (
-        <button
-          type="button"
-          onClick={() => onAssign?.(employee)}
-          className="rounded-lg bg-[#005fd6] px-3 py-2 text-sm font-medium text-white transition hover:bg-[#004bab]"
-        >
+        <button type="button" onClick={() => onAssign?.(employee)} className={`${BTN_PRIMARY} w-full`}>
           Assign department
         </button>
       )
     }
     if (stage === 'pending_verification' && verifyPath) {
       return (
-        <button
-          type="button"
-          onClick={() => navigate(verifyPath)}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-        >
+        <button type="button" onClick={() => navigate(verifyPath)} className={`${BTN_PRIMARY} w-full`}>
           Verify employment
         </button>
       )
@@ -95,58 +75,60 @@ function TeamEmployeeRow({ employee, onRequestAccess, onRemoveAccess, onAssign }
   }
 
   return (
-    <article className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pl-5 shadow-sm transition hover:border-slate-300 hover:shadow-md md:p-5 md:pl-6">
-      <span className={`absolute inset-y-0 left-0 w-1.5 ${accent.bar}`} aria-hidden />
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex min-w-0 flex-1 items-center gap-4">
-          {photoSrc ? (
-            <img
-              src={photoSrc}
-              alt=""
-              className={`h-12 w-12 shrink-0 rounded-full object-cover ring-2 ${accent.ring}`}
-            />
-          ) : (
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-slate-100 to-slate-200 text-sm font-semibold text-slate-600">
-              {getInitials(name)}
-            </div>
-          )}
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="m-0 truncate text-base font-semibold text-slate-900">{name}</p>
-              <span
-                className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${stageStyle.bg} ${stageStyle.color}`}
-              >
-                {stageStyle.label}
-              </span>
-            </div>
-            <p className="m-0 mt-0.5 truncate text-sm text-slate-500">
-              {[role, department].filter(Boolean).join(' · ') || '—'}
-            </p>
-            {employee.joinedAt && (
-              <p className="m-0 mt-1 text-xs text-slate-400">Joined {formatDate(employee.joinedAt)}</p>
-            )}
+    <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md">
+      {/* Identity */}
+      <div className="flex items-start gap-3">
+        {photoSrc ? (
+          <img src={photoSrc} alt="" className="h-12 w-12 shrink-0 rounded-full object-cover" />
+        ) : (
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-600">
+            {getInitials(name)}
           </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="m-0 truncate text-base font-bold text-slate-900">{name}</p>
+          <p className="m-0 mt-0.5 truncate text-sm text-slate-500">
+            {[role, department].filter(Boolean).join(' · ') || '—'}
+          </p>
         </div>
+      </div>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-3 sm:justify-end">
-          {score != null && (
-            <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-2 text-center">
-              <p className="m-0 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Trust score</p>
-              <p className={`m-0 text-lg font-extrabold ${scoreColor}`}>{score}</p>
-            </div>
-          )}
-          <div className="flex flex-wrap gap-2">
-            {renderStageAction()}
-            <button
-              type="button"
-              onClick={() => profilePath && navigate(profilePath)}
-              disabled={!profilePath}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-[#005fd6] hover:text-[#005fd6] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              View profile
-            </button>
-            {renderAccessButton()}
+      <div className="mt-3">
+        <span
+          className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${stageStyle.bg} ${stageStyle.color}`}
+        >
+          {stageStyle.label}
+        </span>
+      </div>
+
+      {/* Meta */}
+      <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
+        <div>
+          <p className="m-0 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Trust score</p>
+          <p className={`m-0 text-xl font-extrabold ${scoreColor}`}>{score ?? '—'}</p>
+        </div>
+        {employee.joinedAt && (
+          <div className="text-right">
+            <p className="m-0 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Joined</p>
+            <p className="m-0 text-xs font-medium text-slate-600">{formatDate(employee.joinedAt)}</p>
           </div>
+        )}
+      </div>
+
+      {/* mt-auto: not every card has a stage action, so pin the buttons to the
+          bottom and keep a row of cards visually aligned. */}
+      <div className="mt-auto flex flex-col gap-2 pt-4">
+        {renderStageAction()}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => profilePath && navigate(profilePath)}
+            disabled={!profilePath}
+            className={BTN_TINTED}
+          >
+            View profile
+          </button>
+          {renderAccessButton()}
         </div>
       </div>
     </article>

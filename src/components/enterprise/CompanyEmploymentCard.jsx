@@ -52,7 +52,7 @@ const RECOMMENDATION_LABELS = {
 function CompanyInitial({ name }) {
   const letter = (name || '?').charAt(0).toUpperCase()
   return (
-    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#005fd6] to-[#3b5cc4] text-xl font-extrabold text-white shadow-md">
+    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1e3a8a] to-[#2748a6] text-xl font-extrabold text-white shadow-md">
       {letter}
     </div>
   )
@@ -72,7 +72,7 @@ function VerificationLadder({ currentLevel }) {
               className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${
                 done
                   ? active
-                    ? 'bg-[#005fd6] text-white shadow-sm'
+                    ? 'bg-[#1e3a8a] text-white shadow-sm'
                     : 'bg-green-100 text-green-800'
                   : 'bg-slate-100 text-slate-400'
               }`}
@@ -173,7 +173,7 @@ function HrFeedbackPanel({ job }) {
               href={docHref}
               target="_blank"
               rel="noreferrer"
-              className="font-semibold text-[#005fd6] no-underline hover:underline"
+              className="font-semibold text-[#1e3a8a] no-underline hover:underline"
             >
               {details.supportingDocumentName || 'View supporting document'}
             </a>
@@ -221,7 +221,7 @@ function CompanyEmploymentCard({ job, canVerify, onVerify, defaultExpanded = fal
               {tagLabel}
             </span>
             {job.isReusable && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#005fd6]/10 px-2.5 py-1 text-[10px] font-bold uppercase text-[#005fd6]">
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#1e3a8a]/10 px-2.5 py-1 text-[10px] font-bold uppercase text-[#1e3a8a]">
                 ♻ Reusable record
               </span>
             )}
@@ -335,7 +335,7 @@ function CompanyEmploymentCard({ job, canVerify, onVerify, defaultExpanded = fal
                       href={href}
                       target="_blank"
                       rel="noreferrer"
-                      className="shrink-0 rounded-lg bg-white px-2.5 py-1 text-[10px] font-bold text-[#005fd6] no-underline shadow-sm hover:bg-blue-50"
+                      className="shrink-0 rounded-lg bg-white px-2.5 py-1 text-[10px] font-bold text-[#1e3a8a] no-underline shadow-sm hover:bg-blue-50"
                     >
                       View
                     </a>
@@ -361,7 +361,7 @@ function CompanyEmploymentCard({ job, canVerify, onVerify, defaultExpanded = fal
             <button
               type="button"
               onClick={() => onVerify?.(job)}
-              className="shrink-0 rounded-xl bg-[#005fd6] px-4 py-2 text-sm font-semibold text-white hover:bg-[#004bab]"
+              className="shrink-0 rounded-xl bg-[#1e3a8a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#172554]"
             >
               Start Verification
             </button>

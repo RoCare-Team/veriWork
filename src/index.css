@@ -26,27 +26,24 @@
   --color-ink-muted: #71717a; /* labels, captions */
   --color-ink-faint: #a1a1aa; /* placeholders, disabled */
 
-  /* --- Brand ------------------------------------------------------------
-     Sampled from public/pagerLookLogo.png, not invented:
-       "Look" wordmark  #0073fe   (the signature azure)
-       shield gradient  #0086ec -> #1e2172
-       "Pager" wordmark #0e203c
-     The old anchor (#1a3a8f) appears nowhere in the logo — a desaturated navy
-     sitting between the azure and the indigo, matching neither. That mismatch
-     is why the chrome read dull next to the mark.
-     600 is the fill (5.7:1 on white); 500 is the logo azure itself, kept for
-     accents/focus where it only needs 3:1. */
-  --color-brand-50: #eff6ff;
-  --color-brand-100: #dbeafe;
-  --color-brand-200: #bedbff;
-  --color-brand-300: #8fc2ff;
-  --color-brand-400: #4a9dff;
-  --color-brand-500: #0073fe; /* logo azure — accents, focus rings, active */
-  --color-brand-600: #005fd6; /* primary fill — white text 5.7:1 */
-  --color-brand-700: #004bab; /* hover — white text 8.0:1 */
-  --color-brand-800: #123a7a;
-  --color-brand-900: #1e2172; /* shield indigo — pressed */
-  --color-brand-950: #0e203c; /* "Pager" navy */
+  /* --- Brand: navy ------------------------------------------------------
+     One navy ramp drives the whole product — sidebar, buttons, focus rings,
+     links. Change these and the app re-themes; nothing should hardcode a hex.
+       600 = primary fill (white text 8.6:1 — comfortably AAA)
+       700 = hover / pressed
+       500 = accents + focus rings
+       900/950 = sidebar gradient, deepest surfaces */
+  --color-brand-50: #f1f4fa; /* tinted surfaces — active nav, subtle fills */
+  --color-brand-100: #dfe6f5;
+  --color-brand-200: #c2cfea;
+  --color-brand-300: #93a9d6;
+  --color-brand-400: #5d7abb;
+  --color-brand-500: #2748a6; /* accents, focus rings */
+  --color-brand-600: #1e3a8a; /* primary navy fill — white text 8.6:1 */
+  --color-brand-700: #172554; /* hover — deeper navy */
+  --color-brand-800: #121d43;
+  --color-brand-900: #0d1631; /* pressed */
+  --color-brand-950: #070d1e; /* deepest navy */
 
   /* --- Semantic (muted, enterprise — not candy) ------------------------- */
   --color-success: #059669;
@@ -55,20 +52,20 @@
   --color-warning-bg: #fffbeb;
   --color-danger: #dc2626;
   --color-danger-bg: #fef2f2;
-  --color-info: #2747b2;
+  --color-info: #2748a6;
   --color-info-bg: #eff3fc;
 
   /* --- Back-compat: referenced by pages not yet swept -------------------
      Remapped onto the logo-derived ramp so unswept pages pick up the correct
      brand without being touched. Kept as aliases rather than deleted — ~100
      files still reference them. */
-  --color-vw-primary: #005fd6;
-  --color-vw-primary-dark: #004bab;
-  --color-vw-primary-light: #0073fe;
+  --color-vw-primary: #1e3a8a;
+  --color-vw-primary-dark: #172554;
+  --color-vw-primary-light: #2748a6;
   /* Single-brand theme: the old orange accent now resolves to brand blue so any
      remaining vw-accent reference stays on-palette instead of reintroducing a
      second colour. */
-  --color-vw-accent: #005fd6;
+  --color-vw-accent: #1e3a8a;
 
   /* --- Depth: soft, wide, low-opacity. Ambient + key, never a hard line -- */
   --shadow-xs: 0 1px 2px rgb(9 9 11 / 0.04);

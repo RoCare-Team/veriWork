@@ -19,7 +19,7 @@ export const LANDING_FEATURES = [
     description:
       'Aadhaar, DigiLocker, and biometric liveness checks create a tamper-proof professional identity.',
     icon: 'shield',
-    accent: 'bg-blue-50 text-[#005fd6]',
+    accent: 'bg-blue-50 text-[#1e3a8a]',
   },
   {
     id: 'workforce',
@@ -27,7 +27,7 @@ export const LANDING_FEATURES = [
     description:
       'Monitor verification status, join requests, and trust scores across your entire organization.',
     icon: 'grid',
-    accent: 'bg-brand-50 text-[#005fd6]',
+    accent: 'bg-brand-50 text-[#1e3a8a]',
   },
   {
     id: 'job-history',
@@ -100,7 +100,7 @@ export const LANDING_PORTALS = [
     cta: 'Access Employer Portal',
     secondaryTo: '/enterprise/register',
     secondaryCta: 'Register company',
-    gradient: 'from-[#004bab] via-[#005fd6] to-[#0073fe]',
+    gradient: 'from-[#172554] via-[#1e3a8a] to-[#2748a6]',
     highlights: ['Workforce dashboard', 'Join request workflow', 'QR onboarding', 'Fraud alerts'],
   },
   {
@@ -112,7 +112,7 @@ export const LANDING_PORTALS = [
     cta: 'Access Employee Portal',
     secondaryTo: '/employee/login',
     secondaryCta: 'Sign in with OTP',
-    gradient: 'from-[#005fd6] via-[#0073fe] to-[#3b5ccc]',
+    gradient: 'from-[#1e3a8a] via-[#2748a6] to-[#3b5ccc]',
     highlights: ['Aadhaar verification', 'Professional ID card', 'Document vault', 'Activity log'],
   },
 ]

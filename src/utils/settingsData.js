@@ -6,7 +6,7 @@ export const TEAM_MEMBERS = [
     role: 'Super Admin',
     badge: 'admin',
     badgeColor: 'blue',
-    avatarBg: 'bg-[#005fd6]',
+    avatarBg: 'bg-[#1e3a8a]',
   },
   {
     id: '2',

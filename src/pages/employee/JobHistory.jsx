@@ -83,7 +83,7 @@ function JobHistory() {
         action={
           <Link
             to="/employee/job-history/add"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-[#005fd6] hover:text-[#005fd6]"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-[#1e3a8a] hover:text-[#1e3a8a]"
             aria-label="Add experience"
           >
             <PlusIcon />
@@ -108,7 +108,7 @@ function JobHistory() {
         />
       </div>
 
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#005fd6] via-[#1f3d9a] to-[#0073fe] p-5 text-white shadow-lg md:p-6">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1e3a8a] via-[#172554] to-[#2748a6] p-5 text-white shadow-lg md:p-6">
         <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/5" />
         <div className="relative flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -160,7 +160,7 @@ function JobHistory() {
           </p>
           <Link
             to="/employee/job-history/add"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#005fd6] px-5 py-2.5 text-sm font-semibold text-white no-underline hover:bg-[#004bab]"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#1e3a8a] px-5 py-2.5 text-sm font-semibold text-white no-underline hover:bg-[#172554]"
           >
             <PlusIcon /> Add your first role
           </Link>
@@ -171,7 +171,7 @@ function JobHistory() {
         <div className="mt-8 text-center">
           <Link
             to="/employee/job-history/add"
-            className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 no-underline shadow-sm transition hover:border-[#005fd6] hover:text-[#005fd6]"
+            className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 no-underline shadow-sm transition hover:border-[#1e3a8a] hover:text-[#1e3a8a]"
           >
             <PlusIcon /> Add another role
           </Link>

@@ -41,7 +41,7 @@ function InvitationCard({ invitation, onAccept, onReject, isPending }) {
     <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       {/* Header */}
       <div className="flex items-start gap-4 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white p-5">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#005fd6] to-[#3b7ff0] text-white shadow-sm">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1e3a8a] to-[#2748a6] text-white shadow-sm">
           <BuildingIcon />
         </div>
         <div className="min-w-0 flex-1">
@@ -104,7 +104,7 @@ function InvitationCard({ invitation, onAccept, onReject, isPending }) {
               type="button"
               onClick={() => onAccept(id)}
               disabled={isPending}
-              className="h-11 rounded-xl bg-[#005fd6] text-sm font-semibold text-white transition hover:bg-[#004bab] disabled:opacity-50"
+              className="h-11 rounded-xl bg-[#1e3a8a] text-sm font-semibold text-white transition hover:bg-[#172554] disabled:opacity-50"
             >
               Accept & Join
             </button>

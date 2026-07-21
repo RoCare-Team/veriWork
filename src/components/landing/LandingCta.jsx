@@ -4,8 +4,8 @@ function LandingCta() {
   return (
     <section className="pb-20 md:pb-28">
       <div className="mx-auto max-w-7xl px-5 md:px-8 lg:px-10">
-        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#004bab] via-[#005fd6] to-[#0073fe] px-6 py-12 text-center md:px-12 md:py-16">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#005fd6]/20 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#172554] via-[#1e3a8a] to-[#2748a6] px-6 py-12 text-center md:px-12 md:py-16">
+          <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#1e3a8a]/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
 
           <div className="relative">
@@ -19,7 +19,7 @@ function LandingCta() {
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:items-center">
               <Link
                 to="/enterprise/register"
-                className="inline-flex h-12 items-center justify-center rounded-2xl bg-white px-8 text-[15px] font-semibold text-[#005fd6] no-underline transition hover:bg-slate-100"
+                className="inline-flex h-12 items-center justify-center rounded-2xl bg-white px-8 text-[15px] font-semibold text-[#1e3a8a] no-underline transition hover:bg-slate-100"
               >
                 Register your company
               </Link>

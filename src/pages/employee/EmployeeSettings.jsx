@@ -114,14 +114,14 @@ function EmployeeSettings() {
             {photo ? (
               <img src={photo} alt={profile?.name} className="h-16 w-16 rounded-full object-cover md:h-20 md:w-20" />
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#005fd6] text-xl font-bold text-white md:h-20 md:w-20">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#1e3a8a] text-xl font-bold text-white md:h-20 md:w-20">
                 {profile?.initials}
               </div>
             )}
             <span className="absolute bottom-0.5 right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500" />
           </div>
           <div className="flex-1">
-            <p className="m-0 text-lg font-extrabold text-[#005fd6] md:text-xl">{profile?.name}</p>
+            <p className="m-0 text-lg font-extrabold text-[#1e3a8a] md:text-xl">{profile?.name}</p>
             <p className="m-0 mt-0.5 text-sm text-slate-500 md:text-base">{profile?.role}</p>
             <p className="m-0 mt-1 text-xs text-slate-400">{settings?.veriworkId || profile?.veriworkId}</p>
             {profile?.employeeScore != null && (
@@ -133,7 +133,7 @@ function EmployeeSettings() {
           </div>
           <Link
             to="/employee/profile-setup"
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-[#005fd6] transition hover:bg-blue-100"
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-[#1e3a8a] transition hover:bg-blue-100"
             aria-label="Edit profile"
           >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
@@ -144,7 +144,7 @@ function EmployeeSettings() {
       </div>
 
       <section className="mt-8">
-        <h2 className="m-0 mb-4 text-sm font-bold text-[#005fd6] md:text-base">Account & Security</h2>
+        <h2 className="m-0 mb-4 text-sm font-bold text-[#1e3a8a] md:text-base">Account & Security</h2>
         <div className="flex flex-col gap-3">
           <SettingsRow icon={<UserIcon />} title="Personal Information" subtitle="Name, Email, Phone" to="/employee/professional-id" />
           <SettingsRow icon={<MailIcon />} title="Email & Verification Sending" subtitle="SMTP mailbox for self-verification" to="/employee/settings/email" />
@@ -153,7 +153,7 @@ function EmployeeSettings() {
       </section>
 
       <section className="mt-8">
-        <h2 className="m-0 mb-4 text-sm font-bold text-[#005fd6] md:text-base">Preferences</h2>
+        <h2 className="m-0 mb-4 text-sm font-bold text-[#1e3a8a] md:text-base">Preferences</h2>
         <div className="flex flex-col gap-3">
           <Toggle
             id="notifications-enabled"
@@ -193,13 +193,13 @@ function EmployeeSettings() {
       </section>
 
       <section className="mt-8">
-        <h2 className="m-0 mb-4 text-sm font-bold text-[#005fd6] md:text-base">Support & Resources</h2>
+        <h2 className="m-0 mb-4 text-sm font-bold text-[#1e3a8a] md:text-base">Support & Resources</h2>
         <div className="grid grid-cols-2 gap-3 md:gap-4 lg:max-w-lg">
           <Link
             to="/employee/settings/support"
             className="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm no-underline transition hover:border-slate-200 hover:shadow-md"
           >
-            <svg className="h-8 w-8 text-[#005fd6]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <svg className="h-8 w-8 text-[#1e3a8a]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
               <path d="M9.5 9.5a3 3 0 0 1 4.2 0M9 15h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
             </svg>
@@ -209,7 +209,7 @@ function EmployeeSettings() {
             to="/employee/settings/support"
             className="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm no-underline transition hover:border-slate-200 hover:shadow-md"
           >
-            <svg className="h-8 w-8 text-[#005fd6]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <svg className="h-8 w-8 text-[#1e3a8a]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3V8a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.6" />
             </svg>
             <span className="mt-2 text-sm font-semibold text-slate-800">Live Chat</span>

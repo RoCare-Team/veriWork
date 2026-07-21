@@ -92,7 +92,7 @@ function SmtpSettingsSection() {
   }
 
   const inputClass =
-    'mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-800 outline-none focus:border-[#005fd6]'
+    'mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-800 outline-none focus:border-[#1e3a8a]'
 
   return (
     <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">

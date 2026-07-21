@@ -79,7 +79,7 @@ function EmployeeProfileDrawer({ employeeId, onClose }) {
           {preview && !isLoading && (
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-lg font-bold text-[#005fd6]">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-lg font-bold text-[#1e3a8a]">
                   {getInitials(preview.name)}
                 </div>
                 <div className="min-w-0">
@@ -140,7 +140,7 @@ function EmployeeProfileDrawer({ employeeId, onClose }) {
                       value={requestType}
                       onChange={(e) => setRequestType(e.target.value)}
                       disabled={accessMutation.isPending || preview.hasAccessApproval}
-                      className="h-11 w-full rounded-xl border border-amber-200 bg-white px-3 text-sm outline-none focus:border-[#005fd6]"
+                      className="h-11 w-full rounded-xl border border-amber-200 bg-white px-3 text-sm outline-none focus:border-[#1e3a8a]"
                     >
                       {ACCESS_REQUEST_TYPES.map((opt) => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -169,7 +169,7 @@ function EmployeeProfileDrawer({ employeeId, onClose }) {
                   {detailed.scoreRating && (
                     <div className="rounded-2xl border border-slate-100 bg-white p-4">
                       <p className="m-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">Score Rating</p>
-                      <p className="mt-2 text-lg font-extrabold text-[#005fd6]">{detailed.scoreRating}</p>
+                      <p className="mt-2 text-lg font-extrabold text-[#1e3a8a]">{detailed.scoreRating}</p>
                     </div>
                   )}
 
@@ -210,7 +210,7 @@ function EmployeeProfileDrawer({ employeeId, onClose }) {
                             <button
                               type="button"
                               onClick={() => setVerifyJob({ ...job, employeeId })}
-                              className="mt-3 text-sm font-semibold text-[#005fd6] hover:underline"
+                              className="mt-3 text-sm font-semibold text-[#1e3a8a] hover:underline"
                             >
                               Start Verification
                             </button>

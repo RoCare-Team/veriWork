@@ -96,7 +96,7 @@ function AdminLogin() {
 
         <p className="m-0 text-center text-xs text-slate-400">
           Enterprise portal?{' '}
-          <Link to="/enterprise/login" className="font-semibold text-[#005fd6] hover:underline">
+          <Link to="/enterprise/login" className="font-semibold text-[#1e3a8a] hover:underline">
             Employer Login
           </Link>
         </p>

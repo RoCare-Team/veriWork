@@ -36,7 +36,7 @@ function AccessRequestCard({ request, onApprove, onReject, isPending }) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="m-0 text-base font-bold text-slate-900">{request.companyName}</h3>
-          <p className={`m-0 mt-1 text-sm ${isFullProfile ? 'font-semibold text-[#005fd6]' : 'text-slate-600'}`}>
+          <p className={`m-0 mt-1 text-sm ${isFullProfile ? 'font-semibold text-[#1e3a8a]' : 'text-slate-600'}`}>
             {typeLabel}
           </p>
           {isFullProfile && (
@@ -68,7 +68,7 @@ function AccessRequestCard({ request, onApprove, onReject, isPending }) {
             type="button"
             onClick={() => onApprove(id)}
             disabled={isPending}
-            className="h-11 rounded-xl bg-[#005fd6] text-sm font-semibold text-white transition hover:bg-[#004bab] disabled:opacity-50"
+            className="h-11 rounded-xl bg-[#1e3a8a] text-sm font-semibold text-white transition hover:bg-[#172554] disabled:opacity-50"
           >
             Approve
           </button>
@@ -132,7 +132,7 @@ function VerificationConsentCard({ request, onApprove, onReject, isPending }) {
             type="button"
             onClick={() => onApprove(id)}
             disabled={isPending}
-            className="h-11 rounded-xl bg-[#005fd6] text-sm font-semibold text-white transition hover:bg-[#004bab] disabled:opacity-50"
+            className="h-11 rounded-xl bg-[#1e3a8a] text-sm font-semibold text-white transition hover:bg-[#172554] disabled:opacity-50"
           >
             Approve & send to HR
           </button>

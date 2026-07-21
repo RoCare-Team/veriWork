@@ -66,7 +66,7 @@ function TeamManagement() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#005fd6]/10 text-[#005fd6]">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#1e3a8a]/10 text-[#1e3a8a]">
               <UsersIcon />
             </div>
             <div>
@@ -79,7 +79,7 @@ function TeamManagement() {
           <button
             type="button"
             onClick={() => setShowInvite(true)}
-            className="flex shrink-0 items-center gap-2 rounded-xl bg-[#005fd6] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#004bab]"
+            className="flex shrink-0 items-center gap-2 rounded-xl bg-[#1e3a8a] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#172554]"
           >
             <PlusIcon />
             Invite Employee
@@ -109,7 +109,7 @@ function TeamManagement() {
           </div>
 
           {linkedEmployees.length > 0 ? (
-            <div className="grid gap-3">
+            <div className="grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {linkedEmployees.map((emp) => (
                 <TeamEmployeeRow
                   key={resolveEmployeeId(emp)}

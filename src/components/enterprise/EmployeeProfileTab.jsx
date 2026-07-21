@@ -15,7 +15,7 @@ function VerificationFlowStepper() {
           key={step.n}
           className="flex items-start gap-3 rounded-xl border border-green-200/60 bg-white/80 px-4 py-3"
         >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#005fd6] text-sm font-bold text-white">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1e3a8a] text-sm font-bold text-white">
             {step.n}
           </span>
           <div>
@@ -63,7 +63,7 @@ function PersonalDetailsCard({ profileSection }) {
             {skills.map((skill) => (
               <span
                 key={skill}
-                className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-[#005fd6]"
+                className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-[#1e3a8a]"
               >
                 {skill}
               </span>
@@ -97,9 +97,9 @@ function EmploymentHistorySection({ jobs, canVerify, onVerifyJob }) {
             Complete verification data, documents, and HR feedback — per employer
           </p>
         </div>
-        <div className="rounded-xl bg-[#005fd6]/10 px-4 py-2 text-center">
-          <p className="m-0 text-[10px] font-bold uppercase text-[#005fd6]">Verified</p>
-          <p className="m-0 text-lg font-extrabold text-[#005fd6]">
+        <div className="rounded-xl bg-[#1e3a8a]/10 px-4 py-2 text-center">
+          <p className="m-0 text-[10px] font-bold uppercase text-[#1e3a8a]">Verified</p>
+          <p className="m-0 text-lg font-extrabold text-[#1e3a8a]">
             {verifiedCount}/{jobs.length}
           </p>
         </div>

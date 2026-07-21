@@ -20,7 +20,7 @@ function LandingPortals() {
     <section id="portals" className="scroll-mt-24 py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-5 md:px-8 lg:px-10">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#005fd6]">Get started</p>
+          <p className="m-0 text-sm font-bold uppercase tracking-widest text-[#1e3a8a]">Get started</p>
           <h2 className="m-0 mt-3 text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">
             Choose your portal
           </h2>
@@ -61,7 +61,7 @@ function LandingPortals() {
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Link
                     to={portal.to}
-                    className="inline-flex h-12 flex-1 items-center justify-center rounded-2xl bg-[#005fd6] text-sm font-semibold text-white no-underline transition hover:bg-[#004bab]"
+                    className="inline-flex h-12 flex-1 items-center justify-center rounded-2xl bg-[#1e3a8a] text-sm font-semibold text-white no-underline transition hover:bg-[#172554]"
                   >
                     {portal.cta}
                   </Link>

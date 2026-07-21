@@ -372,49 +372,55 @@ function BusinessBasicInfo() {
                     Official government registration numbers for your {typeConfig.label}.
                   </p>
                 </div> */}
-                <Input
-                  id="brn"
-                  label={getRegistrationLabel(form.companyType)}
-                  placeholder={typeConfig.registration.placeholder}
-                  value={form.brn}
-                  onChange={handleBrnChange}
-                  leftIcon={<BriefcaseIcon className="h-[18px] w-[18px] text-slate-400" />}
-                  required
-                  hint={getRegistrationHint(form.companyType)}
-                  error={touched && !brnValid}
-                  errorText={
-                    touched && form.brn.trim() && !brnValid
-                      ? `Invalid ${getRegistrationLabel(form.companyType)} format`
-                      : touched && !form.brn.trim()
-                        ? 'Registration number is required'
-                        : ''
-                  }
-                />
-                <Input
-                  id="tax-id"
-                  label={typeConfig.gstRequired ? 'GSTIN (Tax Identification)' : 'GSTIN (Optional)'}
-                  placeholder="e.g. 27AABCU9603R1ZM"
-                  value={form.taxId}
-                  onChange={handleTaxIdChange}
-                  leftIcon={<CardIcon className="h-[18px] w-[18px] text-slate-400" />}
-                  required={typeConfig.gstRequired}
-                  hint={typeConfig.gstRequired ? GSTIN_HINT : 'Leave blank if not registered for GST'}
-                  error={touched && typeConfig.gstRequired && !gstValid}
-                  errorText={
-                    touched && form.taxId.trim() && !isValidGSTIN(form.taxId)
-                      ? 'Invalid GSTIN — must be 15 characters'
-                      : touched && typeConfig.gstRequired && !form.taxId.trim()
-                        ? 'GSTIN is required'
-                        : ''
-                  }
-                  maxLength={15}
-                />
-                {form.taxId.length === 15 && isValidGSTIN(form.taxId) && (
-                  <p className="m-0 text-xs font-medium text-green-600 md:col-span-2">✓ Valid GSTIN format</p>
-                )}
-                {form.brn.trim() && brnValid && (
-                  <p className="m-0 text-xs font-medium text-green-600 md:col-span-2">✓ Valid registration number format</p>
-                )}
+                {/* Each field owns its own validity line, with the row reserved —
+                    so confirming a value never pushes the rest of the form down. */}
+                <div>
+                  <Input
+                    id="brn"
+                    label={getRegistrationLabel(form.companyType)}
+                    placeholder={typeConfig.registration.placeholder}
+                    value={form.brn}
+                    onChange={handleBrnChange}
+                    leftIcon={<BriefcaseIcon className="h-[18px] w-[18px] text-slate-400" />}
+                    required
+                    hint={getRegistrationHint(form.companyType)}
+                    error={touched && !brnValid}
+                    errorText={
+                      touched && form.brn.trim() && !brnValid
+                        ? `Invalid ${getRegistrationLabel(form.companyType)} format`
+                        : touched && !form.brn.trim()
+                          ? 'Registration number is required'
+                          : ''
+                    }
+                  />
+                  <p className="m-0 mt-1 min-h-4 text-xs font-medium text-green-600">
+                    {form.brn.trim() && brnValid ? '✓ Valid registration number format' : ''}
+                  </p>
+                </div>
+                <div>
+                  <Input
+                    id="tax-id"
+                    label={typeConfig.gstRequired ? 'GSTIN (Tax Identification)' : 'GSTIN (Optional)'}
+                    placeholder="e.g. 27AABCU9603R1ZM"
+                    value={form.taxId}
+                    onChange={handleTaxIdChange}
+                    leftIcon={<CardIcon className="h-[18px] w-[18px] text-slate-400" />}
+                    required={typeConfig.gstRequired}
+                    hint={typeConfig.gstRequired ? GSTIN_HINT : 'Leave blank if not registered for GST'}
+                    error={touched && typeConfig.gstRequired && !gstValid}
+                    errorText={
+                      touched && form.taxId.trim() && !isValidGSTIN(form.taxId)
+                        ? 'Invalid GSTIN — must be 15 characters'
+                        : touched && typeConfig.gstRequired && !form.taxId.trim()
+                          ? 'GSTIN is required'
+                          : ''
+                    }
+                    maxLength={15}
+                  />
+                  <p className="m-0 mt-1 min-h-4 text-xs font-medium text-green-600">
+                    {form.taxId.length === 15 && isValidGSTIN(form.taxId) ? '✓ Valid GSTIN format' : ''}
+                  </p>
+                </div>
               </>
             )}
 
@@ -543,7 +549,7 @@ function BusinessBasicInfo() {
 
         <p className="m-0 pb-2 text-center text-xs text-slate-400">
           Already registered?{' '}
-          <Link to="/enterprise/login" className="font-semibold text-[#005fd6] hover:underline">
+          <Link to="/enterprise/login" className="font-semibold text-[#1e3a8a] hover:underline">
             Sign in
           </Link>
         </p>

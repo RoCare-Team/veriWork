@@ -11,6 +11,9 @@ import Workforce from '../pages/enterprise/Workforce'
 import JoinRequests from '../pages/enterprise/JoinRequests'
 import QROnboarding from '../pages/enterprise/QROnboarding'
 import Settings from '../pages/enterprise/Settings'
+import CompanyUsers from '../pages/enterprise/CompanyUsers'
+import AcceptInvite from '../pages/enterprise/AcceptInvite'
+import QrJoin from '../pages/public/QrJoin'
 import TeamManagement from '../pages/enterprise/TeamManagement'
 import DepartmentDetails from '../pages/enterprise/DepartmentDetails'
 import EmployeeProfilePage from '../pages/enterprise/EmployeeProfilePage'
@@ -66,6 +69,10 @@ function AppRoutes() {
         {/* Public employee join — no auth */}
         <Route path="/employee/join" element={<EmployeeJoin />} />
         <Route path="/verify-employment/:token" element={<VerifyEmployment />} />
+        {/* Staff invite — public: the token is the proof, no session yet */}
+        <Route path="/enterprise/accept-invite" element={<AcceptInvite />} />
+        {/* Scanned QR onboarding — anyone with the code can apply */}
+        <Route path="/join/:code" element={<QrJoin />} />
 
         {/* Admin */}
         <Route element={<AdminGuestGuard />}>
@@ -121,6 +128,7 @@ function AppRoutes() {
           <Route path="/enterprise/workforce" element={<Workforce />} />
           <Route path="/enterprise/join-requests" element={<JoinRequests />} />
           <Route path="/enterprise/qr-onboarding" element={<QROnboarding />} />
+          <Route path="/enterprise/users" element={<CompanyUsers />} />
           <Route path="/enterprise/settings" element={<Settings />} />
         </Route>
 

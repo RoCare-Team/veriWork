@@ -37,7 +37,7 @@ function EmployeeAvatar({ employee }) {
   }
 
   return (
-    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#005fd6]/10 text-sm font-bold text-[#005fd6] ring-2 ring-white">
+    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1e3a8a]/10 text-sm font-bold text-[#1e3a8a] ring-2 ring-white">
       {employee.initials}
     </span>
   )
@@ -91,11 +91,11 @@ function AdminEmployees() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search name, email, phone, ID..."
-              className="flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
+              className="flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100"
             />
             <button
               type="submit"
-              className="rounded-2xl bg-[#005fd6] px-4 py-2.5 text-sm font-semibold text-white"
+              className="rounded-2xl bg-[#1e3a8a] px-4 py-2.5 text-sm font-semibold text-white"
             >
               Search
             </button>
@@ -192,7 +192,7 @@ function AdminEmployees() {
                         <p className="m-0 text-xs text-slate-500">{employee.linkedCompanyLabel}</p>
                       </td>
                       <td className="px-5 py-4 font-mono text-xs text-slate-700">{employee.veriworkId}</td>
-                      <td className="px-5 py-4 font-semibold text-[#005fd6]">{employee.employeeScore}</td>
+                      <td className="px-5 py-4 font-semibold text-[#1e3a8a]">{employee.employeeScore}</td>
                       <td className="px-5 py-4">
                         <StatusBadge complete={employee.profileSetupComplete} verified={employee.isVerified} />
                       </td>
@@ -200,7 +200,7 @@ function AdminEmployees() {
                       <td className="px-5 py-4">
                         <Link
                           to={`/admin/employees/${employee.id}`}
-                          className="text-sm font-semibold text-[#005fd6] no-underline hover:underline"
+                          className="text-sm font-semibold text-[#1e3a8a] no-underline hover:underline"
                         >
                           View
                         </Link>

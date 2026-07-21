@@ -58,7 +58,7 @@ function PublicProfile() {
         </p>
         <Link
           to="/"
-          className="mt-6 rounded-xl bg-[#005fd6] px-5 py-2.5 text-sm font-semibold text-white no-underline hover:bg-[#004bab]"
+          className="mt-6 rounded-xl bg-[#1e3a8a] px-5 py-2.5 text-sm font-semibold text-white no-underline hover:bg-[#172554]"
         >
           Go to PagerLook
         </Link>
@@ -79,7 +79,7 @@ function PublicProfile() {
             <button
               type="button"
               onClick={printResumePdf}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#005fd6] hover:text-[#005fd6]"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#1e3a8a] hover:text-[#1e3a8a]"
             >
               <DownloadIcon />
               Download Resume PDF
@@ -87,7 +87,7 @@ function PublicProfile() {
             <button
               type="button"
               onClick={() => setShowAccessModal(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#005fd6] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#004bab]"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#1e3a8a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#172554]"
             >
               <LockIcon />
               Get Full Profile Access
@@ -138,7 +138,7 @@ function PublicProfile() {
                 </dl>
               </div>
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/75 p-6 text-center backdrop-blur-[1px]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#005fd6]/10 text-[#005fd6]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#1e3a8a]/10 text-[#1e3a8a]">
                   <LockIcon />
                 </div>
                 <p className="m-0 mt-3 text-sm font-bold text-slate-900">Full profile is protected</p>
@@ -148,7 +148,7 @@ function PublicProfile() {
                 <button
                   type="button"
                   onClick={() => setShowAccessModal(true)}
-                  className="mt-4 rounded-xl bg-[#005fd6] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#004bab]"
+                  className="mt-4 rounded-xl bg-[#1e3a8a] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#172554]"
                 >
                   Get Full Profile Access
                 </button>

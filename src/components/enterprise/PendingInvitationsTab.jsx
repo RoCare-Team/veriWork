@@ -22,7 +22,7 @@ function CopyLinkButton({ link }) {
       className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition ${
         copied
           ? 'bg-emerald-50 text-emerald-700'
-          : 'border border-[#005fd6]/30 bg-[#005fd6]/5 text-[#005fd6] hover:bg-[#005fd6]/10'
+          : 'border border-[#1e3a8a]/30 bg-[#1e3a8a]/5 text-[#1e3a8a] hover:bg-[#1e3a8a]/10'
       }`}
     >
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" aria-hidden="true">

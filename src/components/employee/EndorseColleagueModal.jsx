@@ -52,7 +52,7 @@ function EndorseColleagueModal({ onClose, onSuccess }) {
               onChange={(e) => setVeriworkId(e.target.value)}
               disabled={mutation.isPending}
               placeholder="e.g. VW-ABC123"
-              className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
+              className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100"
             />
           </div>
 
@@ -65,7 +65,7 @@ function EndorseColleagueModal({ onClose, onSuccess }) {
               value={relationship}
               onChange={(e) => setRelationship(e.target.value)}
               disabled={mutation.isPending}
-              className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
+              className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100"
             >
               {RELATIONSHIPS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -86,7 +86,7 @@ function EndorseColleagueModal({ onClose, onSuccess }) {
               onChange={(e) => setMessage(e.target.value)}
               disabled={mutation.isPending}
               placeholder="Why are you endorsing them?"
-              className="w-full resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
+              className="w-full resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100"
             />
           </div>
         </div>

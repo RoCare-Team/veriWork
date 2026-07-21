@@ -33,9 +33,9 @@ function VerificationFlowGuide() {
   const content = GUIDE[step] || GUIDE.profile
 
   return (
-    <div className="rounded-2xl border border-[#005fd6]/15 bg-gradient-to-br from-blue-50/80 to-white p-5 md:p-6">
-      <p className="m-0 text-xs font-bold uppercase tracking-widest text-[#005fd6]">What happens next</p>
-      <h3 className="m-0 mt-2 text-base font-extrabold text-[#005fd6] md:text-lg">{content.title}</h3>
+    <div className="rounded-2xl border border-[#1e3a8a]/15 bg-gradient-to-br from-blue-50/80 to-white p-5 md:p-6">
+      <p className="m-0 text-xs font-bold uppercase tracking-widest text-[#1e3a8a]">What happens next</p>
+      <h3 className="m-0 mt-2 text-base font-extrabold text-[#1e3a8a] md:text-lg">{content.title}</h3>
       <p className="m-0 mt-2 text-sm leading-relaxed text-slate-600">{content.body}</p>
     </div>
   )

@@ -4,11 +4,11 @@ import { ShieldCheckIcon, CheckCircleIcon } from '../common/Icons'
 function TrustConnectionVisual() {
   return (
     <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
-      <div className="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-[#005fd6]/15 via-transparent to-[#005fd6]/20 blur-3xl" />
+      <div className="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-[#1e3a8a]/15 via-transparent to-[#1e3a8a]/20 blur-3xl" />
 
       <div className="relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-white/90 p-6 shadow-2xl shadow-slate-300/25 backdrop-blur-sm md:p-8">
         <div className="mb-6 flex items-center justify-between">
-          <span className="rounded-full bg-[#005fd6]/8 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#005fd6]">
+          <span className="rounded-full bg-[#1e3a8a]/8 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#1e3a8a]">
             Live connection
           </span>
           <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
@@ -22,9 +22,9 @@ function TrustConnectionVisual() {
 
         <div className="grid items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-3">
           {/* Company */}
-          <div className="rounded-2xl border border-[#005fd6]/15 bg-gradient-to-br from-[#005fd6]/5 to-white p-4">
+          <div className="rounded-2xl border border-[#1e3a8a]/15 bg-gradient-to-br from-[#1e3a8a]/5 to-white p-4">
             <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#005fd6] text-sm font-bold text-white">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#1e3a8a] text-sm font-bold text-white">
                 AC
               </div>
               <div>
@@ -35,7 +35,7 @@ function TrustConnectionVisual() {
             <div className="space-y-2">
               <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
                 <span className="text-slate-500">Team verified</span>
-                <span className="font-bold text-[#005fd6]">94%</span>
+                <span className="font-bold text-[#1e3a8a]">94%</span>
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
                 <span className="text-slate-500">Hiring speed</span>
@@ -46,20 +46,20 @@ function TrustConnectionVisual() {
 
           {/* Connection bridge */}
           <div className="relative flex flex-col items-center justify-center py-2 md:py-0">
-            <div className="hidden h-px w-full bg-gradient-to-r from-[#005fd6]/30 via-[#005fd6]/50 to-[#005fd6]/30 md:block" />
-            <div className="my-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#005fd6]/25 bg-gradient-to-br from-[#005fd6]/10 to-[#005fd6]/10 shadow-lg shadow-brand-500/15">
-              <ShieldCheckIcon className="h-7 w-7 text-[#005fd6]" />
+            <div className="hidden h-px w-full bg-gradient-to-r from-[#1e3a8a]/30 via-[#1e3a8a]/50 to-[#1e3a8a]/30 md:block" />
+            <div className="my-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#1e3a8a]/25 bg-gradient-to-br from-[#1e3a8a]/10 to-[#1e3a8a]/10 shadow-lg shadow-brand-500/15">
+              <ShieldCheckIcon className="h-7 w-7 text-[#1e3a8a]" />
             </div>
-            <div className="hidden h-px w-full bg-gradient-to-r from-[#005fd6]/30 via-[#005fd6]/50 to-[#005fd6]/30 md:block" />
+            <div className="hidden h-px w-full bg-gradient-to-r from-[#1e3a8a]/30 via-[#1e3a8a]/50 to-[#1e3a8a]/30 md:block" />
             <p className="m-0 mt-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400 md:mt-3">
               Verified trust
             </p>
           </div>
 
           {/* Professional */}
-          <div className="rounded-2xl border border-[#005fd6]/20 bg-gradient-to-br from-[#005fd6]/5 to-white p-4">
+          <div className="rounded-2xl border border-[#1e3a8a]/20 bg-gradient-to-br from-[#1e3a8a]/5 to-white p-4">
             <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#005fd6] to-[#004bab] text-sm font-bold text-white">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#1e3a8a] to-[#172554] text-sm font-bold text-white">
                 PS
               </div>
               <div>
@@ -70,7 +70,7 @@ function TrustConnectionVisual() {
             <div className="space-y-2">
               <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
                 <span className="text-slate-500">Trust score</span>
-                <span className="font-bold text-[#005fd6]">98</span>
+                <span className="font-bold text-[#1e3a8a]">98</span>
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-xs">
                 <span className="text-slate-500">Identity</span>
@@ -104,9 +104,9 @@ function TrustConnectionVisual() {
         </div>
       </div>
 
-      <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-[#005fd6]/10 bg-white px-4 py-3 shadow-xl md:block lg:-left-6">
+      <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-[#1e3a8a]/10 bg-white px-4 py-3 shadow-xl md:block lg:-left-6">
         <p className="m-0 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Connection time</p>
-        <p className="m-0 text-lg font-extrabold text-[#005fd6]">Under 2 minutes</p>
+        <p className="m-0 text-lg font-extrabold text-[#1e3a8a]">Under 2 minutes</p>
       </div>
     </div>
   )
@@ -142,22 +142,22 @@ function LandingHero() {
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 md:px-8 lg:grid-cols-2 lg:gap-16 lg:px-10">
         <div className="max-w-xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#005fd6]/15 bg-white/80 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#005fd6] shadow-sm backdrop-blur-sm">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#1e3a8a]/15 bg-white/80 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#1e3a8a] shadow-sm backdrop-blur-sm">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#005fd6] opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#005fd6]" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1e3a8a] opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#1e3a8a]" />
             </span>
             Company ↔ Professional trust platform
           </span>
 
           <h1 className="m-0 mt-7 text-[2rem] font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-4xl md:text-[2.75rem] lg:text-5xl">
             Connecting Talent{' '}
-            <span className="bg-gradient-to-r from-[#005fd6] to-[#004bab] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#1e3a8a] to-[#172554] bg-clip-text text-transparent">
               Faster
             </span>
             ,<br />
             Building Relationships{' '}
-            <span className="bg-gradient-to-r from-[#005fd6] to-[#0073fe] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#1e3a8a] to-[#2748a6] bg-clip-text text-transparent">
               Stronger
             </span>
           </h1>
@@ -173,7 +173,7 @@ function LandingHero() {
                 key={pill.text}
                 className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/90 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm"
               >
-                {pill.icon && <pill.icon className="h-3.5 w-3.5 text-[#005fd6]" />}
+                {pill.icon && <pill.icon className="h-3.5 w-3.5 text-[#1e3a8a]" />}
                 {pill.text}
               </span>
             ))}
@@ -182,7 +182,7 @@ function LandingHero() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               to="/enterprise/login"
-              className="inline-flex h-12 items-center justify-center rounded-2xl bg-[#005fd6] px-7 text-[15px] font-semibold text-white no-underline shadow-lg shadow-blue-900/20 transition hover:bg-[#004bab]"
+              className="inline-flex h-12 items-center justify-center rounded-2xl bg-[#1e3a8a] px-7 text-[15px] font-semibold text-white no-underline shadow-lg shadow-blue-900/20 transition hover:bg-[#172554]"
             >
               Start for employers
             </Link>

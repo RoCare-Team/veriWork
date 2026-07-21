@@ -47,7 +47,7 @@ function TeamMembersSection({ admin, companyName }) {
           role={admin.email}
           badge="Admin"
           badgeColor="blue"
-          avatarBg="bg-[#005fd6]"
+          avatarBg="bg-[#1e3a8a]"
         />
       </div>
     </section>
@@ -67,10 +67,10 @@ function SecurityApiSection() {
 
 function EnterprisePlanCard({ totalEmployees }) {
   return (
-    <section className="rounded-2xl bg-gradient-to-br from-[#005fd6] to-[#0073fe] p-5 text-white shadow-lg md:p-6">
+    <section className="rounded-2xl bg-gradient-to-br from-[#1e3a8a] to-[#2748a6] p-5 text-white shadow-lg md:p-6">
       <div className="flex items-start justify-between gap-3">
         <h3 className="m-0 text-lg font-extrabold">Enterprise Plan</h3>
-        <span className="rounded-full bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#005fd6]">
+        <span className="rounded-full bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#1e3a8a]">
           Active
         </span>
       </div>

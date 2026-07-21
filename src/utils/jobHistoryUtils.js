@@ -76,7 +76,7 @@ export function companyInitials(company = '') {
 
 export function companyAccentColor(company = '') {
   const palette = [
-    'from-[#005fd6] to-[#0073fe]',
+    'from-[#1e3a8a] to-[#2748a6]',
     'from-violet-600 to-violet-800',
     'from-teal-600 to-teal-800',
     'from-orange-500 to-orange-700',

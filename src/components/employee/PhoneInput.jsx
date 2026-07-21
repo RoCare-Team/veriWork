@@ -24,7 +24,7 @@ function PhoneInput({
             onChange={(e) => onCountryCodeChange(e.target.value)}
             disabled={disabled}
             aria-label="Country code"
-            className="h-12 w-[108px] appearance-none rounded-xl border border-slate-300 bg-white pl-3 pr-8 text-sm font-semibold text-slate-800 outline-none transition focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:h-[52px] md:w-[118px] md:text-base"
+            className="h-12 w-[108px] appearance-none rounded-xl border border-slate-300 bg-white pl-3 pr-8 text-sm font-semibold text-slate-800 outline-none transition focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:h-[52px] md:w-[118px] md:text-base"
           >
             {COUNTRY_CODES.map((c) => (
               <option key={c.code} value={c.code}>
@@ -52,7 +52,7 @@ function PhoneInput({
             onChange={onChange}
             disabled={disabled}
             autoComplete="tel-national"
-            className="h-12 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-3.5 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:h-[52px] md:text-base"
+            className="h-12 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-3.5 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 md:h-[52px] md:text-base"
           />
         </div>
       </div>

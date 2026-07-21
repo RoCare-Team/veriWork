@@ -47,7 +47,7 @@ function AdminEmployeeDetail() {
       <AdminLayout>
         <div className="px-4 py-8 md:px-8">
           <p className="text-sm text-red-600">{error?.message || 'Employee not found'}</p>
-          <Link to="/admin/employees" className="mt-4 inline-block text-sm font-semibold text-[#005fd6]">
+          <Link to="/admin/employees" className="mt-4 inline-block text-sm font-semibold text-[#1e3a8a]">
             Back to employees
           </Link>
         </div>
@@ -61,7 +61,7 @@ function AdminEmployeeDetail() {
   return (
     <AdminLayout>
       <div className="px-4 py-6 md:px-8 md:py-8">
-        <Link to="/admin/employees" className="text-sm font-semibold text-[#005fd6] no-underline hover:underline">
+        <Link to="/admin/employees" className="text-sm font-semibold text-[#1e3a8a] no-underline hover:underline">
           ← Back to employees
         </Link>
 
@@ -71,7 +71,7 @@ function AdminEmployeeDetail() {
               {photo ? (
                 <img src={photo} alt="" className="h-20 w-20 rounded-2xl object-cover" />
               ) : (
-                <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#005fd6]/10 text-2xl font-bold text-[#005fd6]">
+                <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#1e3a8a]/10 text-2xl font-bold text-[#1e3a8a]">
                   {employee.initials}
                 </span>
               )}
@@ -83,7 +83,7 @@ function AdminEmployeeDetail() {
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-full bg-[#005fd6]/10 px-3 py-1 text-sm font-bold text-[#005fd6]">
+              <span className="rounded-full bg-[#1e3a8a]/10 px-3 py-1 text-sm font-bold text-[#1e3a8a]">
                 Score {employee.employeeScore}
               </span>
               {employee.isVerified && (

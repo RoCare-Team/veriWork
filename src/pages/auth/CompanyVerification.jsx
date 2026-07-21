@@ -22,6 +22,7 @@ import {
 } from '../../utils/enterpriseCompanyTypes'
 import {
   getEnterpriseDocType,
+  getUploadedDocument,
   uploadEnterpriseDocument,
   validateDocumentFile,
 } from '../../lib/uploadDocument'
@@ -48,10 +49,7 @@ function CompanyVerification() {
   const companyType = resolveCompanyType(onboarding?.company, onboarding?.onboarding?.basicInfo)
   const companyDocuments = getDocumentsForCompanyType(companyType)
 
-  const getDocValue = (docId) => {
-    const docType = getEnterpriseDocType(docId)
-    return documents[docId] || documents[docType] || null
-  }
+  const getDocValue = (docId) => getUploadedDocument(documents, docId)
 
   const requiredDocs = companyDocuments.filter((d) => d.required)
   const hasDocument = (docId) => Boolean(getDocValue(docId))
@@ -109,9 +107,9 @@ function CompanyVerification() {
   }
 
   const docIcon = (id) => {
-    if (id === 'addressProof') return <BuildingIcon className="h-5 w-5 text-[#005fd6]" />
-    if (id === 'taxCertificate') return <CardIcon className="h-5 w-5 text-[#005fd6]" />
-    return <DocumentIcon className="h-5 w-5 text-[#005fd6]" />
+    if (id === 'addressProof') return <BuildingIcon className="h-5 w-5 text-[#1e3a8a]" />
+    if (id === 'taxCertificate') return <CardIcon className="h-5 w-5 text-[#1e3a8a]" />
+    return <DocumentIcon className="h-5 w-5 text-[#1e3a8a]" />
   }
 
   const docDisplay = (docId) => {
@@ -182,11 +180,11 @@ function CompanyVerification() {
         </section>
 
         <div className="flex gap-3 rounded-3xl border border-blue-100 bg-blue-50/60 p-5">
-          <div className="shrink-0 text-[#005fd6]">
+          <div className="shrink-0 text-[#1e3a8a]">
             <InfoIcon className="h-5 w-5" />
           </div>
           <div>
-            <p className="m-0 text-sm font-bold text-[#005fd6]">Verification Timeline</p>
+            <p className="m-0 text-sm font-bold text-[#1e3a8a]">Verification Timeline</p>
             <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
               Our compliance team typically reviews documents within 24–48 business hours. You will receive an email once
               verified.
@@ -196,7 +194,7 @@ function CompanyVerification() {
 
         <p className="m-0 pb-2 text-center text-xs text-slate-400">
           Already registered?{' '}
-          <Link to="/enterprise/login" className="font-semibold text-[#005fd6] hover:underline">
+          <Link to="/enterprise/login" className="font-semibold text-[#1e3a8a] hover:underline">
             Sign in
           </Link>
         </p>

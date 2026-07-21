@@ -3,6 +3,8 @@ import { api } from '../lib/api'
 
 export const enterpriseKeys = {
   onboarding: ['enterprise', 'onboarding'],
+  applicationStatus: ['enterprise', 'application', 'status'],
+  applicationMessages: ['enterprise', 'application', 'messages'],
   dashboard: ['enterprise', 'dashboard'],
   workforce: ['enterprise', 'workforce'],
   joinRequests: ['enterprise', 'join-requests'],
@@ -21,6 +23,9 @@ export const enterpriseKeys = {
   verificationIncoming: ['company', 'verification', 'incoming'],
   auditLogs: (filters) => ['company', 'audit-logs', filters],
   smtpSettings: ['company', 'smtp-settings'],
+  myPermissions: ['company', 'me', 'permissions'],
+  companyUsers: ['company', 'users'],
+  roles: ['company', 'roles'],
 }
 
 export function fetchOnboarding() {
@@ -61,12 +66,36 @@ export function updateJoinRequest(id, status) {
   return api(API.ENTERPRISE.JOIN_REQUEST(id), { method: 'PATCH', body: { status } })
 }
 
+export function fetchApplicationStatus() {
+  return api(API.ENTERPRISE.APPLICATION_STATUS)
+}
+
+export function resubmitApplication() {
+  return api(API.ENTERPRISE.APPLICATION_RESUBMIT, { method: 'POST', body: {} })
+}
+
+export function fetchApplicationMessages() {
+  return api(API.ENTERPRISE.APPLICATION_MESSAGES)
+}
+
+export function postApplicationMessage(body) {
+  return api(API.ENTERPRISE.APPLICATION_MESSAGES, { method: 'POST', body: { body } })
+}
+
 export function fetchQrOnboarding() {
   return api(API.ENTERPRISE.QR_ONBOARDING)
 }
 
-export function createQrOnboarding(label) {
-  return api(API.ENTERPRISE.QR_ONBOARDING, { method: 'POST', body: { label } })
+export function createQrOnboarding(body) {
+  return api(API.ENTERPRISE.QR_ONBOARDING, { method: 'POST', body })
+}
+
+export function setQrOnboardingActive(id, isActive) {
+  return api(API.ENTERPRISE.QR_ONBOARDING_ACTIVE(id), { method: 'PATCH', body: { isActive } })
+}
+
+export function deleteQrOnboarding(id) {
+  return api(API.ENTERPRISE.QR_ONBOARDING_DELETE(id), { method: 'DELETE' })
 }
 
 export function fetchTeam() {
@@ -191,6 +220,55 @@ export function fetchAuditLogs({ action = '', page = 1, limit = 20 } = {}) {
   const params = new URLSearchParams({ page: String(page), limit: String(limit) })
   if (action) params.set('action', action)
   return api(`${API.COMPANY.AUDIT_LOGS}?${params}`)
+}
+
+export function fetchMyPermissions() {
+  return api(API.COMPANY.ME_PERMISSIONS)
+}
+
+export function fetchRoles() {
+  return api(API.COMPANY.ROLES)
+}
+
+export function fetchCompanyUsers() {
+  return api(API.COMPANY.USERS)
+}
+
+export function createCompanyUser(body) {
+  return api(API.COMPANY.USERS, { method: 'POST', body })
+}
+
+export function resetCompanyUserPassword(userId, password) {
+  return api(API.COMPANY.USER_PASSWORD(userId), { method: 'POST', body: { password } })
+}
+
+export function createCompanyRole(body) {
+  return api(API.COMPANY.ROLES, { method: 'POST', body })
+}
+
+export function updateCompanyRole(roleId, body) {
+  return api(API.COMPANY.ROLE(roleId), { method: 'PATCH', body })
+}
+
+export function deleteCompanyRole(roleId) {
+  return api(API.COMPANY.ROLE(roleId), { method: 'DELETE' })
+}
+
+export function inviteCompanyUser(body) {
+  return api(API.COMPANY.USER_INVITE, { method: 'POST', body })
+}
+
+export function revokeCompanyUserInvite(inviteId) {
+  return api(API.COMPANY.USER_INVITE_REVOKE(inviteId), { method: 'POST', body: {} })
+}
+
+/** body is { companyRole } for a preset, or { companyRoleId } for a custom role. */
+export function updateCompanyUserRole(userId, body) {
+  return api(API.COMPANY.USER_ROLE(userId), { method: 'PATCH', body })
+}
+
+export function removeCompanyUser(userId) {
+  return api(API.COMPANY.USER_REMOVE(userId), { method: 'DELETE' })
 }
 
 export function fetchSmtpSettings() {

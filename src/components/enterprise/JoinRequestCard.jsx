@@ -6,7 +6,7 @@ function JoinRequestCard({ initials, name, role, employeeScore, score, trust }) 
 
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition hover:border-slate-200 hover:shadow-md">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-50 to-blue-100 text-sm font-bold text-[#005fd6]">
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-50 to-blue-100 text-sm font-bold text-[#1e3a8a]">
         {initials}
       </div>
       <div className="min-w-0 flex-1">

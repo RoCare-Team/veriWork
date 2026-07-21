@@ -1,3 +1,5 @@
+import { FIELD_LABEL, FIELD_MESSAGE, FIELD_WRAP, fieldControlClass } from './fieldStyles'
+
 function Input({
   label,
   id,
@@ -11,10 +13,19 @@ function Input({
   className = '',
   ...props
 }) {
+  /*
+   * Fields that can show a hint or an error keep a permanent one-line slot, so
+   * swapping hint -> error (or a hint appearing as you type) never reflows the
+   * form. Fields that pass neither prop get no slot and are unaffected.
+   */
+  const hasMessageSlot = hint !== undefined || errorText !== undefined
+  const showError = Boolean(error && errorText)
+  const message = showError ? errorText : error ? '' : hint
+
   return (
-    <div className={`flex flex-col gap-1.5 ${className}`.trim()}>
+    <div className={`${FIELD_WRAP} ${className}`.trim()}>
       {label && (
-        <label htmlFor={id} className="text-[13px] font-semibold text-ink-body">
+        <label htmlFor={id} className={FIELD_LABEL}>
           {label}
           {required && <span className="text-danger"> *</span>}
         </label>
@@ -30,14 +41,12 @@ function Input({
           type={type}
           required={required}
           aria-invalid={error ? 'true' : undefined}
-          aria-describedby={hint || errorText ? `${id}-desc` : undefined}
-          className={`h-10 w-full rounded-ctl border bg-surface px-3 text-sm text-ink-strong outline-none transition duration-150 ease-swift placeholder:text-ink-faint disabled:cursor-not-allowed disabled:bg-canvas disabled:text-ink-faint ${
-            leftIcon ? 'pl-9' : ''
-          } ${rightSlot ? 'pr-10' : ''} ${
-            error
-              ? 'border-danger focus:border-danger focus:ring-2 focus:ring-danger/20'
-              : 'border-line hover:border-ink-faint focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25'
-          }`}
+          aria-describedby={hasMessageSlot ? `${id}-desc` : undefined}
+          className={fieldControlClass({
+            error,
+            leftIcon: Boolean(leftIcon),
+            rightSlot: Boolean(rightSlot),
+          })}
           {...props}
         />
         {rightSlot && (
@@ -46,14 +55,13 @@ function Input({
           </span>
         )}
       </div>
-      {error && errorText && (
-        <p id={`${id}-desc`} className="m-0 text-xs text-danger" role="alert">
-          {errorText}
-        </p>
-      )}
-      {!error && hint && (
-        <p id={`${id}-desc`} className="m-0 text-xs text-ink-muted">
-          {hint}
+      {hasMessageSlot && (
+        <p
+          id={`${id}-desc`}
+          className={`${FIELD_MESSAGE} ${showError ? 'text-danger' : 'text-ink-muted'}`}
+          role={showError ? 'alert' : undefined}
+        >
+          {message}
         </p>
       )}
     </div>

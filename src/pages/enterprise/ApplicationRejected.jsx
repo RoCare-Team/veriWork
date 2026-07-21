@@ -53,7 +53,7 @@ function ApplicationRejected() {
 
         <Link
           to="/enterprise/verify"
-          className="mt-8 inline-flex h-12 items-center justify-center rounded-2xl bg-[#005fd6] px-7 text-sm font-semibold text-white no-underline shadow-lg shadow-blue-900/20 transition hover:bg-[#004bab]"
+          className="mt-8 inline-flex h-12 items-center justify-center rounded-2xl bg-[#1e3a8a] px-7 text-sm font-semibold text-white no-underline shadow-lg shadow-blue-900/20 transition hover:bg-[#172554]"
         >
           Resubmit Documents
         </Link>

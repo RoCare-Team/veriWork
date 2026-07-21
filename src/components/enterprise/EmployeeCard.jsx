@@ -30,7 +30,7 @@ function EmployeeCard({
             className="h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-slate-100"
           />
         ) : (
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-[#005fd6]">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-[#1e3a8a]">
             {displayInitials}
           </div>
         )}
@@ -66,7 +66,7 @@ function EmployeeCard({
             </p>
             <div className="mt-1">
               {verified ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-[#005fd6]">
+                <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-[#1e3a8a]">
                   ✓ Verified
                 </span>
               ) : (
@@ -82,7 +82,7 @@ function EmployeeCard({
       <button
         type="button"
         onClick={onViewProfile}
-        className="mt-4 w-full rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-[#005fd6] hover:text-[#005fd6]"
+        className="mt-4 w-full rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-[#1e3a8a] hover:text-[#1e3a8a]"
       >
         View Profile
       </button>

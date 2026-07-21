@@ -1,6 +1,6 @@
 import { formatChartMonth } from '../../utils/formatters'
 
-const CHART_COLORS = ['#005fd6', '#0073fe', '#3b5fc7', '#5b7fd4', '#7a9ee0', '#9ab8eb']
+const CHART_COLORS = ['#1e3a8a', '#2748a6', '#2748a6', '#5b7fd4', '#7a9ee0', '#9ab8eb']
 
 export function WorkforceGrowthChart({ data = [] }) {
   if (!data.length) {
@@ -28,14 +28,14 @@ export function WorkforceGrowthChart({ data = [] }) {
       <svg viewBox={`0 0 ${w} ${h}`} className="h-auto min-w-[320px] w-full" aria-hidden="true">
         <defs>
           <linearGradient id="growth-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#005fd6" stopOpacity="0.2" />
-            <stop offset="100%" stopColor="#005fd6" stopOpacity="0" />
+            <stop offset="0%" stopColor="#1e3a8a" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="#1e3a8a" stopOpacity="0" />
           </linearGradient>
         </defs>
         <polygon points={areaPoints} fill="url(#growth-fill)" />
-        <polyline points={linePoints} fill="none" stroke="#005fd6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <polyline points={linePoints} fill="none" stroke="#1e3a8a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
         {points.map((p) => (
-          <circle key={p.label} cx={p.x} cy={p.y} r="4" fill="#005fd6" />
+          <circle key={p.label} cx={p.x} cy={p.y} r="4" fill="#1e3a8a" />
         ))}
       </svg>
       <div className="mt-2 flex justify-between gap-1 px-2 text-[10px] font-medium text-slate-400 sm:text-[11px]">
@@ -136,7 +136,7 @@ export function TrustScoreBarChart({ data = [] }) {
             <span className="text-[10px] font-bold text-slate-500 sm:text-xs">{d.count}</span>
             <div className="flex w-full flex-1 items-end">
               <div
-                className="w-full rounded-t-lg bg-gradient-to-t from-[#005fd6] to-[#3b5fc7] transition-all"
+                className="w-full rounded-t-lg bg-gradient-to-t from-[#1e3a8a] to-[#2748a6] transition-all"
                 style={{ height, minHeight: d.count ? '4px' : '0' }}
                 title={`${d.range || d.label}: ${d.count}`}
               />

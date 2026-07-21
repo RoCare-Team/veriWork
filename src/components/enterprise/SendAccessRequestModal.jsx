@@ -88,7 +88,7 @@ function SendAccessRequestModal({
               value={requestType}
               onChange={(e) => setRequestType(e.target.value)}
               disabled={mutation.isPending || typesQuery.isLoading}
-              className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
+              className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100"
             >
               {typeOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -98,8 +98,8 @@ function SendAccessRequestModal({
               ))}
             </select>
             {requestType === 'full_profile_access' && (
-              <p className="m-0 flex items-center gap-2 text-xs font-semibold text-[#005fd6]">
-                <span className="rounded-full bg-[#005fd6]/10 px-2 py-0.5 text-[10px] font-bold uppercase">Recommended</span>
+              <p className="m-0 flex items-center gap-2 text-xs font-semibold text-[#1e3a8a]">
+                <span className="rounded-full bg-[#1e3a8a]/10 px-2 py-0.5 text-[10px] font-bold uppercase">Recommended</span>
                 Unlocks profile, documents, and verification in one request.
               </p>
             )}
@@ -119,7 +119,7 @@ function SendAccessRequestModal({
               onChange={(e) => setMessage(e.target.value)}
               disabled={mutation.isPending}
               placeholder="Add a note for the employee..."
-              className="w-full resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#005fd6] focus:ring-4 focus:ring-blue-100"
+              className="w-full resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#1e3a8a] focus:ring-4 focus:ring-blue-100"
             />
           </div>
         </div>
