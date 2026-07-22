@@ -25,7 +25,9 @@ export const JOURNEY_STEPS = [
     description: '10th, 12th and graduation',
     required: false,
     points: 45,
-    path: '/employee/profile-setup',
+    // Deep-link straight to the education step — coming back from the score page
+    // should not dump the user on basic details again.
+    path: '/employee/profile-setup?step=education',
   },
   {
     id: 'identity',

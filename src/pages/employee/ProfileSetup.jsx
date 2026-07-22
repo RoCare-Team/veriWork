@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import EmployeeLayout from '../../layouts/EmployeeLayout'
 import EmployeePageHeader from '../../components/employee/PageHeader'
@@ -20,7 +20,7 @@ import { mediaUrl } from '../../lib/mediaUrl'
 import { COUNTRY_CODES } from '../../utils/countryCodes'
 import {
   clearInvitationSession,
-  getInvitationEmail,
+  getInvitationDetails,
   getInvitationToken,
 } from '../../utils/invitationSession'
 import { useToast } from '../../context/ToastContext'
@@ -250,6 +250,7 @@ function applyProfileToForm(data, setters) {
 
 function ProfileSetup() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const queryClient = useQueryClient()
   const { toast } = useToast()
   const { user, profile, updateProfileState } = useAuth()
@@ -271,17 +272,26 @@ function ProfileSetup() {
   const [sameAsCurrentAddress, setSameAsCurrentAddress] = useState(false)
   const [photo, setPhoto] = useState(null)
   const [photoUrl, setPhotoUrl] = useState('')
-  const [photoPreview, setPhotoPreview] = useState(null)
+  // Derived from the picked file — no state, so nothing to sync in an effect.
+  const photoPreview = useMemo(() => (photo ? URL.createObjectURL(photo) : null), [photo])
   const [photoError, setPhotoError] = useState('')
   const [education, setEducation] = useState(EMPTY_EDUCATION)
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState({})
   // Wizard position. Step 2 (education) and 3 (identity) are skippable.
-  const [step, setStep] = useState(0)
+  // `?step=education` (from the score page's "Add now") opens that step directly
+  // instead of dropping the user back on basic details.
+  const requestedStepId = searchParams.get('step')
+  const [step, setStep] = useState(() => {
+    const index = STEPS.findIndex((s) => s.id === requestedStepId)
+    return index >= 0 ? index : 0
+  })
   // Only surface "what's missing" after they try to continue — not while typing.
   const [showStep1Errors, setShowStep1Errors] = useState(false)
   const [aadhaarVerified, setAadhaarVerified] = useState(false)
   const [biometricVerified, setBiometricVerified] = useState(false)
+  // Set just before a mutation that should save without navigating away.
+  const saveOnlyRef = useRef(false)
   const [generalErrors, setGeneralErrors] = useState([])
 
   const setters = {
@@ -307,27 +317,38 @@ function ProfileSetup() {
   useEffect(() => {
     let cancelled = false
 
+    /*
+     * Anything the inviting company already entered (name, mobile, email, role,
+     * company) pre-fills the form — but only where the saved profile is still
+     * blank, so a returning user's own data always wins.
+     */
+    const withInvitationDefaults = (data = {}) => {
+      const invite = getInvitationDetails()
+      const hasName = data.name && data.name !== 'New User'
+      const hasRole = data.role && data.role !== 'Professional'
+      return {
+        ...data,
+        name: hasName ? data.name : invite.name || data.name,
+        email: data.email || invite.email || '',
+        phone: data.phone || invite.phone || '',
+        role: hasRole ? data.role : invite.designation || data.role,
+        company: data.company || invite.companyName || '',
+      }
+    }
+
     async function loadProfile() {
       setLoading(true)
       try {
         const data = await getProfile()
-        if (!cancelled) {
-          applyProfileToForm(
-            {
-              ...data,
-              email: data.email || getInvitationEmail() || '',
-            },
-            setters,
-          )
-        }
+        if (!cancelled) applyProfileToForm(withInvitationDefaults(data), setters)
       } catch {
         if (!cancelled) {
           applyProfileToForm(
-            {
+            withInvitationDefaults({
               ...profile,
               phone: profile?.phone || user?.phone,
-              email: profile?.email || user?.email || getInvitationEmail(),
-            },
+              email: profile?.email || user?.email,
+            }),
             setters,
           )
         }
@@ -342,15 +363,11 @@ function ProfileSetup() {
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Release the object URL when the pick changes or the page unmounts.
   useEffect(() => {
-    if (!photo) {
-      setPhotoPreview(null)
-      return undefined
-    }
-    const url = URL.createObjectURL(photo)
-    setPhotoPreview(url)
-    return () => URL.revokeObjectURL(url)
-  }, [photo])
+    if (!photoPreview) return undefined
+    return () => URL.revokeObjectURL(photoPreview)
+  }, [photoPreview])
 
   const phoneDigits = phone.replace(/\D/g, '')
   const fullPhone = normalizePhone(countryCode, phone)
@@ -393,23 +410,9 @@ function ProfileSetup() {
       return setupProfile(formData)
     },
     onSuccess: (data) => {
-      const autoJoined = data?.invitationResult?.autoJoined
-      if (Array.isArray(autoJoined) && autoJoined.length > 0) {
-        const entry = autoJoined[0]
-        const companyName =
-          typeof entry === 'string' ? entry : entry?.companyName || entry?.name || 'the company'
-        updateProfileState({
-          ...profile,
-          profileSetupComplete: data.profileSetupComplete ?? true,
-          photoUrl: data.photoUrl ?? profile?.photoUrl,
-        })
-        queryClient.invalidateQueries({ queryKey: employeeKeys.profile })
-        queryClient.invalidateQueries({ queryKey: employeeKeys.score })
-        clearInvitationSession()
-        toast(`You have been added to ${companyName} team!`, 'success')
-        navigate('/employee/score')
-        return
-      }
+      // "Save" persists without leaving the wizard; "Continue"/"Finish" navigate.
+      const saveOnly = saveOnlyRef.current
+      saveOnlyRef.current = false
 
       updateProfileState({
         ...profile,
@@ -418,6 +421,23 @@ function ProfileSetup() {
       })
       queryClient.invalidateQueries({ queryKey: employeeKeys.profile })
       queryClient.invalidateQueries({ queryKey: employeeKeys.score })
+
+      const autoJoined = data?.invitationResult?.autoJoined
+      if (Array.isArray(autoJoined) && autoJoined.length > 0) {
+        const entry = autoJoined[0]
+        const companyName =
+          typeof entry === 'string' ? entry : entry?.companyName || entry?.name || 'the company'
+        clearInvitationSession()
+        toast(`You have been added to ${companyName} team!`, 'success')
+        if (!saveOnly) navigate('/employee/score')
+        return
+      }
+
+      if (saveOnly) {
+        toast('Progress saved', 'success')
+        return
+      }
+
       // Finishing setup lands on the score — it's the payoff, and it shows
       // exactly what the skipped steps would still be worth.
       navigate(isEditing ? '/employee/professional-id' : '/employee/score')
@@ -511,6 +531,23 @@ function ProfileSetup() {
     setFieldErrors({})
     setGeneralErrors([])
     mutation.mutate()
+  }
+
+  /** Persist what's filled so far and stay on the current step. */
+  const handleSave = () => {
+    if (!isStep1Valid) {
+      setShowStep1Errors(true)
+      setStep(0)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    if (hasPartialEdu) {
+      setStep(1)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    saveOnlyRef.current = true
+    submitProfile()
   }
 
   /**
@@ -1115,6 +1152,17 @@ function ProfileSetup() {
                   Skip for now
                 </button>
               )}
+
+              {/* Save without leaving the step — useful when filling this over
+                  more than one sitting. */}
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={mutation.isPending}
+                className="rounded-ctl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+              >
+                {mutation.isPending ? 'Saving...' : 'Save'}
+              </button>
 
               {step < STEPS.length - 1 ? (
                 <Button

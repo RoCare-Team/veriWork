@@ -23,10 +23,16 @@ function EmployeeJoin() {
 
   useEffect(() => {
     if (!token || !invitation) return
+    // Carry everything the company already filled in, so profile setup can
+    // pre-fill it instead of asking the invitee to type it again.
     setInvitationSession({
       token,
       email: invitation.employeeEmail || invitation.email || '',
       companyName: invitation.companyName || '',
+      name: invitation.employeeName || '',
+      phone: invitation.employeeMobile || '',
+      department: invitation.department || '',
+      designation: invitation.designation || '',
     })
   }, [token, invitation])
 
