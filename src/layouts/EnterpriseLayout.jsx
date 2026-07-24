@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Sidebar from '../components/enterprise/Sidebar'
 import EnterpriseNavbar from '../components/enterprise/Navbar'
+import FeatureTour from '../components/common/FeatureTour'
 import useSidebarCollapsed from '../hooks/useSidebarCollapsed'
 import { useAuth } from '../context/AuthContext'
 
@@ -19,6 +20,9 @@ function EnterpriseLayout({ children }) {
    */
   return (
     <div className="fixed inset-0 flex overflow-hidden bg-canvas">
+      {/* First-run feature guide — shows once, always skippable. */}
+      <FeatureTour portal="enterprise" />
+
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}

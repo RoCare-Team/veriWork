@@ -37,6 +37,10 @@ const INITIAL_FORM = {
   uanNumber: '',
   pfNumber: '',
   esiNumber: '',
+  monthlyInHandSalary: '',
+  yearlyPackage: '',
+  salaryVerificationStatus: '',
+  employmentVerificationStatus: '',
   performanceRating: '',
   behaviorRemarks: '',
   disciplinaryIssues: false,
@@ -63,6 +67,64 @@ function Field({ label, children }) {
       <span className="font-semibold text-slate-800">{label}</span>
       {children}
     </label>
+  )
+}
+
+/**
+ * Two-button choice — reads faster than a dropdown and makes the answer
+ * visible at a glance, which is what this form needs most.
+ */
+function Choice({ label, hint, value, onChange, options, required = false }) {
+  return (
+    <div>
+      <p className="m-0 text-sm font-semibold text-slate-800">
+        {label}
+        {required && <span className="text-red-500"> *</span>}
+      </p>
+      {hint && <p className="m-0 mt-0.5 text-xs text-slate-400">{hint}</p>}
+      <div className="mt-2 flex gap-2">
+        {options.map((o) => {
+          const active = value === o.value
+          return (
+            <button
+              key={String(o.value)}
+              type="button"
+              onClick={() => onChange(o.value)}
+              className={`flex-1 rounded-xl border py-2.5 text-sm font-semibold transition ${
+                active
+                  ? o.tone === 'negative'
+                    ? 'border-red-400 bg-red-50 text-red-700'
+                    : 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+              }`}
+            >
+              {o.label}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+const YES_NO = [
+  { value: true, label: 'Yes' },
+  { value: false, label: 'No', tone: 'negative' },
+]
+
+const VERIFY_OPTIONS = [
+  { value: 'verified', label: 'Verified' },
+  { value: 'unverified', label: 'Unverified', tone: 'negative' },
+]
+
+/** Titled block — keeps this long form scannable instead of one flat list. */
+function Group({ title, hint, children }) {
+  return (
+    <section className="border-t border-slate-100 pt-5 first:border-0 first:pt-0">
+      <p className="m-0 text-[11px] font-bold uppercase tracking-wider text-[#1e3a8a]">{title}</p>
+      {hint && <p className="m-0 mt-0.5 text-xs text-slate-400">{hint}</p>}
+      <div className="mt-3 space-y-4">{children}</div>
+    </section>
   )
 }
 
@@ -97,6 +159,9 @@ function VerifyEmployment() {
       uanNumber: info.uanNumber || prev.uanNumber,
       pfNumber: info.pfNumber || prev.pfNumber,
       esiNumber: info.esiNumber || prev.esiNumber,
+      // Pre-fill with what the employee declared so HR only corrects it if wrong.
+      monthlyInHandSalary: info.monthlyInHandSalary || prev.monthlyInHandSalary,
+      yearlyPackage: info.yearlyPackage || prev.yearlyPackage,
     }))
   }, [info])
 
@@ -167,7 +232,12 @@ function VerifyEmployment() {
     )
   }
 
-  const canSubmit = form.declarationAccepted && !mutation.isPending
+  // When employment is confirmed, both the salary and the overall decision must
+  // be explicitly marked — the backend enforces the same rules.
+  const salaryStatusMissing = form.workedHere && !form.salaryVerificationStatus
+  const decisionMissing = form.workedHere && !form.employmentVerificationStatus
+  const canSubmit =
+    form.declarationAccepted && !salaryStatusMissing && !decisionMissing && !mutation.isPending
 
   return (
     <div className="min-h-screen bg-slate-50 px-4 py-10">
@@ -192,8 +262,49 @@ function VerifyEmployment() {
             <Detail label="Department" value={info?.department} />
             <Detail label="Duration" value={info?.duration} />
             <Detail label="Reporting manager" value={info?.reportingManager} />
+            <Detail
+              label="Monthly in-hand (declared)"
+              value={info?.monthlyInHandSalary ? `₹${info.monthlyInHandSalary}` : ''}
+            />
+            <Detail
+              label="Yearly package (declared)"
+              value={info?.yearlyPackage ? `₹${info.yearlyPackage}` : ''}
+            />
           </dl>
         </div>
+
+        {/* Role progression the employee declared — makes it easy to confirm the
+            whole journey (joined as X, promoted to Y) in one glance. */}
+        {(info?.positions || []).length > 0 && (
+          <div className="mb-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="m-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              Career journey at your company ({info.positions.length})
+            </p>
+            <ol className="m-0 mt-3 list-none space-y-3 p-0">
+              {info.positions.map((pos, i) => (
+                <li key={`${pos.title}-${i}`} className="flex gap-3">
+                  <div className="flex flex-col items-center">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#1e3a8a] text-[10px] font-bold text-white">
+                      {i + 1}
+                    </span>
+                    {i < info.positions.length - 1 && <span className="my-1 w-px flex-1 bg-slate-200" />}
+                  </div>
+                  <div className="min-w-0 pb-1">
+                    <p className="m-0 text-sm font-bold text-slate-900">{pos.title}</p>
+                    <p className="m-0 mt-0.5 text-xs text-slate-500">
+                      {pos.fromDate || '—'} → {pos.isCurrent ? 'Present' : pos.toDate || '—'}
+                      {pos.yearlyPackage ? ` · CTC ₹${pos.yearlyPackage}` : ''}
+                      {pos.monthlyInHandSalary ? ` · In-hand ₹${pos.monthlyInHandSalary}/mo` : ''}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <p className="m-0 mt-3 text-xs text-slate-400">
+              Please confirm this progression is accurate in your response below.
+            </p>
+          </div>
+        )}
 
         {/* Uploaded documents */}
         {documents.length > 0 && (
@@ -228,7 +339,7 @@ function VerifyEmployment() {
           className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
           onSubmit={(e) => {
             e.preventDefault()
-            if (!form.declarationAccepted) return
+            if (!form.declarationAccepted || salaryStatusMissing || decisionMissing) return
             mutation.mutate()
           }}
         >
@@ -256,51 +367,108 @@ function VerifyEmployment() {
           </div>
 
           {form.workedHere && (
-            <div className="space-y-4">
-              <Field label="Job title / Designation">
-                <input className={fieldClass} value={form.designation} onChange={set('designation')} placeholder="Job title" />
-              </Field>
+            <div className="space-y-6">
+              <Group title="Employment details">
+                <Field label="Job title / Designation">
+                  <input className={fieldClass} value={form.designation} onChange={set('designation')} placeholder="Job title" />
+                </Field>
 
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Joining date">
-                  <input type="date" className={fieldClass} value={form.joiningDate} onChange={set('joiningDate')} />
-                </Field>
-                <Field label="Exit date">
-                  <input type="date" className={fieldClass} value={form.exitDate} onChange={set('exitDate')} />
-                </Field>
-              </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Joining date">
+                    <input type="date" className={fieldClass} value={form.joiningDate} onChange={set('joiningDate')} />
+                  </Field>
+                  <Field label="Exit date">
+                    <input type="date" className={fieldClass} value={form.exitDate} onChange={set('exitDate')} />
+                  </Field>
+                </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Department">
-                  <input className={fieldClass} value={form.department} onChange={set('department')} placeholder="Department" />
-                </Field>
-                <Field label="Reporting manager">
-                  <input className={fieldClass} value={form.reportingManager} onChange={set('reportingManager')} placeholder="Manager name" />
-                </Field>
-              </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Department">
+                    <input className={fieldClass} value={form.department} onChange={set('department')} placeholder="Department" />
+                  </Field>
+                  <Field label="Reporting manager">
+                    <input className={fieldClass} value={form.reportingManager} onChange={set('reportingManager')} placeholder="Manager name" />
+                  </Field>
+                </div>
 
-              <Field label="Employee ID / Code">
-                <input className={fieldClass} value={form.employeeCode} onChange={set('employeeCode')} placeholder="Company employee code" />
-              </Field>
+                <Field label="Employee ID / Code">
+                  <input className={fieldClass} value={form.employeeCode} onChange={set('employeeCode')} placeholder="Company employee code" />
+                </Field>
+              </Group>
 
-              <div className="grid grid-cols-3 gap-3">
-                <Field label="UAN (PF)">
-                  <input
-                    className={fieldClass}
-                    value={form.uanNumber}
-                    onChange={(e) => setForm((f) => ({ ...f, uanNumber: e.target.value.replace(/\D/g, '').slice(0, 12) }))}
-                    placeholder="12 digits"
-                  />
-                </Field>
-                <Field label="PF ID">
-                  <input className={fieldClass} value={form.pfNumber} onChange={set('pfNumber')} />
-                </Field>
-                <Field label="ESI No.">
-                  <input className={fieldClass} value={form.esiNumber} onChange={set('esiNumber')} />
-                </Field>
-              </div>
+              {/* Salary — the whole point of the request, so it gets a highlighted
+                  block showing what the employee declared next to the inputs. */}
+              <Group title="Salary" hint="Confirm the amount, then mark it verified or unverified">
+                <div className="rounded-xl border border-[#1e3a8a]/20 bg-blue-50/60 p-4">
+                  <p className="m-0 text-xs font-semibold uppercase tracking-wide text-[#1e3a8a]">
+                    Employee declared
+                  </p>
+                  <div className="mt-1.5 flex flex-wrap gap-x-6 gap-y-1">
+                    <span className="text-sm text-slate-700">
+                      Monthly in-hand:{' '}
+                      <strong className="text-slate-900">
+                        {info?.monthlyInHandSalary ? `₹${info.monthlyInHandSalary}` : 'Not provided'}
+                      </strong>
+                    </span>
+                    <span className="text-sm text-slate-700">
+                      Yearly package:{' '}
+                      <strong className="text-slate-900">
+                        {info?.yearlyPackage ? `₹${info.yearlyPackage}` : 'Not provided'}
+                      </strong>
+                    </span>
+                  </div>
+                </div>
 
-              {/* Assessment */}
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Monthly in-hand (₹)">
+                    <input
+                      className={fieldClass}
+                      value={form.monthlyInHandSalary}
+                      onChange={set('monthlyInHandSalary')}
+                      placeholder="e.g. 45000"
+                      inputMode="numeric"
+                    />
+                  </Field>
+                  <Field label="Yearly package (₹)">
+                    <input
+                      className={fieldClass}
+                      value={form.yearlyPackage}
+                      onChange={set('yearlyPackage')}
+                      placeholder="e.g. 1200000"
+                      inputMode="numeric"
+                    />
+                  </Field>
+                </div>
+
+                <Choice
+                  label="Are these salary figures correct?"
+                  required
+                  value={form.salaryVerificationStatus}
+                  onChange={(v) => setForm((f) => ({ ...f, salaryVerificationStatus: v }))}
+                  options={VERIFY_OPTIONS}
+                />
+              </Group>
+
+              <Group title="Statutory IDs" hint="Optional — strengthens the verification">
+                <div className="grid grid-cols-3 gap-3">
+                  <Field label="UAN (PF)">
+                    <input
+                      className={fieldClass}
+                      value={form.uanNumber}
+                      onChange={(e) => setForm((f) => ({ ...f, uanNumber: e.target.value.replace(/\D/g, '').slice(0, 12) }))}
+                      placeholder="12 digits"
+                    />
+                  </Field>
+                  <Field label="PF ID">
+                    <input className={fieldClass} value={form.pfNumber} onChange={set('pfNumber')} />
+                  </Field>
+                  <Field label="ESI No.">
+                    <input className={fieldClass} value={form.esiNumber} onChange={set('esiNumber')} />
+                  </Field>
+                </div>
+              </Group>
+
+              <Group title="Performance & conduct">
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Performance rating">
                   <select className={fieldClass} value={form.performanceRating} onChange={set('performanceRating')}>
@@ -325,10 +493,15 @@ function VerifyEmployment() {
               </Field>
 
               <div>
-                <label className="flex items-center gap-2 text-sm">
-                  <input type="checkbox" checked={form.disciplinaryIssues} onChange={set('disciplinaryIssues')} />
-                  <span className="font-semibold text-slate-800">Any disciplinary issues on record</span>
-                </label>
+                <Choice
+                  label="Any disciplinary issues on record?"
+                  value={form.disciplinaryIssues}
+                  onChange={(v) => setForm((f) => ({ ...f, disciplinaryIssues: v }))}
+                  options={[
+                    { value: false, label: 'No' },
+                    { value: true, label: 'Yes', tone: 'negative' },
+                  ]}
+                />
                 {form.disciplinaryIssues && (
                   <textarea
                     rows={2}
@@ -340,10 +513,36 @@ function VerifyEmployment() {
                 )}
               </div>
 
-              <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" checked={form.rehireEligible} onChange={set('rehireEligible')} />
-                <span className="font-semibold text-slate-800">Eligible for rehire</span>
-              </label>
+              <Choice
+                label="Eligible for rehire?"
+                value={form.rehireEligible}
+                onChange={(v) => setForm((f) => ({ ...f, rehireEligible: v }))}
+                options={YES_NO}
+              />
+              </Group>
+
+              {/* The final call — this is what marks the employment verified. */}
+              <Group
+                title="Final verification"
+                hint="Your decision on this employment record"
+              >
+                <div className="rounded-xl border border-[#1e3a8a]/20 bg-blue-50/60 p-4">
+                  <Choice
+                    label={`Do you verify ${info?.employeeName || 'this person'}'s employment?`}
+                    required
+                    value={form.employmentVerificationStatus}
+                    onChange={(v) => setForm((f) => ({ ...f, employmentVerificationStatus: v }))}
+                    options={VERIFY_OPTIONS}
+                  />
+                  <p className="m-0 mt-3 text-xs text-slate-500">
+                    {form.employmentVerificationStatus === 'verified'
+                      ? '✓ This employment will be marked as verified on their PagerLook profile.'
+                      : form.employmentVerificationStatus === 'unverified'
+                        ? '✗ This employment will be marked as unverified — the details could not be confirmed.'
+                        : 'Choose Verified or Unverified to complete the verification.'}
+                  </p>
+                </div>
+              </Group>
             </div>
           )}
 
@@ -423,11 +622,19 @@ function VerifyEmployment() {
           <Button type="submit" className="mt-6 w-full" disabled={!canSubmit}>
             {mutation.isPending ? 'Submitting…' : 'Submit verification'}
           </Button>
-          {!form.declarationAccepted && (
+          {decisionMissing ? (
+            <p className="m-0 mt-2 text-center text-xs text-amber-600">
+              Please mark this employment as Verified or Unverified to submit.
+            </p>
+          ) : salaryStatusMissing ? (
+            <p className="m-0 mt-2 text-center text-xs text-amber-600">
+              Please confirm whether the salary is correct to submit.
+            </p>
+          ) : !form.declarationAccepted ? (
             <p className="m-0 mt-2 text-center text-xs text-slate-400">
               Please accept the declaration to submit.
             </p>
-          )}
+          ) : null}
         </form>
 
         <p className="mt-6 text-center text-xs text-slate-400">

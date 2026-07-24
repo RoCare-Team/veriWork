@@ -76,7 +76,6 @@ const INITIAL_FORM = {
   companyName: '',
   role: '',
   employmentType: 'Full-time',
-  salaryBand: '',
   department: '',
   workLocation: '',
   employeeCode: '',
@@ -86,7 +85,8 @@ const INITIAL_FORM = {
   uanNumber: '',
   pfNumber: '',
   esiNumber: '',
-  lastDrawnSalary: '',
+  yearlyPackage: '',
+  monthlyInHandSalary: '',
   companyEmail: '',
   description: '',
 }
@@ -94,6 +94,18 @@ const INITIAL_FORM = {
 // Two slots by default — HR 1 and HR 2 — with more addable.
 const INITIAL_HR_CONTACTS = ['', '']
 const MAX_HR_CONTACTS = 6
+
+// A role held at this company. Employees add one per promotion so the whole
+// journey (joined as X → promoted to Y) is on record for the verifier.
+const EMPTY_POSITION = {
+  title: '',
+  fromDate: '',
+  toDate: '',
+  isCurrent: false,
+  yearlyPackage: '',
+  monthlyInHandSalary: '',
+}
+const MAX_POSITIONS = 15
 
 function toDateInputValue(value) {
   if (!value) return ''
@@ -104,6 +116,7 @@ function AddExperience() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [form, setForm] = useState(INITIAL_FORM)
+  const [positions, setPositions] = useState([])
   const [hrContacts, setHrContacts] = useState(INITIAL_HR_CONTACTS)
   const [documents, setDocuments] = useState({})
   const [error, setError] = useState('')
@@ -114,7 +127,6 @@ function AddExperience() {
         title: form.role.trim(),
         company: form.companyName.trim(),
         employmentType: form.employmentType,
-        salaryBand: form.salaryBand.trim(),
         department: form.department.trim(),
         workLocation: form.workLocation.trim(),
         employeeCode: form.employeeCode.trim(),
@@ -124,7 +136,9 @@ function AddExperience() {
         uanNumber: form.uanNumber.trim(),
         pfNumber: form.pfNumber.trim(),
         esiNumber: form.esiNumber.trim(),
-        lastDrawnSalary: form.lastDrawnSalary.trim(),
+        yearlyPackage: form.yearlyPackage.trim(),
+        monthlyInHandSalary: form.monthlyInHandSalary.trim(),
+        positions: cleanPositions,
         companyEmail: form.companyEmail.trim(),
         // hrContacts is the full list; hrEmail/managerEmail mirror the first two
         // so pre-existing readers (companyLinkingService, older rows) still work.
@@ -169,6 +183,23 @@ function AddExperience() {
       prev.length <= INITIAL_HR_CONTACTS.length ? prev : prev.filter((_, i) => i !== index),
     )
 
+  const addPosition = () =>
+    setPositions((prev) => (prev.length >= MAX_POSITIONS ? prev : [...prev, { ...EMPTY_POSITION }]))
+
+  const removePosition = (index) =>
+    setPositions((prev) => prev.filter((_, i) => i !== index))
+
+  const updatePosition = (index, field) => (e) => {
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value
+    setPositions((prev) =>
+      prev.map((row, i) =>
+        i === index
+          ? { ...row, [field]: value, ...(field === 'isCurrent' && value ? { toDate: '' } : {}) }
+          : row,
+      ),
+    )
+  }
+
   const updateDigits = (field, max) => (e) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, max)
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -189,6 +220,18 @@ function AddExperience() {
 
   const uanValid = !form.uanNumber || form.uanNumber.length === 12
   const datesValid = !form.exitDate || !form.joiningDate || form.exitDate >= form.joiningDate
+
+  // Only rows the user actually named are sent; a blank row is just noise.
+  const cleanPositions = positions
+    .map((p) => ({
+      title: p.title.trim(),
+      fromDate: p.fromDate || '',
+      toDate: p.isCurrent ? '' : p.toDate || '',
+      isCurrent: Boolean(p.isCurrent),
+      yearlyPackage: p.yearlyPackage.trim(),
+      monthlyInHandSalary: p.monthlyInHandSalary.trim(),
+    }))
+    .filter((p) => p.title)
 
   // Deduped case-insensitively to match what the backend mails.
   const cleanHrContacts = Array.from(
@@ -285,21 +328,24 @@ function AddExperience() {
               disabled={isSubmitting}
             />
             <Input
-              id="salary-band"
-              label="Salary Band"
-              placeholder="Optional"
-              value={form.salaryBand}
-              onChange={update('salaryBand')}
+              id="yearly-package"
+              label="Yearly Package (CTC)"
+              placeholder="e.g. 1200000"
+              value={form.yearlyPackage}
+              onChange={update('yearlyPackage')}
               leftIcon={<CardIcon className="h-[18px] w-[18px]" />}
               disabled={isSubmitting}
+              hint="Annual cost to company"
             />
             <Input
-              id="last-drawn-salary"
-              label="Last Drawn Salary"
-              placeholder="Optional — for verification"
-              value={form.lastDrawnSalary}
-              onChange={update('lastDrawnSalary')}
+              id="monthly-in-hand-salary"
+              label="Monthly In-Hand"
+              placeholder="e.g. 45000"
+              value={form.monthlyInHandSalary}
+              onChange={update('monthlyInHandSalary')}
+              leftIcon={<span className="text-sm font-semibold">₹</span>}
               disabled={isSubmitting}
+              hint="Monthly take-home — HR confirms this during verification"
             />
           </div>
         </section>
@@ -343,6 +389,112 @@ function AddExperience() {
               </label>
             </div>
           </div>
+        </section>
+
+        {/* Growth inside the same company — each promotion is its own row, so a
+            verifier can confirm the whole journey, not just the final title. */}
+        <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">
+          <SectionTitle>Career Journey at this Company</SectionTitle>
+          <p className="mt-2 text-sm text-slate-500">
+            Optional — add each role you held here. E.g. joined as Software Engineer, then
+            promoted to Senior Software Engineer.
+          </p>
+
+          {positions.length === 0 ? (
+            <p className="mt-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-5 text-center text-sm text-slate-500">
+              No roles added yet. Add one for each promotion or title change.
+            </p>
+          ) : (
+            <div className="mt-4 flex flex-col gap-4">
+              {positions.map((pos, index) => (
+                <div key={index} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="rounded-full bg-[#1e3a8a]/10 px-2.5 py-1 text-[11px] font-bold text-[#1e3a8a]">
+                      Role {index + 1}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => removePosition(index)}
+                      disabled={isSubmitting}
+                      className="text-xs font-semibold text-red-600 hover:underline disabled:opacity-50"
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-5">
+                    <Input
+                      id={`position-title-${index}`}
+                      label="Role / Designation"
+                      placeholder="e.g. Software Engineer"
+                      value={pos.title}
+                      onChange={updatePosition(index, 'title')}
+                      leftIcon={<BriefcaseIcon className="h-[18px] w-[18px]" />}
+                      disabled={isSubmitting}
+                    />
+                    <Input
+                      id={`position-package-${index}`}
+                      label="Yearly Package (CTC)"
+                      placeholder="e.g. 900000"
+                      value={pos.yearlyPackage}
+                      onChange={updatePosition(index, 'yearlyPackage')}
+                      disabled={isSubmitting}
+                    />
+                    <Input
+                      id={`position-from-${index}`}
+                      label="From"
+                      type="date"
+                      value={toDateInputValue(pos.fromDate)}
+                      onChange={updatePosition(index, 'fromDate')}
+                      leftIcon={<CalendarIcon />}
+                      disabled={isSubmitting}
+                    />
+                    <div>
+                      <Input
+                        id={`position-to-${index}`}
+                        label="To"
+                        type="date"
+                        value={toDateInputValue(pos.toDate)}
+                        onChange={updatePosition(index, 'toDate')}
+                        leftIcon={<CalendarIcon />}
+                        disabled={isSubmitting || pos.isCurrent}
+                      />
+                      <label className="mt-2 flex cursor-pointer items-center gap-2 text-sm text-slate-600">
+                        <input
+                          type="checkbox"
+                          checked={pos.isCurrent}
+                          onChange={updatePosition(index, 'isCurrent')}
+                          className="h-4 w-4 rounded border-slate-300 text-[#1e3a8a] focus:ring-[#1e3a8a]"
+                          disabled={isSubmitting}
+                        />
+                        This is my current role
+                      </label>
+                    </div>
+                    <Input
+                      id={`position-monthly-${index}`}
+                      label="Monthly In-Hand"
+                      placeholder="e.g. 45000"
+                      value={pos.monthlyInHandSalary}
+                      onChange={updatePosition(index, 'monthlyInHandSalary')}
+                      leftIcon={<span className="text-sm font-semibold">₹</span>}
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {positions.length < MAX_POSITIONS && (
+            <button
+              type="button"
+              onClick={addPosition}
+              disabled={isSubmitting}
+              className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#1e3a8a] hover:underline disabled:opacity-50"
+            >
+              + Add role / promotion
+            </button>
+          )}
         </section>
 
         <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm md:p-6">

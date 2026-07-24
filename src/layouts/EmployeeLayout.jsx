@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import EmployeeSidebar from '../components/employee/Sidebar'
 import EmployeeNavbar from '../components/employee/Navbar'
+import FeatureTour from '../components/common/FeatureTour'
 import useSidebarCollapsed from '../hooks/useSidebarCollapsed'
 
 function EmployeeLayout({ children, footer, fullWidth = false }) {
@@ -19,6 +20,9 @@ function EmployeeLayout({ children, footer, fullWidth = false }) {
    */
   return (
     <div className="fixed inset-0 flex overflow-hidden bg-canvas">
+      {/* First-run feature guide — shows once, always skippable. */}
+      <FeatureTour portal="employee" />
+
       <EmployeeSidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
