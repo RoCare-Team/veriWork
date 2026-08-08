@@ -122,6 +122,45 @@ function AdminEmployeeDetail() {
               <DetailRow label="DigiLocker Used" value={employee.digilockerUsed ? 'Yes' : 'No'} />
               <DetailRow label="Endorsements" value={String(employee.endorsements)} />
             </div>
+
+            {employee.aadhaarKyc && (
+              <div className="mt-5 rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <h4 className="m-0 text-sm font-bold text-slate-900">Aadhaar KYC</h4>
+                  <Link
+                    to={`/admin/aadhaar-requests/${employee.aadhaarKyc.id}`}
+                    className="text-sm font-semibold text-[#1e3a8a] no-underline hover:underline"
+                  >
+                    Review →
+                  </Link>
+                </div>
+                <div className="mt-2 space-y-1 text-sm">
+                  <div className="flex justify-between gap-4">
+                    <span className="text-slate-500">Status</span>
+                    <span className="font-semibold capitalize text-slate-800">{employee.aadhaarKyc.status}</span>
+                  </div>
+                  <div className="flex justify-between gap-4">
+                    <span className="text-slate-500">Number</span>
+                    <span className="font-mono text-slate-800">{employee.aadhaarKyc.aadhaarMasked}</span>
+                  </div>
+                  <div className="flex justify-between gap-4">
+                    <span className="text-slate-500">Submitted</span>
+                    <span className="text-slate-800">{formatDate(employee.aadhaarKyc.submittedAt)}</span>
+                  </div>
+                  <div className="flex justify-between gap-4">
+                    <span className="text-slate-500">Face match</span>
+                    <span className="text-slate-800">
+                      {employee.aadhaarKyc.faceMatchMatched
+                        ? `Matched (${employee.aadhaarKyc.faceMatchSimilarity}%)`
+                        : 'Not matched'}
+                    </span>
+                  </div>
+                </div>
+                {employee.aadhaarKyc.rejectionReason && (
+                  <p className="m-0 mt-2 text-xs text-red-600">{employee.aadhaarKyc.rejectionReason}</p>
+                )}
+              </div>
+            )}
           </section>
 
           <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm xl:col-span-2">

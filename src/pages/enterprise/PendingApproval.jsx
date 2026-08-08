@@ -6,6 +6,7 @@ import Button from '../../components/common/Button'
 import MessageThread from '../../components/common/MessageThread'
 import { useAuth } from '../../context/AuthContext'
 import { useToast } from '../../context/ToastContext'
+import { CONTACT_LINKS, SUPPORT_EMAIL, SUPPORT_PHONE_DISPLAY, whatsappLink } from '../../utils/contactInfo'
 import {
   enterpriseKeys,
   fetchApplicationStatus,
@@ -236,8 +237,21 @@ function PendingApproval() {
 
         <p className="m-0 text-center text-xs text-slate-400">
           Or email{' '}
-          <a href="mailto:support@pagerlook.com" className="font-semibold text-brand-600 hover:underline">
-            support@pagerlook.com
+          <a href={CONTACT_LINKS.email} className="font-semibold text-brand-600 hover:underline">
+            {SUPPORT_EMAIL}
+          </a>
+          {' · '}
+          <a
+            href={whatsappLink('Hi PagerLook, I have a question about my company application.')}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="font-semibold text-brand-600 hover:underline"
+          >
+            WhatsApp {SUPPORT_PHONE_DISPLAY}
+          </a>
+          {' · '}
+          <a href={CONTACT_LINKS.call} className="font-semibold text-brand-600 hover:underline">
+            Call us
           </a>
           {' · '}
           <Link to="/" className="font-semibold text-brand-600 hover:underline">

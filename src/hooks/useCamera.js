@@ -53,9 +53,13 @@ export function useCamera({ facingMode = 'user' } = {}) {
     }
   }, [facingMode, stopCamera])
 
-  const capturePhoto = useCallback(() => {
+  /**
+   * Grab a still off the live stream without ending the session — used to
+   * collect the several pose frames the liveness check needs.
+   */
+  const grabFrame = useCallback(() => {
     const video = videoRef.current
-    if (!video || status !== 'live') return null
+    if (!video || video.readyState < 2 || !video.videoWidth) return null
 
     const canvas = document.createElement('canvas')
     canvas.width = video.videoWidth
@@ -64,12 +68,20 @@ export function useCamera({ facingMode = 'user' } = {}) {
     const ctx = canvas.getContext('2d')
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.92)
+    return canvas.toDataURL('image/jpeg', 0.92)
+  }, [])
+
+  const capturePhoto = useCallback(() => {
+    if (status !== 'live') return null
+
+    const dataUrl = grabFrame()
+    if (!dataUrl) return null
+
     setCapturedImage(dataUrl)
     setStatus('captured')
     stopCamera()
     return dataUrl
-  }, [status, stopCamera])
+  }, [status, grabFrame, stopCamera])
 
   const retake = useCallback(() => {
     setCapturedImage(null)
@@ -86,6 +98,7 @@ export function useCamera({ facingMode = 'user' } = {}) {
     startCamera,
     stopCamera,
     capturePhoto,
+    grabFrame,
     retake,
     isLive: status === 'live',
     isCaptured: status === 'captured',

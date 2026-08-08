@@ -31,6 +31,8 @@ import AdminCompanies from '../pages/admin/AdminCompanies'
 import AdminCompanyReview from '../pages/admin/AdminCompanyReview'
 import AdminEmployees from '../pages/admin/AdminEmployees'
 import AdminEmployeeDetail from '../pages/admin/AdminEmployeeDetail'
+import AdminAadhaarRequests from '../pages/admin/AdminAadhaarRequests'
+import AdminAadhaarReview from '../pages/admin/AdminAadhaarReview'
 import EmployeeJoin from '../pages/employee/EmployeeJoin'
 import EmployeeOtp from '../pages/employee/EmployeeOtp'
 import ProfileSetup from '../pages/employee/ProfileSetup'
@@ -87,6 +89,8 @@ function AppRoutes() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/employees/:id" element={<AdminEmployeeDetail />} />
           <Route path="/admin/employees" element={<AdminEmployees />} />
+          <Route path="/admin/aadhaar-requests/:id" element={<AdminAadhaarReview />} />
+          <Route path="/admin/aadhaar-requests" element={<AdminAadhaarRequests />} />
           <Route path="/admin/companies/approved" element={<AdminCompanies status="approved" />} />
           <Route path="/admin/companies/rejected" element={<AdminCompanies status="rejected" />} />
           <Route path="/admin/companies/all" element={<AdminCompanies status="all" />} />

@@ -9,6 +9,7 @@ import LandingSecurity from '../components/landing/LandingSecurity'
 import LandingTestimonials from '../components/landing/LandingTestimonials'
 import LandingCta from '../components/landing/LandingCta'
 import LandingFooter from '../components/landing/LandingFooter'
+import FloatingWhatsApp from '../components/common/FloatingWhatsApp'
 
 function Home() {
   return (
@@ -26,6 +27,7 @@ function Home() {
         <LandingCta />
       </main>
       <LandingFooter />
+      <FloatingWhatsApp />
     </div>
   )
 }

@@ -6,12 +6,14 @@ const ARC_START = 180
 const ARC_SPAN = 180
 const ANIMATION_MS = 2000
 
+// The six published PagerLook trust bands.
 const SCORE_SEGMENTS = [
-  { min: 300, max: 450, color: '#dc2626', label: 'Poor' },
-  { min: 450, max: 600, color: '#ea580c', label: 'Low' },
-  { min: 600, max: 700, color: '#ca8a04', label: 'Fair' },
-  { min: 700, max: 800, color: '#1e3a8a', label: 'Good' },
-  { min: 800, max: 1000, color: '#16a34a', label: 'Excellent' },
+  { min: 300, max: 450, color: '#dc2626', label: 'High Risk' },
+  { min: 450, max: 600, color: '#ea580c', label: 'Needs Work' },
+  { min: 600, max: 750, color: '#ca8a04', label: 'Fair' },
+  { min: 750, max: 850, color: '#1e3a8a', label: 'Good' },
+  { min: 850, max: 950, color: '#16a34a', label: 'Excellent' },
+  { min: 950, max: 1000, color: '#7c3aed', label: 'Elite' },
 ]
 
 const SEGMENT_GAP = 2.5
@@ -201,7 +203,7 @@ function EmployeeScoreGauge({ score, rating, size = 'lg', showRange = true, anim
       {showRange && (
         <div className="mt-1 flex w-full max-w-[280px] justify-between px-1 text-[10px] font-semibold text-slate-500">
           <span>{SCORE_MIN}</span>
-          <span className="text-slate-400">Poor → Excellent</span>
+          <span className="text-slate-400">High Risk → Elite Trust</span>
           <span>{SCORE_MAX}</span>
         </div>
       )}

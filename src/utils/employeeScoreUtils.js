@@ -25,59 +25,47 @@ export function calculateEmployeeScore(profile) {
   return Math.min(SCORE_MAX, Math.max(SCORE_MIN, Math.round(score)))
 }
 
+// The six PagerLook trust bands (must mirror scoreService.js on the backend).
 export function getScoreRating(score) {
-  if (score >= 800) {
+  if (score >= 951) {
     return {
-      label: 'Excellent',
-      tier: 'A+',
-      color: 'text-emerald-600',
-      bg: 'bg-emerald-50',
-      border: 'border-emerald-200',
-      bar: 'bg-emerald-500',
+      label: 'Elite Trust', tier: 'A+',
+      color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200', bar: 'bg-purple-600',
+      description: 'Elite trust. Fully verified across identity, employment and compliance.',
+    }
+  }
+  if (score >= 851) {
+    return {
+      label: 'Excellent', tier: 'A',
+      color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', bar: 'bg-emerald-500',
       description: 'Top-tier verified professional. Highly trusted by employers.',
     }
   }
-  if (score >= 700) {
+  if (score >= 751) {
     return {
-      label: 'Good',
-      tier: 'A',
-      color: 'text-[#1e3a8a]',
-      bg: 'bg-blue-50',
-      border: 'border-blue-200',
-      bar: 'bg-[#1e3a8a]',
-      description: 'Strong identity and work history. Reliable for hiring decisions.',
+      label: 'Good', tier: 'B',
+      color: 'text-[#1e3a8a]', bg: 'bg-blue-50', border: 'border-blue-200', bar: 'bg-[#1e3a8a]',
+      description: 'Strong, reliable profile. Employers can hire with confidence.',
     }
   }
-  if (score >= 600) {
+  if (score >= 601) {
     return {
-      label: 'Fair',
-      tier: 'B',
-      color: 'text-amber-600',
-      bg: 'bg-amber-50',
-      border: 'border-amber-200',
-      bar: 'bg-amber-500',
-      description: 'Building trust. Complete verification and job records to improve.',
+      label: 'Fair', tier: 'C',
+      color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200', bar: 'bg-amber-500',
+      description: 'Building trust. Verify more employment and education records.',
     }
   }
-  if (score >= 450) {
+  if (score >= 451) {
     return {
-      label: 'Developing',
-      tier: 'C',
-      color: 'text-orange-600',
-      bg: 'bg-orange-50',
-      border: 'border-orange-200',
-      bar: 'bg-orange-500',
-      description: 'Early stage profile. Finish identity verification to unlock score.',
+      label: 'Needs Improvement', tier: 'D',
+      color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', bar: 'bg-orange-500',
+      description: 'Getting started. Complete identity and add verified jobs to improve.',
     }
   }
   return {
-    label: 'New',
-    tier: '—',
-    color: 'text-slate-500',
-    bg: 'bg-slate-50',
-    border: 'border-slate-200',
-    bar: 'bg-slate-400',
-    description: 'Start verification to build your Employee Score.',
+    label: 'High Risk', tier: 'E',
+    color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', bar: 'bg-red-500',
+    description: 'High risk. Start verifying your identity and employment to build trust.',
   }
 }
 
@@ -131,10 +119,11 @@ export function getScoreFactors(profile) {
 }
 
 export function getScorePercentile(score) {
-  if (score >= 800) return 'Top 5% of professionals'
-  if (score >= 700) return 'Top 20% of professionals'
-  if (score >= 600) return 'Top 45% of professionals'
-  if (score >= 450) return 'Building your ranking'
+  if (score >= 951) return 'Top 2% of professionals'
+  if (score >= 851) return 'Top 10% of professionals'
+  if (score >= 751) return 'Top 25% of professionals'
+  if (score >= 601) return 'Top 50% of professionals'
+  if (score >= 451) return 'Building your ranking'
   return 'Not yet ranked'
 }
 

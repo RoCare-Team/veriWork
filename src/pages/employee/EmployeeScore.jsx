@@ -5,25 +5,76 @@ import EmployeePageHeader from '../../components/employee/PageHeader'
 import EmployeeScoreGauge from '../../components/employee/EmployeeScoreGauge'
 import Button from '../../components/common/Button'
 import Loader from '../../components/common/Loader'
+import { useState } from 'react'
 import { employeeKeys, fetchScore } from '../../api/employee'
-import { SCORE_MAX, SCORE_MIN } from '../../utils/employeeScoreUtils'
+import { SCORE_MAX, SCORE_MIN, getScoreRating } from '../../utils/employeeScoreUtils'
 import { useAuth } from '../../context/AuthContext'
 import { getMissingJourneySteps } from '../../utils/employeeJourney'
 
+function CheckDot({ done }) {
+  return (
+    <span
+      className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
+        done ? 'bg-emerald-500 text-white' : 'border border-slate-300 bg-white'
+      }`}
+    >
+      {done && (
+        <svg width="10" height="10" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M5 10.5l3.2 3.2L15 7" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )}
+    </span>
+  )
+}
+
+/** One score category — expandable to show exactly which items earn points. */
 function FactorRow({ factor }) {
+  const [open, setOpen] = useState(false)
   const pct = factor.max > 0 ? (factor.points / factor.max) * 100 : 0
+  const items = factor.items || []
   return (
     <div className="rounded-2xl border border-slate-100 bg-white p-4">
-      <div className="flex justify-between gap-3">
+      <button
+        type="button"
+        onClick={() => items.length && setOpen((o) => !o)}
+        className="flex w-full items-start justify-between gap-3 text-left"
+      >
         <div>
           <p className="m-0 text-sm font-bold text-slate-900">{factor.label}</p>
           <p className="m-0 mt-1 text-xs text-slate-500">{factor.tip}</p>
         </div>
-        <span className="text-xs font-bold text-slate-600">+{factor.points}/{factor.max}</span>
-      </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="text-xs font-bold text-slate-600">{factor.points}/{factor.max}</span>
+          {items.length > 0 && (
+            <svg
+              width="14" height="14" viewBox="0 0 20 20" fill="none"
+              className={`text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`}
+              aria-hidden="true"
+            >
+              <path d="M5 8l5 5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </div>
+      </button>
       <div className="mt-3 h-2 rounded-full bg-slate-100">
         <div className="h-full rounded-full bg-[#1e3a8a]" style={{ width: `${pct}%` }} />
       </div>
+
+      {open && items.length > 0 && (
+        <ul className="m-0 mt-3 list-none space-y-2 border-t border-slate-100 p-0 pt-3">
+          {items.map((it) => (
+            <li key={it.id} className="flex items-center justify-between gap-3 text-xs">
+              <span className="flex items-center gap-2">
+                <CheckDot done={it.done} />
+                <span className={it.done ? 'text-slate-700' : 'text-slate-400'}>{it.label}</span>
+              </span>
+              <span className={`font-bold ${it.done ? 'text-emerald-600' : 'text-slate-400'}`}>
+                {it.points}/{it.max}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
@@ -62,16 +113,25 @@ function EmployeeScore() {
     )
   }
 
+  // Derive rating locally so the badge/number get proper Tailwind colours for
+  // all six bands (the API sends a hex colour, not a class).
+  const rating = getScoreRating(data.employeeScore)
+
   return (
     <EmployeeLayout>
       <EmployeePageHeader title="Employee Score" subtitle="Your PagerLook Score — like CIBIL, but for your career" />
 
       <div className="lg:grid lg:grid-cols-5 lg:gap-8">
         <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm lg:col-span-2">
-          <EmployeeScoreGauge score={data.employeeScore} rating={data.scoreRating} size="lg" />
-          <p className="mt-4 text-center text-sm text-slate-600">{data.scoreRating?.description}</p>
+          <EmployeeScoreGauge score={data.employeeScore} rating={rating} size="lg" />
+          <p className="mt-4 text-center text-sm text-slate-600">{rating.description}</p>
           <p className="mt-2 text-center text-xs font-semibold text-[#1e3a8a]">{data.percentile}</p>
-          <p className="mt-4 text-center text-xs text-slate-400">Range {data.minScore ?? SCORE_MIN}–{data.maxScore ?? SCORE_MAX}</p>
+          {data.trustPoints != null && (
+            <p className="mt-3 text-center text-xs font-semibold text-slate-500">
+              <span className="text-slate-900">{data.trustPoints}</span> / {data.maxTrustPoints ?? 1000} trust points verified
+            </p>
+          )}
+          <p className="mt-2 text-center text-xs text-slate-400">Range {data.minScore ?? SCORE_MIN}–{data.maxScore ?? SCORE_MAX}</p>
 
           {(data.verificationTags || []).length > 0 && (
             <div className="mt-5 border-t border-slate-100 pt-4">

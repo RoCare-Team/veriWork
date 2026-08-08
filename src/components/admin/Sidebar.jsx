@@ -27,6 +27,17 @@ const NAV = [
     ),
   },
   {
+    to: '/admin/aadhaar-requests',
+    label: 'Aadhaar KYC',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="7.5" cy="9.5" r="1.8" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M4.6 13.6c.4-1.2 1.5-2 2.9-2s2.5.8 2.9 2M12.5 8.5h3.2M12.5 11.5h3.2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
     to: '/admin/employees',
     label: 'Employees',
     icon: (

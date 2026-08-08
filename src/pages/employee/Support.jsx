@@ -5,7 +5,54 @@ import EmployeePageHeader from '../../components/employee/PageHeader'
 import SettingsRow from '../../components/employee/SettingsRow'
 import Button from '../../components/common/Button'
 import Input from '../../components/common/Input'
-import { DocumentIcon, InfoIcon } from '../../components/common/Icons'
+import {
+  CallIcon,
+  DocumentIcon,
+  InfoIcon,
+  InstagramIcon,
+  MailIcon,
+  WhatsAppIcon,
+} from '../../components/common/Icons'
+import {
+  CONTACT_LINKS,
+  SUPPORT_EMAIL,
+  SUPPORT_PHONE_DISPLAY,
+  mailtoLink,
+  whatsappLink,
+} from '../../utils/contactInfo'
+
+const CONTACT_CHANNELS = [
+  {
+    label: 'WhatsApp',
+    hint: SUPPORT_PHONE_DISPLAY,
+    href: whatsappLink('Hi PagerLook support, I need help with my verification.'),
+    Icon: WhatsAppIcon,
+    external: true,
+    accent: 'text-[#25D366]',
+  },
+  {
+    label: 'Call us',
+    hint: SUPPORT_PHONE_DISPLAY,
+    href: CONTACT_LINKS.call,
+    Icon: CallIcon,
+    accent: 'text-[#1e3a8a]',
+  },
+  {
+    label: 'Email',
+    hint: SUPPORT_EMAIL,
+    href: mailtoLink('PagerLook support request'),
+    Icon: MailIcon,
+    accent: 'text-[#1e3a8a]',
+  },
+  {
+    label: 'Instagram',
+    hint: '@pagerlook',
+    href: CONTACT_LINKS.instagram,
+    Icon: InstagramIcon,
+    external: true,
+    accent: 'text-[#E1306C]',
+  },
+]
 
 function PhoneIcon() {
   return (
@@ -30,25 +77,18 @@ function Support() {
       <EmployeePageHeader title="Support & Resources" subtitle="Get help with verification and account issues" />
 
       <div className="grid grid-cols-2 gap-3 md:gap-4 lg:max-w-lg">
-        <button
-          type="button"
-          className="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-slate-200"
-        >
-          <svg className="h-8 w-8 text-[#1e3a8a]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
-            <path d="M9.5 9.5a3 3 0 0 1 4.2 0M9 15h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
-          <span className="mt-2 text-sm font-semibold text-slate-800">FAQ</span>
-        </button>
-        <button
-          type="button"
-          className="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-slate-200"
-        >
-          <svg className="h-8 w-8 text-[#1e3a8a]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3V8a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.6" />
-          </svg>
-          <span className="mt-2 text-sm font-semibold text-slate-800">Live Chat</span>
-        </button>
+        {CONTACT_CHANNELS.map(({ label, hint, href, Icon, external, accent }) => (
+          <a
+            key={label}
+            href={href}
+            {...(external ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
+            className="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white p-6 text-center no-underline shadow-sm transition hover:border-slate-200 hover:shadow-md"
+          >
+            <Icon className={`h-8 w-8 ${accent}`} />
+            <span className="mt-2 text-sm font-semibold text-slate-800">{label}</span>
+            <span className="mt-0.5 break-all text-xs text-slate-400">{hint}</span>
+          </a>
+        ))}
       </div>
 
       <div className="mt-6 flex flex-col gap-3">

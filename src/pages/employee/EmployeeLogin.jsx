@@ -86,7 +86,7 @@ function EmployeeLogin() {
   return (
     <EmployeeAuthLayout
       heroTitle={isReturningFlow ? 'Welcome Back' : 'Build Your PagerLook Score'}
-      heroSubtitle="Sign in with phone OTP. Dev mock code: 123456"
+      heroSubtitle="Sign in with a one-time code sent to your phone."
     >
       <div className="flex flex-col gap-7 md:gap-8">
         <section className="text-center lg:text-left">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import EmployeeAuthLayout from '../../layouts/EmployeeAuthLayout'
@@ -31,6 +31,9 @@ function EmployeeOtp() {
   const [otp, setOtp] = useState('')
   const [resendSeconds, setResendSeconds] = useState(0)
   const [error, setError] = useState('')
+  // Remembers the last code we auto-submitted so the same 6 digits never fire
+  // twice (incl. React StrictMode's double effect invoke).
+  const autoSubmittedRef = useRef('')
 
   const phoneDigits = phone.replace(/\D/g, '')
   const fullPhone = normalizePhone(countryCode, phone)
@@ -49,6 +52,7 @@ function EmployeeOtp() {
       setError('')
       setOtpSent(true)
       setOtp('')
+      autoSubmittedRef.current = ''
       setResendSeconds(30)
       toast('OTP sent to your phone', 'success')
     },
@@ -67,7 +71,11 @@ function EmployeeOtp() {
       }
       navigate(data.homeRoute || '/employee/profile-setup')
     },
-    onError: (err) => setError(err.message || 'Invalid OTP'),
+    onError: (err) => {
+      // Allow another attempt: clearing the ref lets a re-entered code re-fire.
+      autoSubmittedRef.current = ''
+      setError(err.message || 'Invalid OTP')
+    },
   })
 
   const handleSendOtp = (e) => {
@@ -87,12 +95,26 @@ function EmployeeOtp() {
     sendOtpMutation.mutate()
   }
 
+  // Auto-verify the moment all 6 digits are entered — no button press needed.
+  // The ref guard ensures each distinct code is submitted at most once.
+  useEffect(() => {
+    if (
+      otpSent &&
+      isOtpValid &&
+      !verifyMutation.isPending &&
+      autoSubmittedRef.current !== otp
+    ) {
+      autoSubmittedRef.current = otp
+      verifyMutation.mutate()
+    }
+  }, [otp, otpSent, isOtpValid]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const isSubmitting = sendOtpMutation.isPending || verifyMutation.isPending
 
   return (
     <EmployeeAuthLayout
       heroTitle="Sign in with Phone"
-      heroSubtitle="We'll send a one-time code to verify your number. Dev OTP: 123456"
+      heroSubtitle="We'll send a one-time code to verify your number."
     >
       <div className="flex flex-col gap-7 md:gap-8">
         <section className="text-center lg:text-left">
@@ -155,15 +177,21 @@ function EmployeeOtp() {
                   </button>
                 )}
               </div>
-              <p className="mt-2 text-xs text-slate-400">Development OTP: <strong>123456</strong></p>
             </div>
           )}
 
-          <Button type="submit" disabled={isSubmitting || (otpSent ? !isOtpValid : !isPhoneValid)}>
-            {isSubmitting
-              ? otpSent ? 'Verifying...' : 'Sending...'
-              : otpSent ? 'Verify OTP' : 'Send OTP'}
-          </Button>
+          {/* Once the code is sent, verification is automatic on the 6th digit —
+              the button only stays for the "Send OTP" step / manual retry. */}
+          {!otpSent && (
+            <Button type="submit" disabled={isSubmitting || !isPhoneValid}>
+              {sendOtpMutation.isPending ? 'Sending...' : 'Send OTP'}
+            </Button>
+          )}
+          {otpSent && (
+            <p className="m-0 text-center text-xs text-slate-400">
+              {verifyMutation.isPending ? 'Verifying…' : 'Enter the 6-digit code — it verifies automatically.'}
+            </p>
+          )}
         </form>
 
         <p className="m-0 text-center text-sm text-slate-500 lg:text-left">

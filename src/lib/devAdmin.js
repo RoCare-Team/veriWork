@@ -2,8 +2,11 @@ import { getAccessToken } from './authStorage'
 import { normalizeAdminCompanyDetail, normalizeAdminListItem } from '../utils/adminCompanyUtils'
 import { normalizeAdminEmployee, normalizeAdminEmployeeList } from '../utils/adminEmployeeUtils'
 
-export const DEV_ADMIN_EMAIL = 'admin@veriwork.com'
-export const DEV_ADMIN_PASSWORD = 'Admin@VeriWork123'
+// Offline-mode credentials. Only reachable when VITE_DEV_ADMIN === 'true'
+// (see api/auth.js) and must mirror the backend dev fallback in
+// config/bootstrap.js. Override both to match a custom ADMIN_EMAIL/PASSWORD.
+export const DEV_ADMIN_EMAIL = import.meta.env.VITE_DEV_ADMIN_EMAIL || 'admin@pagerlook.local'
+export const DEV_ADMIN_PASSWORD = import.meta.env.VITE_DEV_ADMIN_PASSWORD || 'Admin@Local123'
 export const DEV_ADMIN_TOKEN = 'dev-admin-mock-token'
 
 const STORAGE_KEY = 'veriwork_dev_admin_companies'

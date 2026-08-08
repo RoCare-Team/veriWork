@@ -1,6 +1,13 @@
 import { Link } from 'react-router-dom'
 import BrandLogo from '../components/common/BrandLogo'
 import StepProgress from '../components/common/StepProgress'
+import { CallIcon, InstagramIcon, MailIcon, WhatsAppIcon } from '../components/common/Icons'
+import {
+  CONTACT_LINKS,
+  SUPPORT_EMAIL,
+  SUPPORT_PHONE_DISPLAY,
+  whatsappLink,
+} from '../utils/contactInfo'
 
 function BackIcon() {
   return (
@@ -67,12 +74,49 @@ function OnboardingLayout({
         )}
 
         <div className="relative z-10">
-          <p className="text-sm leading-relaxed text-white/60">
-            Need help? Contact{' '}
-            <a href="mailto:support@veriwork.com" className="font-semibold text-white/90 underline">
-              support@veriwork.com
-            </a>
-          </p>
+          <p className="m-0 text-xs font-bold uppercase tracking-widest text-white/50">Need help?</p>
+          <ul className="m-0 mt-3 flex flex-col gap-2 p-0 list-none">
+            <li>
+              <a
+                href={whatsappLink('Hi PagerLook, I need help with onboarding.')}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="flex items-center gap-2 text-sm text-white/70 no-underline transition hover:text-white"
+              >
+                <WhatsAppIcon className="h-4 w-4 shrink-0" />
+                WhatsApp {SUPPORT_PHONE_DISPLAY}
+              </a>
+            </li>
+            <li>
+              <a
+                href={CONTACT_LINKS.call}
+                className="flex items-center gap-2 text-sm text-white/70 no-underline transition hover:text-white"
+              >
+                <CallIcon className="h-4 w-4 shrink-0" />
+                {SUPPORT_PHONE_DISPLAY}
+              </a>
+            </li>
+            <li>
+              <a
+                href={CONTACT_LINKS.email}
+                className="flex items-center gap-2 text-sm text-white/70 no-underline transition hover:text-white"
+              >
+                <MailIcon className="h-4 w-4 shrink-0" />
+                {SUPPORT_EMAIL}
+              </a>
+            </li>
+            <li>
+              <a
+                href={CONTACT_LINKS.instagram}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="flex items-center gap-2 text-sm text-white/70 no-underline transition hover:text-white"
+              >
+                <InstagramIcon className="h-4 w-4 shrink-0" />
+                @pagerlook
+              </a>
+            </li>
+          </ul>
         </div>
       </aside>
 

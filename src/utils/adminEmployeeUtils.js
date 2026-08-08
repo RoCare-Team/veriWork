@@ -38,6 +38,8 @@ export function normalizeAdminEmployee(item) {
     digilockerUsed: Boolean(item.digilockerUsed),
     publicProfileEnabled: item.publicProfileEnabled !== false,
     authProvider: item.authProvider || 'phone',
+    // Present on the detail response only; null until the employee submits.
+    aadhaarKyc: item.aadhaarKyc || null,
   }
 }
 

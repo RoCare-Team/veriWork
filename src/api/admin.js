@@ -19,6 +19,8 @@ export const adminKeys = {
   employees: (status, q) => ['admin', 'employees', status || 'all', q || ''],
   employee: (id) => ['admin', 'employee', id],
   companyMessages: (id) => ['admin', 'company', id, 'messages'],
+  aadhaarRequests: (status, q) => ['admin', 'aadhaar-requests', status || 'pending', q || ''],
+  aadhaarRequest: (id) => ['admin', 'aadhaar-request', id],
 }
 
 export function fetchAdminDashboard() {
@@ -90,4 +92,38 @@ export async function fetchAdminEmployee(id) {
 
   const data = await api(API.ADMIN.EMPLOYEE(id))
   return normalizeAdminEmployee(data)
+}
+
+// The offline dev-admin session has no server behind it, and Aadhaar review
+// needs the real uploaded card images — so say that plainly instead of
+// rendering an empty queue that looks like "nothing to review".
+const DEV_ADMIN_UNAVAILABLE =
+  'Aadhaar review needs a real admin account — the offline demo admin cannot load submitted cards.'
+
+/** Manual Aadhaar KYC review queue. */
+export function fetchAadhaarRequests({ status = 'pending', q = '' } = {}) {
+  if (isDevAdminSession()) return Promise.reject(new Error(DEV_ADMIN_UNAVAILABLE))
+
+  const params = new URLSearchParams()
+  if (status) params.set('status', status)
+  if (q?.trim()) params.set('q', q.trim())
+
+  const query = params.toString()
+  return api(query ? `${API.ADMIN.AADHAAR_REQUESTS}?${query}` : API.ADMIN.AADHAAR_REQUESTS)
+}
+
+export function fetchAadhaarRequest(id) {
+  if (isDevAdminSession()) return Promise.reject(new Error(DEV_ADMIN_UNAVAILABLE))
+  return api(API.ADMIN.AADHAAR_REQUEST(id))
+}
+
+export function reviewAadhaarRequest(id, { status, reason, notes }) {
+  return api(API.ADMIN.AADHAAR_REQUEST_REVIEW(id), {
+    method: 'PATCH',
+    body: {
+      status,
+      ...(reason ? { reason } : {}),
+      ...(notes ? { notes } : {}),
+    },
+  })
 }

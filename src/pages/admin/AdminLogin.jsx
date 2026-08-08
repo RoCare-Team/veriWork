@@ -15,8 +15,10 @@ function AdminLogin() {
   const navigate = useNavigate()
   const { loginAdmin: setSession } = useAuth()
   const { toast } = useToast()
-  const [email, setEmail] = useState('admin@veriwork.com')
-  const [password, setPassword] = useState('Admin@VeriWork123')
+  // Admin credentials are always typed in fresh — never seeded, and never
+  // shared with the enterprise/employee portals' saved logins.
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [touched, setTouched] = useState(false)
 
   const mutation = useMutation({
@@ -61,38 +63,47 @@ function AdminLogin() {
           </p>
         </section>
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+        {/*
+         * autoComplete="off" plus non-login-looking field names keeps browsers
+         * and password managers from dropping saved enterprise/employee
+         * credentials into the admin console form.
+         */}
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate autoComplete="off">
           <Input
-            id="admin-email"
+            id="admin-console-id"
+            name="admin-console-id"
             label="Admin Email"
             type="email"
-            placeholder="robin@gmail.com"
+            placeholder="Enter admin email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             error={touched && !isValidEmail(email)}
-            autoComplete="email"
+            autoComplete="off"
+            autoCapitalize="none"
+            spellCheck="false"
+            data-lpignore="true"
+            data-form-type="other"
             disabled={mutation.isPending}
           />
           <Input
-            id="admin-password"
+            id="admin-console-secret"
+            name="admin-console-secret"
             label="Password"
             type="password"
-            placeholder="••••••••"
+            placeholder="Enter admin password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             disabled={mutation.isPending}
-            autoComplete="current-password"
+            autoComplete="new-password"
+            data-lpignore="true"
+            data-form-type="other"
           />
           <Button type="submit" disabled={mutation.isPending}>
             {mutation.isPending ? 'Signing in...' : 'Sign In to Admin'}
           </Button>
         </form>
-
-        <p className="m-0 text-center text-xs text-slate-400">
-          Backend: admin@veriwork.com / Admin@VeriWork123
-        </p>
 
         <p className="m-0 text-center text-xs text-slate-400">
           Enterprise portal?{' '}

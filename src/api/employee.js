@@ -6,6 +6,7 @@ export const employeeKeys = {
   professionalId: ['employee', 'professional-id'],
   score: ['employee', 'score'],
   verification: ['employee', 'verification'],
+  aadhaarSubmission: ['employee', 'aadhaar-submission'],
   jobs: ['employee', 'jobs'],
   activity: (filter = 'all') => ['employee', 'activity', filter],
   vault: ['employee', 'vault'],
@@ -42,13 +43,43 @@ export function fetchVerificationStatus() {
   return api(API.EMPLOYEE.VERIFICATION_STATUS)
 }
 
-export function verifyAadhaar(method = 'digilocker') {
-  return api(API.EMPLOYEE.VERIFICATION_AADHAAR, { method: 'POST', body: { method } })
+export function fetchAadhaarSubmission() {
+  return api(API.EMPLOYEE.VERIFICATION_AADHAAR)
 }
 
-export function verifyBiometric(photoFile) {
+/**
+ * Manual Aadhaar KYC — the card images plus the typed details go to the
+ * platform admin queue. Nothing is marked verified until an admin approves.
+ */
+export function submitAadhaar({
+  aadhaarNumber,
+  nameOnAadhaar,
+  dobOnAadhaar = '',
+  genderOnAadhaar = '',
+  addressOnAadhaar = '',
+  frontImage,
+  backImage,
+}) {
   const form = new FormData()
-  if (photoFile) form.append('photo', photoFile)
+  form.append('aadhaarNumber', aadhaarNumber)
+  form.append('nameOnAadhaar', nameOnAadhaar)
+  form.append('dobOnAadhaar', dobOnAadhaar)
+  form.append('genderOnAadhaar', genderOnAadhaar)
+  form.append('addressOnAadhaar', addressOnAadhaar)
+  form.append('consent', 'true')
+  form.append('frontImage', frontImage)
+  form.append('backImage', backImage)
+  return api(API.EMPLOYEE.VERIFICATION_AADHAAR, { method: 'POST', body: form })
+}
+
+/**
+ * `selfie` is matched server-side against the photo on the approved Aadhaar
+ * card; `poses` are the left/right frames that prove the head actually moved.
+ */
+export function verifyBiometric(selfieFile, poseFiles = []) {
+  const form = new FormData()
+  if (selfieFile) form.append('selfie', selfieFile)
+  poseFiles.filter(Boolean).forEach((file) => form.append('poses', file))
   return api(API.EMPLOYEE.VERIFICATION_BIOMETRIC, { method: 'POST', body: form })
 }
 

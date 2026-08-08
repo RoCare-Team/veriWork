@@ -1,3 +1,5 @@
+import { CONTACT_LINKS } from './contactInfo'
+
 export const LANDING_NAV = [
   { label: 'Features', href: '#features' },
   { label: 'Demo', href: '#demo' },
@@ -148,12 +150,14 @@ export const LANDING_FOOTER_LINKS = {
     { label: 'Security', href: '#security' },
     { label: 'Employer Portal', to: '/enterprise/login' },
     { label: 'Employee Portal', to: '/employee' },
-    { label: 'Admin Console', to: '/admin/login' },
+    // Admin console is intentionally not linked publicly — staff reach
+    // /admin/login directly.
   ],
   company: [
     { label: 'About', href: '#' },
     { label: 'Careers', href: '#' },
-    { label: 'Contact', href: '#' },
+    { label: 'Contact', href: CONTACT_LINKS.email },
+    { label: 'Instagram', href: CONTACT_LINKS.instagram },
     { label: 'Blog', href: '#' },
   ],
   legal: [
