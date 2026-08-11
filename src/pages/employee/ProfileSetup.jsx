@@ -18,6 +18,7 @@ import { normalizePhone } from '../../lib/api'
 import { getProfile, setupProfile } from '../../lib/employeeProfile'
 import { mediaUrl } from '../../lib/mediaUrl'
 import { COUNTRY_CODES } from '../../utils/countryCodes'
+import { JOURNEY_STEPS } from '../../utils/employeeJourney'
 import {
   clearInvitationSession,
   getInvitationDetails,
@@ -80,6 +81,22 @@ const EMPTY_EDUCATION = {
   class10: { board: '', school: '', passingYear: '', percentage: '' },
   class12: { board: '', school: '', stream: '', passingYear: '', percentage: '' },
   graduation: { degree: '', college: '', university: '', passingYear: '', percentage: '' },
+}
+
+/*
+ * Which optional steps the user deliberately jumped over. Kept in sessionStorage
+ * so a reload mid-setup doesn't quietly turn "I skipped this" back into "not
+ * reached yet" — the whole point is that a skip stays visible.
+ */
+const SKIPPED_STORAGE_KEY = 'pagerlook.profileSetup.skippedSteps'
+
+function readSkippedSteps() {
+  try {
+    const parsed = JSON.parse(sessionStorage.getItem(SKIPPED_STORAGE_KEY) || '[]')
+    return Array.isArray(parsed) ? parsed.filter((id) => STEPS.some((s) => s.id === id)) : []
+  } catch {
+    return []
+  }
 }
 
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024
@@ -286,12 +303,18 @@ function ProfileSetup() {
     const index = STEPS.findIndex((s) => s.id === requestedStepId)
     return index >= 0 ? index : 0
   })
+  // Optional steps the user chose to jump over. A step here is *not* the same as
+  // an unvisited one, and the progress bar renders it differently.
+  const [skippedSteps, setSkippedSteps] = useState(readSkippedSteps)
   // Only surface "what's missing" after they try to continue — not while typing.
   const [showStep1Errors, setShowStep1Errors] = useState(false)
   const [aadhaarVerified, setAadhaarVerified] = useState(false)
   const [biometricVerified, setBiometricVerified] = useState(false)
   // Set just before a mutation that should save without navigating away.
   const saveOnlyRef = useRef(false)
+  // Where to go once the save lands, when the save exists only to unblock a
+  // route (see `startVerification`).
+  const nextPathRef = useRef('')
   const [generalErrors, setGeneralErrors] = useState([])
 
   const setters = {
@@ -363,6 +386,14 @@ function ProfileSetup() {
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(SKIPPED_STORAGE_KEY, JSON.stringify(skippedSteps))
+    } catch {
+      // Private-mode storage failures are not worth interrupting setup over.
+    }
+  }, [skippedSteps])
+
   // Release the object URL when the pick changes or the page unmounts.
   useEffect(() => {
     if (!photoPreview) return undefined
@@ -412,7 +443,15 @@ function ProfileSetup() {
     onSuccess: (data) => {
       // "Save" persists without leaving the wizard; "Continue"/"Finish" navigate.
       const saveOnly = saveOnlyRef.current
+      // Set when the save was only a prerequisite for going somewhere else
+      // (the Aadhaar / face flows), which is neither of the above.
+      const nextPath = nextPathRef.current
       saveOnlyRef.current = false
+      nextPathRef.current = ''
+
+      // Setup is over — the skip marks were wizard state, not profile state.
+      // What's still missing now lives on the score page instead.
+      if (!saveOnly && !nextPath) setSkippedSteps([])
 
       updateProfileState({
         ...profile,
@@ -429,7 +468,13 @@ function ProfileSetup() {
           typeof entry === 'string' ? entry : entry?.companyName || entry?.name || 'the company'
         clearInvitationSession()
         toast(`You have been added to ${companyName} team!`, 'success')
-        if (!saveOnly) navigate('/employee/score')
+        if (nextPath) navigate(nextPath)
+        else if (!saveOnly) navigate('/employee/score')
+        return
+      }
+
+      if (nextPath) {
+        navigate(nextPath)
         return
       }
 
@@ -443,6 +488,10 @@ function ProfileSetup() {
       navigate(isEditing ? '/employee/professional-id' : '/employee/score')
     },
     onError: (err) => {
+      // Don't let a failed save leave a pending destination behind — the next
+      // successful save would then navigate away for no reason.
+      saveOnlyRef.current = false
+      nextPathRef.current = ''
       const { fieldErrors: nextFieldErrors, general } = extractFieldErrors(err.details)
       setFieldErrors(nextFieldErrors)
       setGeneralErrors(general)
@@ -497,6 +546,21 @@ function ProfileSetup() {
 
   const isStep1Valid = step1Missing.length === 0
 
+  // Ticks on the shared journey bar. Aadhaar/Face come from the saved profile —
+  // they're done on their own pages, but must still show as complete here.
+  const completedSteps = [
+    ...(isStep1Valid ? ['profile'] : []),
+    ...(completedEduLevels > 0 && !hasPartialEdu ? ['education'] : []),
+    ...(aadhaarVerified && biometricVerified ? ['identity'] : []),
+  ]
+
+  // Completing a step always wins over having skipped it earlier.
+  const visibleSkipped = skippedSteps.filter((id) => !completedSteps.includes(id))
+  const skippedDetails = JOURNEY_STEPS.filter((s) => visibleSkipped.includes(s.id))
+
+  const markSkipped = (id) => setSkippedSteps((prev) => (prev.includes(id) ? prev : [...prev, id]))
+  const clearSkipped = (id) => setSkippedSteps((prev) => prev.filter((s) => s !== id))
+
   const updateEducation = (level, field, value) => {
     setEducation((prev) => ({
       ...prev,
@@ -550,10 +614,39 @@ function ProfileSetup() {
     submitProfile()
   }
 
+  const goToStep = (index) => {
+    setStep(index)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  /**
+   * Move forward, or submit if there is nowhere left to go. Never called
+   * directly by a control — `goNext`/`skipStep` decide what leaving the current
+   * step *means* first.
+   */
+  const advance = () => {
+    if (step === STEPS.length - 1) {
+      submitProfile()
+      return
+    }
+    goToStep(step + 1)
+  }
+
+  /**
+   * Record what leaving an optional step meant: filled in = done and no longer
+   * skipped, left empty = skipped. Without this, walking past a step with
+   * "Continue" would look identical to never having reached it.
+   */
+  const settleOptionalStep = (index) => {
+    const meta = STEPS[index]
+    if (!meta?.optional) return
+    if (completedSteps.includes(meta.id)) clearSkipped(meta.id)
+    else markSkipped(meta.id)
+  }
+
   /**
    * Advance a step. Step 1 must be valid; optional steps just must not be
-   * half-filled. On the LAST step there is nowhere to advance to — "skip" there
-   * means "finish without doing this", so it submits.
+   * half-filled.
    */
   const goNext = () => {
     if (step === 0) {
@@ -568,21 +661,89 @@ function ProfileSetup() {
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
-    if (step === STEPS.length - 1) {
-      submitProfile()
-      return
-    }
-    setStep((s) => s + 1)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    settleOptionalStep(step)
+    advance()
   }
 
-  // Ticks on the shared journey bar. Aadhaar/Face come from the saved profile —
-  // they're done on their own pages, but must still show as complete here.
-  const completedSteps = [
-    ...(isStep1Valid ? ['profile'] : []),
-    ...(completedEduLevels > 0 && !hasPartialEdu ? ['education'] : []),
-    ...(aadhaarVerified && biometricVerified ? ['identity'] : []),
-  ]
+  /**
+   * Explicit skip. On the LAST step there is nowhere to advance to, so "skip"
+   * there means "finish without doing this" and submits.
+   */
+  const skipStep = () => {
+    const meta = STEPS[step]
+    if (!meta?.optional) return
+
+    /*
+     * Skipping means "none of this", so a half-filled level is cleared rather
+     * than left behind — a partial record looks complete on a profile but isn't,
+     * and the backend rejects it on submit anyway.
+     */
+    if (meta.id === 'education' && hasPartialEdu) {
+      setEducation((prev) => {
+        const next = { ...prev }
+        for (const [level, state] of Object.entries(eduStates)) {
+          if (state === 'partial') next[level] = { ...EMPTY_EDUCATION[level] }
+        }
+        return next
+      })
+    }
+
+    markSkipped(meta.id)
+    advance()
+  }
+
+  /**
+   * Leave the wizard for one of the identity checks.
+   *
+   * The server refuses Aadhaar until the profile is actually saved
+   * ("Complete profile setup before Aadhaar verification"), and until now the
+   * wizard sent people there with an unsaved profile — so the check only failed
+   * once they had filled the whole Aadhaar form. Save first, then go.
+   */
+  const startVerification = (to) => {
+    if (mutation.isPending || loading) return
+
+    if (profile?.profileSetupComplete) {
+      navigate(to)
+      return
+    }
+    if (!isStep1Valid) {
+      setShowStep1Errors(true)
+      goToStep(0)
+      return
+    }
+    if (hasPartialEdu) {
+      goToStep(1)
+      return
+    }
+
+    nextPathRef.current = to
+    // Not a "finish" — the wizard state (including skips) must survive the trip.
+    saveOnlyRef.current = true
+    submitProfile()
+  }
+
+  /** Jump straight to a step from the progress bar. */
+  const handleStepSelect = (id) => {
+    const index = STEPS.findIndex((s) => s.id === id)
+    if (index < 0 || index === step) return
+    // Step 1 gates everything after it — jumping ahead with it incomplete would
+    // only fail on submit, so send them back with the reason instead.
+    if (index > 0 && !isStep1Valid) {
+      setShowStep1Errors(true)
+      goToStep(0)
+      return
+    }
+    // Don't strand a half-filled education level behind them.
+    if (step === 1 && index !== 1 && hasPartialEdu) return
+    // Only moving *forward* past a step counts as leaving it behind — going
+    // Back is a second look, not a skip.
+    if (index > step) settleOptionalStep(step)
+    // Going *to* a step means they're giving it another look — it isn't skipped
+    // any more until they leave it empty again.
+    clearSkipped(id)
+    goToStep(index)
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -624,7 +785,42 @@ function ProfileSetup() {
       />
 
       <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <VerificationStepBar currentStep={STEPS[step].id} completed={completedSteps} />
+        <VerificationStepBar
+          currentStep={STEPS[step].id}
+          completed={completedSteps}
+          skipped={visibleSkipped}
+          onStepSelect={handleStepSelect}
+        />
+
+        {/* A skipped step is called out by name, right under the bar, with the
+            way back to it — so it can never be mistaken for "not reached yet". */}
+        {skippedDetails.length > 0 && (
+          <div className="mt-5 flex flex-col gap-2 border-t border-dashed border-slate-200 pt-4">
+            {skippedDetails.map((s) => (
+              <div
+                key={s.id}
+                className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-xl border border-amber-200 bg-amber-50/70 px-3.5 py-2.5"
+              >
+                <p className="m-0 flex flex-wrap items-center gap-2 text-xs text-amber-900">
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+                    Skipped
+                  </span>
+                  <span>
+                    <strong>{s.label}</strong> — you can add this any time, but{' '}
+                    <strong>+{s.points} pts</strong> stay locked until you do.
+                  </span>
+                </p>
+                <button
+                  type="button"
+                  onClick={() => handleStepSelect(s.id)}
+                  className="shrink-0 rounded-ctl border border-amber-300 bg-white px-3 py-1.5 text-xs font-bold text-amber-700 transition hover:bg-amber-100"
+                >
+                  Add it now
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {(error || generalErrors.length > 0) && (
@@ -1078,6 +1274,12 @@ function ProfileSetup() {
                 <strong>Identity Verified</strong> badge employers look for. Skip now and you can do
                 it any time — you just won't get these points until you do.
               </p>
+              {!profile?.profileSetupComplete && (
+                <p className="m-0 mt-2 text-xs text-slate-500">
+                  Starting a check saves your details first — Aadhaar can only run against a saved
+                  profile.
+                </p>
+              )}
             </div>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -1109,8 +1311,8 @@ function ProfileSetup() {
                   <p className="m-0 mt-1 text-xs text-slate-500">{c.desc}</p>
                   <button
                     type="button"
-                    onClick={() => navigate(c.to)}
-                    disabled={c.done}
+                    onClick={() => startVerification(c.to)}
+                    disabled={c.done || mutation.isPending}
                     className="mt-4 w-full rounded-ctl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:bg-slate-100 disabled:text-slate-400"
                   >
                     {c.done ? 'Verified' : `Verify ${c.key === 'aadhaar' ? 'Aadhaar' : 'face'}`}
@@ -1121,35 +1323,106 @@ function ProfileSetup() {
           </FormSection>
         )}
 
+        {/* Last step — one honest summary of what is about to be saved, so
+            nobody finishes setup without knowing what they left behind. */}
+        {step === STEPS.length - 1 && (
+          <FormSection
+            title="Before you finish"
+            description="This is exactly where each step stands. Anything skipped can be added later from your score page."
+            className="w-full"
+          >
+            <ul className="m-0 flex list-none flex-col gap-3 p-0">
+              {JOURNEY_STEPS.map((s, index) => {
+                const done = completedSteps.includes(s.id)
+                const wasSkipped = visibleSkipped.includes(s.id)
+                const status = done ? 'done' : wasSkipped ? 'skipped' : 'pending'
+                const chip = {
+                  done: 'border-green-200 bg-green-50 text-green-700',
+                  skipped: 'border-amber-200 bg-amber-50 text-amber-700',
+                  pending: 'border-slate-200 bg-slate-50 text-slate-500',
+                }[status]
+                const chipText = { done: 'Completed', skipped: 'Skipped', pending: 'Not added yet' }[status]
+
+                return (
+                  <li
+                    key={s.id}
+                    className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="m-0 text-sm font-bold text-slate-900">
+                        <span className="text-slate-400">{index + 1}.</span> {s.title}
+                      </p>
+                      <p className="m-0 mt-0.5 text-xs text-slate-500">
+                        {s.description}
+                        {!done && !s.required && ` · worth +${s.points} pts`}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${chip}`}>
+                        {chipText}
+                      </span>
+                      {/* No button for the step they're already standing on —
+                          its own controls are right above this summary. */}
+                      {!done && s.id !== STEPS[step].id && (
+                        <button
+                          type="button"
+                          onClick={() => handleStepSelect(s.id)}
+                          className="rounded-ctl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
+                        >
+                          Add now
+                        </button>
+                      )}
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          </FormSection>
+        )}
+
         <div className="sticky bottom-0 z-10 -mx-4 border-t border-slate-200 bg-slate-50/95 px-4 py-4 backdrop-blur md:-mx-6 md:px-6 lg:-mx-8 lg:px-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               {step > 0 && (
                 <button
                   type="button"
-                  onClick={() => setStep((s) => s - 1)}
+                  onClick={() => handleStepSelect(STEPS[step - 1].id)}
                   disabled={mutation.isPending}
                   className="rounded-ctl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
                 >
                   Back
                 </button>
               )}
-              <p className="m-0 text-sm text-slate-500">
-                {step === 0
-                  ? 'Fields marked * are required'
-                  : "Optional — skip now, add it later from your score page"}
-              </p>
+              <div className="min-w-0">
+                <p className="m-0 text-sm font-semibold text-slate-700">
+                  Step {step + 1} of {STEPS.length} · {JOURNEY_STEPS[step].label}
+                  <span
+                    className={`ml-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                      STEPS[step].optional
+                        ? 'bg-amber-50 text-amber-700'
+                        : 'bg-brand-600/10 text-brand-600'
+                    }`}
+                  >
+                    {STEPS[step].optional ? 'Optional' : 'Required'}
+                  </span>
+                </p>
+                <p className="m-0 text-xs text-slate-500">
+                  {step === 0
+                    ? 'Fields marked * are required'
+                    : 'Skip now and add it later from your score page'}
+                </p>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
               {STEPS[step].optional && (
                 <button
                   type="button"
-                  onClick={goNext}
+                  onClick={skipStep}
                   disabled={mutation.isPending}
-                  className="rounded-ctl px-4 py-2.5 text-sm font-semibold text-slate-500 underline hover:text-slate-700 disabled:opacity-50"
+                  className="rounded-ctl border border-dashed border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-500 transition hover:border-slate-400 hover:bg-white hover:text-slate-700 disabled:opacity-50"
                 >
-                  Skip for now
+                  {step === STEPS.length - 1 ? 'Skip & finish' : 'Skip this step'}
                 </button>
               )}
 

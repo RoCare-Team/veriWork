@@ -1,8 +1,8 @@
 import BrandMark from './BrandMark'
 
 /**
- * PagerLook logo. Thin wrapper over the crisp inline-SVG {@link BrandMark} so
- * every existing call site gets the same sharp, background-free logo.
+ * PagerLook logo. Thin wrapper over {@link BrandMark} so every existing call
+ * site renders the same official logo lockup.
  *
  * Legacy props are mapped to BrandMark's `tone`:
  *  - `variant="white"` (light logo for dark surfaces) → tone `light`

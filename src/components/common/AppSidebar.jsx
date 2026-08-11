@@ -165,8 +165,8 @@ function AppSidebar({
             collapsed ? 'lg:justify-center lg:px-0' : ''
           }`}
         >
-          {/* Crisp inline logo — sharp on the deep blue gradient, keeps the
-              blue "Look" accent the all-white PNG used to flatten. */}
+          {/* White logo straight on the gradient — the earlier white chip read
+              as a card pasted into the header. */}
           <Link
             to={homeTo}
             onClick={onClose}
@@ -175,7 +175,7 @@ function AppSidebar({
               collapsed ? 'lg:hidden' : ''
             }`}
           >
-            <BrandMark tone="light" size="md" showTagline />
+            <BrandMark tone="light" size="md" chip={false} />
           </Link>
 
           {/* Desktop-only: the mobile drawer is always full width. */}

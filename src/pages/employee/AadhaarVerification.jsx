@@ -160,7 +160,13 @@ function AadhaarVerification() {
     setForm((prev) => ({ ...prev, [key]: event.target.value }))
 
   const status = submission?.status || 'not_submitted'
-  const showForm = status === 'not_submitted' || status === 'rejected'
+  /*
+   * The server refuses Aadhaar until the profile is saved. Say so up front —
+   * otherwise the whole form gets filled and uploaded before it fails with
+   * "Complete profile setup before Aadhaar verification".
+   */
+  const profileIncomplete = profile?.profileSetupComplete === false
+  const showForm = !profileIncomplete && (status === 'not_submitted' || status === 'rejected')
 
   const subtitle =
     {
@@ -184,7 +190,23 @@ function AadhaarVerification() {
             <p className="m-0 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
           )}
 
-          {status === 'pending' && (
+          {profileIncomplete && (
+            <>
+              <StatusBanner
+                tone="warning"
+                icon={<InfoIcon className="mt-0.5 h-5 w-5 shrink-0" />}
+                title="Finish your basic details first"
+              >
+                Aadhaar is matched against your saved profile, so we need your name, date of birth
+                and gender on record before this check can run. It takes a minute.
+              </StatusBanner>
+              <Button type="button" onClick={() => navigate('/employee/profile-setup')}>
+                Complete profile setup
+              </Button>
+            </>
+          )}
+
+          {!profileIncomplete && status === 'pending' && (
             <>
               <StatusBanner
                 tone="warning"

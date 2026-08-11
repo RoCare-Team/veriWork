@@ -136,7 +136,7 @@ function AuthHero({ eyebrow, title, subtitle, stats = [] }) {
 
       {/* Brand + copy */}
       <div className="relative z-10">
-        {/* Crisp inline logo — no white chip needed on the dark hero. */}
+        {/* Official logo lockup — white chip keeps it legible on the dark hero. */}
         <BrandMark tone="light" size="lg" showTagline />
         {eyebrow && (
           <p className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-white/60">{eyebrow}</p>
