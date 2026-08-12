@@ -1,7 +1,11 @@
+import { isPortalUnlocked } from './employeeProfileUtils'
+
 export function getEmployeeHomeRoute(profile) {
   if (!profile) return '/employee/login'
   if (!profile.profileSetupComplete) return '/employee/profile-setup'
-  if (!profile.isVerified && !profile.biometricVerified) return '/employee/verification'
+  // Only Aadhaar routes you back to verification — the face match is optional,
+  // so skipping it must not trap you on the verification page every login.
+  if (!isPortalUnlocked(profile)) return '/employee/verification'
   return '/employee/score'
 }
 

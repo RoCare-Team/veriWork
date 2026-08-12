@@ -21,6 +21,7 @@ export const adminKeys = {
   companyMessages: (id) => ['admin', 'company', id, 'messages'],
   aadhaarRequests: (status, q) => ['admin', 'aadhaar-requests', status || 'pending', q || ''],
   aadhaarRequest: (id) => ['admin', 'aadhaar-request', id],
+  verificationRequests: (status, q) => ['admin', 'verification-requests', status || 'all', q || ''],
 }
 
 export function fetchAdminDashboard() {
@@ -115,6 +116,38 @@ export function fetchAadhaarRequests({ status = 'pending', q = '' } = {}) {
 export function fetchAadhaarRequest(id) {
   if (isDevAdminSession()) return Promise.reject(new Error(DEV_ADMIN_UNAVAILABLE))
   return api(API.ADMIN.AADHAAR_REQUEST(id))
+}
+
+/**
+ * Every employment verification request on the platform — employee-initiated and
+ * company-initiated alike — so support can see who sent one and chase it.
+ */
+export function fetchAdminVerificationRequests({ status = 'all', q = '' } = {}) {
+  if (isDevAdminSession()) {
+    return Promise.reject(
+      new Error(
+        'Verification requests need a real admin account — the offline demo admin has no live requests to show.',
+      ),
+    )
+  }
+
+  const params = new URLSearchParams()
+  if (status) params.set('status', status)
+  if (q?.trim()) params.set('q', q.trim())
+
+  const query = params.toString()
+  return api(query ? `${API.ADMIN.VERIFICATION_REQUESTS}?${query}` : API.ADMIN.VERIFICATION_REQUESTS)
+}
+
+/** Re-send an unanswered request, optionally fixing/extending the HR contacts. */
+export function resendAdminVerificationRequest(id, { hrContacts, hrName } = {}) {
+  return api(API.ADMIN.VERIFICATION_REQUEST_RESEND(id), {
+    method: 'POST',
+    body: {
+      ...(hrContacts?.length ? { hrContacts } : {}),
+      ...(hrName ? { hrName } : {}),
+    },
+  })
 }
 
 export function reviewAadhaarRequest(id, { status, reason, notes }) {

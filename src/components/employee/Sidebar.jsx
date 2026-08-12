@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import AppSidebar from '../common/AppSidebar'
 import { useAuth } from '../../context/AuthContext'
+import { isPortalUnlocked } from '../../utils/employeeProfileUtils'
 
 /* Icons: 20x20, 1.5 stroke, round caps/joins — one optical weight across the set. */
 
@@ -185,7 +186,9 @@ const NAV_GROUPS = [
 function EmployeeSidebar({ open, onClose, collapsed = false, onToggleCollapse }) {
   const navigate = useNavigate()
   const { profile, logout } = useAuth()
-  const verified = profile?.isVerified === true
+  // Face match is optional — gating stops at profile + Aadhaar so a skipped
+  // selfie never locks the portal.
+  const unlocked = isPortalUnlocked(profile)
 
   const handleSignOut = async () => {
     await logout()
@@ -198,8 +201,8 @@ function EmployeeSidebar({ open, onClose, collapsed = false, onToggleCollapse })
     ...group,
     items: group.items.map((item) => ({
       ...item,
-      disabled: item.requiresVerification && !verified,
-      disabledHint: 'Complete verification to unlock',
+      disabled: item.requiresVerification && !unlocked,
+      disabledHint: 'Complete Aadhaar verification to unlock',
     })),
   }))
 

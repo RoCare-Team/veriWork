@@ -5,14 +5,17 @@ import EmployeeLayout from '../../layouts/EmployeeLayout'
 import EmployeePageHeader from '../../components/employee/PageHeader'
 import Loader from '../../components/common/Loader'
 import Button from '../../components/common/Button'
+import HrContactsEditor from '../../components/common/HrContactsEditor'
 import {
   employeeKeys,
   fetchJobVerification,
   createJobVerificationRequest,
+  resendJobVerificationRequest,
   uploadJobDocumentWithType,
 } from '../../api/employee'
 import { useToast } from '../../context/ToastContext'
 import { formatDate } from '../../utils/formatters'
+import { cleanContacts } from '../../utils/hrContacts'
 import { mediaUrl } from '../../lib/mediaUrl'
 
 const RATING_LABELS = {
@@ -72,8 +75,34 @@ function VerificationRequestStatus({ request }) {
       {request.verificationNotes && (
         <p className="m-0 mt-2 text-xs text-slate-500">{request.verificationNotes}</p>
       )}
+      {request.remindersSent > 0 && (
+        <p className="m-0 mt-2 text-xs text-slate-500">
+          Re-sent {request.remindersSent} {request.remindersSent === 1 ? 'time' : 'times'}
+          {request.lastRemindedAt ? ` — last on ${formatDate(request.lastRemindedAt)}` : ''}
+        </p>
+      )}
     </div>
   )
+}
+
+/* Seconds left on the resend cool-down, ticking down to 0. */
+function useCountdown(until) {
+  const target = until ? new Date(until).getTime() : 0
+  // The clock is the external system here — the remaining seconds are derived,
+  // so nothing is set during render or synchronously inside the effect.
+  const [now, setNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    if (!target || target <= Date.now()) return undefined
+    const id = setInterval(() => {
+      const tick = Date.now()
+      setNow(tick)
+      if (tick >= target) clearInterval(id)
+    }, 1000)
+    return () => clearInterval(id)
+  }, [target])
+
+  return target ? Math.max(0, Math.ceil((target - now) / 1000)) : 0
 }
 
 function VerifiedRecordPanel({ record, job }) {
@@ -170,9 +199,28 @@ function AiAnalysisPanel({ analysis }) {
   )
 }
 
+/*
+ * employmentDetails always comes back fully keyed (empty strings / nulls) because
+ * it is a sub-document with defaults, so "has keys" is not "HR answered". Only a
+ * substantive field means a real response.
+ */
+function hasHrResponse(details) {
+  if (!details) return false
+  return (
+    details.workedHere != null ||
+    Boolean(
+      details.employmentVerificationStatus ||
+        details.verifierName ||
+        details.designation ||
+        details.feedback ||
+        details.hrRemarks,
+    )
+  )
+}
+
 // HR feedback attached to this experience — read-only / locked once submitted.
 function HrResponsePanel({ details }) {
-  if (!details || Object.keys(details).length === 0) return null
+  if (!hasHrResponse(details)) return null
   const verifierLine = [details.verifierName, details.verifierDesignation].filter(Boolean).join(' · ')
 
   return (
@@ -258,8 +306,8 @@ function JobVerification() {
   const { jobId } = useParams()
   const { toast } = useToast()
   const queryClient = useQueryClient()
-  const [hrEmail, setHrEmail] = useState('')
-  const [managerEmail, setManagerEmail] = useState('')
+  // One open-ended recipient list, shared by the first send and the resend.
+  const [hrContacts, setHrContacts] = useState([''])
   const [uploadType, setUploadType] = useState('offer_letter')
 
   const { data, isLoading, error } = useQuery({
@@ -283,18 +331,35 @@ function JobVerification() {
       r.employmentDetails &&
       r.employmentDetails.workedHere != null,
   )
+  // Server decides what is still nudgeable (an HR-responded request is not).
+  const resendableRequestId = payload?.resendableRequestId
+  const resendSecondsLeft = useCountdown(payload?.resendAvailableAt)
   const record = payload?.permanentRecord
-  const hrResponse =
-    record?.hrResponse ||
-    openRequest?.employmentDetails ||
-    openRequest?.hrResponse ||
-    respondedRequest?.employmentDetails
+  const hrResponse = [
+    record?.hrResponse,
+    openRequest?.employmentDetails,
+    openRequest?.hrResponse,
+    respondedRequest?.employmentDetails,
+  ].find(hasHrResponse)
   const aiAnalysis = record?.aiAnalysis || openRequest?.aiAnalysis || payload?.aiAnalysis
 
-  useEffect(() => {
-    if (job?.hrEmail) setHrEmail(job.hrEmail)
-    if (job?.managerEmail) setManagerEmail(job.managerEmail)
-  }, [job?.hrEmail, job?.managerEmail])
+  // Prefill from what was actually mailed (the open request), falling back to the
+  // addresses saved on the job. Adjusted during render rather than in an effect,
+  // and keyed on the joined list so a background re-fetch returning the same
+  // addresses can't stomp what is being typed.
+  const savedContactsKey = (
+    openRequest?.hrContacts?.length
+      ? openRequest.hrContacts
+      : job?.hrContacts?.length
+        ? job.hrContacts
+        : [job?.hrEmail, job?.managerEmail].filter(Boolean)
+  ).join(',')
+  const [syncedContactsKey, setSyncedContactsKey] = useState('')
+
+  if (savedContactsKey && savedContactsKey !== syncedContactsKey) {
+    setSyncedContactsKey(savedContactsKey)
+    setHrContacts(savedContactsKey.split(','))
+  }
 
   const uploadMutation = useMutation({
     mutationFn: ({ file, documentType }) => uploadJobDocumentWithType(jobId, file, documentType),
@@ -307,11 +372,7 @@ function JobVerification() {
   })
 
   const verifyMutation = useMutation({
-    mutationFn: () =>
-      createJobVerificationRequest(jobId, {
-        hrEmail: hrEmail.trim() || undefined,
-        managerEmail: managerEmail.trim() || undefined,
-      }),
+    mutationFn: () => createJobVerificationRequest(jobId, { hrContacts: cleanContacts(hrContacts) }),
     onSuccess: (res) => {
       const result = res?.data || res
       toast(result?.message || result?.request?.message || 'Verification request sent', 'success')
@@ -320,6 +381,20 @@ function JobVerification() {
       queryClient.invalidateQueries({ queryKey: employeeKeys.score })
     },
     onError: (err) => toast(err.message || 'Could not start verification', 'error'),
+  })
+
+  // Follow-up when the other side never responded. Sends the SAME request again
+  // (no duplicate) and carries any corrected HR address with it.
+  const resendMutation = useMutation({
+    mutationFn: () =>
+      resendJobVerificationRequest(resendableRequestId, { hrContacts: cleanContacts(hrContacts) }),
+    onSuccess: (res) => {
+      const result = res?.data || res
+      toast(result?.message || 'Verification request re-sent', 'success')
+      queryClient.invalidateQueries({ queryKey: [...employeeKeys.jobs, jobId, 'verification'] })
+      queryClient.invalidateQueries({ queryKey: employeeKeys.jobs })
+    },
+    onError: (err) => toast(err.message || 'Could not re-send the request', 'error'),
   })
 
   if (isLoading) return <Loader variant="fullPage" label="Loading..." />
@@ -335,6 +410,7 @@ function JobVerification() {
   const tag = job.verificationTag
   const canRequest = payload?.canRequestVerification && !payload?.isVerified
   const isVerified = payload?.isVerified || payload?.alreadyVerified
+  const canResend = Boolean(resendableRequestId) && !isVerified
 
   return (
     <EmployeeLayout>
@@ -380,6 +456,48 @@ function JobVerification() {
             <div className="mt-4 space-y-2">
               <VerificationRequestStatus request={openRequest} />
             </div>
+
+            {/* No response yet? Nudge them again — same request, no duplicate. */}
+            {canResend && (
+              <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="m-0 text-xs font-semibold text-slate-700">No response yet?</p>
+                <p className="m-0 mt-1 text-xs text-slate-500">
+                  {openRequest.verificationChannel === 'email'
+                    ? 'Send the request again. Fix the HR emails below, or add more contacts, if the first ones were wrong.'
+                    : `Send ${job.company} a reminder on their PagerLook dashboard.`}
+                </p>
+
+                {openRequest.verificationChannel === 'email' && (
+                  <div className="mt-3">
+                    <HrContactsEditor
+                      contacts={hrContacts}
+                      onChange={setHrContacts}
+                      size="sm"
+                      label="HR contacts"
+                      hint="Everyone listed here gets the same verification link."
+                      disabled={resendMutation.isPending}
+                    />
+                  </div>
+                )}
+
+                <Button
+                  type="button"
+                  variant="secondary"
+                  fullWidth={false}
+                  className="mt-3"
+                  disabled={resendMutation.isPending || resendSecondsLeft > 0}
+                  onClick={() => resendMutation.mutate()}
+                >
+                  {resendMutation.isPending
+                    ? 'Sending...'
+                    : resendSecondsLeft > 0
+                      ? `Resend in ${resendSecondsLeft}s`
+                      : openRequest.verificationChannel === 'email'
+                        ? 'Resend request'
+                        : 'Send reminder'}
+                </Button>
+              </div>
+            )}
           </section>
         )}
 
@@ -437,29 +555,14 @@ function JobVerification() {
               <p className="m-0 mt-1 text-xs text-slate-500">
                 Required if the previous company is not registered on PagerLook (Case B). If registered, request goes to their HR dashboard (Case A).
               </p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <label className="block text-sm">
-                  <span className="font-semibold text-slate-700">HR contact 1</span>
-                  <input
-                    type="email"
-                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
-                    value={hrEmail}
-                    onChange={(e) => setHrEmail(e.target.value)}
-                    placeholder="hr1@company.com"
-                  />
-                </label>
-                {/* Backed by the managerEmail column — the second of the two
-                    recipient slots sendVerificationEmails mails. Label only. */}
-                <label className="block text-sm">
-                  <span className="font-semibold text-slate-700">HR contact 2</span>
-                  <input
-                    type="email"
-                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
-                    value={managerEmail}
-                    onChange={(e) => setManagerEmail(e.target.value)}
-                    placeholder="hr2@company.com"
-                  />
-                </label>
+              <div className="mt-4">
+                <HrContactsEditor
+                  contacts={hrContacts}
+                  onChange={setHrContacts}
+                  label="HR contacts"
+                  hint="Add every HR or manager mailbox worth trying — each one receives the same verification link."
+                  disabled={verifyMutation.isPending}
+                />
               </div>
             </section>
 

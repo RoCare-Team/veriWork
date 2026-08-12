@@ -173,6 +173,11 @@ export function createJobVerificationRequest(jobId, body) {
   return api(API.EMPLOYEE.JOB_VERIFICATION_REQUEST(jobId), { method: 'POST', body })
 }
 
+/** Nudge an unanswered request — same request, optionally corrected HR emails. */
+export function resendJobVerificationRequest(requestId, body) {
+  return api(API.EMPLOYEE.VERIFICATION_REQUEST_RESEND(requestId), { method: 'POST', body })
+}
+
 export function fetchVerificationRequests() {
   return api(API.EMPLOYEE.VERIFICATION_REQUESTS)
 }

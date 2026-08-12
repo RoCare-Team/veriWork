@@ -42,6 +42,19 @@ export function isVerificationComplete(profile) {
   )
 }
 
+/**
+ * Portal access gate — not the same as the Identity Verified badge.
+ *
+ * The face match is optional (it earns points and the badge), so skipping it
+ * must not lock Professional ID / Job History / Vault / Activity. Identity is
+ * still established by the admin-reviewed Aadhaar, so that stays required.
+ */
+export function isPortalUnlocked(profile) {
+  if (!profile) return false
+  if (profile.portalUnlocked === true || profile.isVerified === true) return true
+  return Boolean(profile.profileSetupComplete && profile.aadhaarVerified)
+}
+
 export function getCurrentVerificationStep(profile) {
   if (!profile.profileSetupComplete) return 'profile'
   if (!profile.aadhaarVerified) return 'aadhaar'
@@ -83,5 +96,6 @@ export function buildDisplayProfile(profile) {
     phone: profile.phone,
     email: profile.email || '',
     isVerified: isVerificationComplete(profile),
+    portalUnlocked: isPortalUnlocked(profile),
   }
 }

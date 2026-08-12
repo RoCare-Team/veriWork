@@ -28,6 +28,8 @@ export const API = {
     AADHAAR_REQUESTS: '/admin/aadhaar-requests',
     AADHAAR_REQUEST: (id) => `/admin/aadhaar-requests/${id}`,
     AADHAAR_REQUEST_REVIEW: (id) => `/admin/aadhaar-requests/${id}/review`,
+    VERIFICATION_REQUESTS: '/admin/verification-requests',
+    VERIFICATION_REQUEST_RESEND: (id) => `/admin/verification-requests/${id}/resend`,
   },
 
   EMPLOYEE: {
@@ -58,6 +60,7 @@ export const API = {
     JOB_VERIFICATION: (id) => `/employee/jobs/${id}/verification`,
     JOB_VERIFICATION_REQUEST: (id) => `/employee/jobs/${id}/verification-request`,
     VERIFICATION_REQUESTS: '/employee/verification/requests',
+    VERIFICATION_REQUEST_RESEND: (id) => `/employee/verification-requests/${id}/resend`,
     VERIFICATION_CONSENT_APPROVE: (id) => `/employee/verification-requests/${id}/approve-consent`,
     VERIFICATION_CONSENT_REJECT: (id) => `/employee/verification-requests/${id}/reject-consent`,
     VERIFICATION_TAGS: '/employee/verification/tags',
