@@ -1,9 +1,12 @@
 import { useEffect, useRef } from 'react'
 
-const OTP_LENGTH = 6
+// The SMS gateway sends a 4-digit code; demo numbers and the dev mock use 6.
+// The send response reports the length, so the caller passes it through.
+export const DEFAULT_OTP_LENGTH = 4
 
-function OtpInput({ value, onChange, disabled = false }) {
+function OtpInput({ value, onChange, disabled = false, length = DEFAULT_OTP_LENGTH }) {
   const inputsRef = useRef([])
+  const OTP_LENGTH = length
 
   const digits = value.padEnd(OTP_LENGTH, ' ').slice(0, OTP_LENGTH).split('')
 

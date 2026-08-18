@@ -5,7 +5,7 @@ import EmployeeAuthLayout from '../../layouts/EmployeeAuthLayout'
 import Button from '../../components/common/Button'
 import Loader from '../../components/common/Loader'
 import PhoneInput from '../../components/employee/PhoneInput'
-import OtpInput from '../../components/employee/OtpInput'
+import OtpInput, { DEFAULT_OTP_LENGTH } from '../../components/employee/OtpInput'
 import Toggle from '../../components/employee/Toggle'
 import SecurityFooter from '../../components/employee/SecurityFooter'
 import { FingerprintIcon } from '../../components/common/Icons'
@@ -29,12 +29,15 @@ function EmployeeLogin() {
   const [otp, setOtp] = useState('')
   const [biometric, setBiometric] = useState(true)
   const [resendSeconds, setResendSeconds] = useState(0)
+  // Digit count comes from the send response — the SMS gateway sends 4, the
+  // demo/mock codes 6.
+  const [otpLength, setOtpLength] = useState(DEFAULT_OTP_LENGTH)
   const [error, setError] = useState('')
 
   const phoneDigits = phone.replace(/\D/g, '')
   const fullPhone = normalizePhone(countryCode, phone)
   const isPhoneValid = phoneDigits.length >= 10
-  const isOtpValid = otp.length === 6
+  const isOtpValid = otp.length === otpLength
   const isReturningFlow = isEmployeeSession()
 
   useEffect(() => {
@@ -45,11 +48,12 @@ function EmployeeLogin() {
 
   const sendOtpMutation = useMutation({
     mutationFn: () => sendEmployeeOtp(fullPhone),
-    onSuccess: () => {
+    onSuccess: (data) => {
       setError('')
       setOtpSent(true)
       setOtp('')
-      setResendSeconds(30)
+      setOtpLength(data?.otpLength || DEFAULT_OTP_LENGTH)
+      setResendSeconds(data?.resendInSeconds || 30)
     },
     onError: (err) => setError(err.message || 'Failed to send OTP'),
   })
@@ -141,7 +145,7 @@ function EmployeeLogin() {
 
           {otpSent && (
             <div className="animate-fade-in">
-              <OtpInput value={otp} onChange={setOtp} disabled={isSubmitting} />
+              <OtpInput value={otp} onChange={setOtp} disabled={isSubmitting} length={otpLength} />
               <div className="mt-3 flex items-center justify-between text-sm">
                 <span className="text-slate-500">Didn&apos;t receive code?</span>
                 {resendSeconds > 0 ? (

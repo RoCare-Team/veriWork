@@ -5,7 +5,7 @@ import EmployeeAuthLayout from '../../layouts/EmployeeAuthLayout'
 import Button from '../../components/common/Button'
 import Loader from '../../components/common/Loader'
 import PhoneInput from '../../components/employee/PhoneInput'
-import OtpInput from '../../components/employee/OtpInput'
+import OtpInput, { DEFAULT_OTP_LENGTH } from '../../components/employee/OtpInput'
 import SecurityFooter from '../../components/employee/SecurityFooter'
 import { sendEmployeeOtp, verifyEmployeeOtp } from '../../api/auth'
 import { useAuth } from '../../context/AuthContext'
@@ -30,15 +30,18 @@ function EmployeeOtp() {
   const [otpSent, setOtpSent] = useState(false)
   const [otp, setOtp] = useState('')
   const [resendSeconds, setResendSeconds] = useState(0)
+  // How many digits the code has — the send response tells us, since the SMS
+  // gateway (4 digits) and the demo/mock codes (6) differ.
+  const [otpLength, setOtpLength] = useState(DEFAULT_OTP_LENGTH)
   const [error, setError] = useState('')
-  // Remembers the last code we auto-submitted so the same 6 digits never fire
+  // Remembers the last code we auto-submitted so the same digits never fire
   // twice (incl. React StrictMode's double effect invoke).
   const autoSubmittedRef = useRef('')
 
   const phoneDigits = phone.replace(/\D/g, '')
   const fullPhone = normalizePhone(countryCode, phone)
   const isPhoneValid = phoneDigits.length >= 10
-  const isOtpValid = otp.length === 6
+  const isOtpValid = otp.length === otpLength
 
   useEffect(() => {
     if (resendSeconds <= 0) return
@@ -48,13 +51,14 @@ function EmployeeOtp() {
 
   const sendOtpMutation = useMutation({
     mutationFn: () => sendEmployeeOtp(fullPhone),
-    onSuccess: () => {
+    onSuccess: (data) => {
       setError('')
       setOtpSent(true)
       setOtp('')
       autoSubmittedRef.current = ''
-      setResendSeconds(30)
-      toast('OTP sent to your phone', 'success')
+      setOtpLength(data?.otpLength || DEFAULT_OTP_LENGTH)
+      setResendSeconds(data?.resendInSeconds || 30)
+      toast(data?.message || 'OTP sent to your phone', 'success')
     },
     onError: (err) => setError(err.message || 'Failed to send OTP'),
   })
@@ -95,7 +99,7 @@ function EmployeeOtp() {
     sendOtpMutation.mutate()
   }
 
-  // Auto-verify the moment all 6 digits are entered — no button press needed.
+  // Auto-verify the moment every digit is entered — no button press needed.
   // The ref guard ensures each distinct code is submitted at most once.
   useEffect(() => {
     if (
@@ -166,7 +170,7 @@ function EmployeeOtp() {
 
           {otpSent && (
             <div className="animate-fade-in">
-              <OtpInput value={otp} onChange={setOtp} disabled={isSubmitting} />
+              <OtpInput value={otp} onChange={setOtp} disabled={isSubmitting} length={otpLength} />
               <div className="mt-3 flex items-center justify-between text-sm">
                 <span className="text-slate-500">Didn&apos;t receive code?</span>
                 {resendSeconds > 0 ? (
@@ -180,7 +184,7 @@ function EmployeeOtp() {
             </div>
           )}
 
-          {/* Once the code is sent, verification is automatic on the 6th digit —
+          {/* Once the code is sent, verification is automatic on the last digit —
               the button only stays for the "Send OTP" step / manual retry. */}
           {!otpSent && (
             <Button type="submit" disabled={isSubmitting || !isPhoneValid}>
@@ -189,7 +193,9 @@ function EmployeeOtp() {
           )}
           {otpSent && (
             <p className="m-0 text-center text-xs text-slate-400">
-              {verifyMutation.isPending ? 'Verifying…' : 'Enter the 6-digit code — it verifies automatically.'}
+              {verifyMutation.isPending
+                ? 'Verifying…'
+                : `Enter the ${otpLength}-digit code — it verifies automatically.`}
             </p>
           )}
         </form>
