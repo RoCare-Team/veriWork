@@ -22,6 +22,7 @@ export const adminKeys = {
   aadhaarRequests: (status, q) => ['admin', 'aadhaar-requests', status || 'pending', q || ''],
   aadhaarRequest: (id) => ['admin', 'aadhaar-request', id],
   verificationRequests: (status, q) => ['admin', 'verification-requests', status || 'all', q || ''],
+  demoRequests: (status, q) => ['admin', 'demo-requests', status || 'all', q || ''],
 }
 
 export function fetchAdminDashboard() {
@@ -159,4 +160,18 @@ export function reviewAadhaarRequest(id, { status, reason, notes }) {
       ...(notes ? { notes } : {}),
     },
   })
+}
+
+/** Demo requests filed from the public site. */
+export function fetchDemoRequests({ status = 'all', q = '' } = {}) {
+  const params = new URLSearchParams()
+  if (status) params.set('status', status)
+  if (q) params.set('q', q)
+  const query = params.toString()
+  return api(query ? `${API.ADMIN.DEMO_REQUESTS}?${query}` : API.ADMIN.DEMO_REQUESTS)
+}
+
+/** Move a lead along, or leave an internal note on it. */
+export function updateDemoRequest(id, body) {
+  return api(API.ADMIN.DEMO_REQUEST(id), { method: 'PATCH', body })
 }

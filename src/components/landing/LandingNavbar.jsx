@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import BrandLogo from '../common/BrandLogo'
 import PortalChooserModal from './PortalChooserModal'
+import DemoRequestModal from './DemoRequestModal'
 import { LANDING_NAV } from '../../utils/landingData'
 
 function MenuIcon({ open }) {
@@ -22,10 +23,16 @@ function LandingNavbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [chooserOpen, setChooserOpen] = useState(false)
+  const [demoOpen, setDemoOpen] = useState(false)
 
   const openChooser = () => {
     setMenuOpen(false)
     setChooserOpen(true)
+  }
+
+  const openDemo = () => {
+    setMenuOpen(false)
+    setDemoOpen(true)
   }
 
   useEffect(() => {
@@ -62,15 +69,26 @@ function LandingNavbar() {
           className="hidden items-center gap-0.5 rounded-full bg-slate-100/80 p-1 lg:flex"
           aria-label="Main"
         >
-          {LANDING_NAV.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="rounded-full px-4 py-2 text-sm font-semibold text-slate-600 no-underline transition hover:bg-white hover:text-[#1e3a8a] hover:shadow-sm"
-            >
-              {item.label}
-            </a>
-          ))}
+          {LANDING_NAV.map((item) =>
+            item.action === 'demo' ? (
+              <button
+                key={item.label}
+                type="button"
+                onClick={openDemo}
+                className="rounded-full px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-[#1e3a8a] hover:shadow-sm"
+              >
+                {item.label}
+              </button>
+            ) : (
+              <a
+                key={item.href}
+                href={item.href}
+                className="rounded-full px-4 py-2 text-sm font-semibold text-slate-600 no-underline transition hover:bg-white hover:text-[#1e3a8a] hover:shadow-sm"
+              >
+                {item.label}
+              </a>
+            ),
+          )}
         </nav>
 
         <div className="hidden shrink-0 items-center gap-1 lg:flex">
@@ -103,16 +121,27 @@ function LandingNavbar() {
       {menuOpen && (
         <div className="mx-auto mt-2 max-w-7xl rounded-3xl border border-slate-200 bg-white p-4 shadow-xl lg:hidden">
           <nav className="flex flex-col gap-1" aria-label="Mobile">
-            {LANDING_NAV.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 no-underline hover:bg-slate-50"
-              >
-                {item.label}
-              </a>
-            ))}
+            {LANDING_NAV.map((item) =>
+              item.action === 'demo' ? (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={openDemo}
+                  className="rounded-xl px-3 py-3 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  {item.label}
+                </button>
+              ) : (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 no-underline hover:bg-slate-50"
+                >
+                  {item.label}
+                </a>
+              ),
+            )}
           </nav>
           <div className="mt-3 flex flex-col gap-2 border-t border-slate-100 pt-3">
             <Link
@@ -134,6 +163,7 @@ function LandingNavbar() {
       )}
 
       <PortalChooserModal open={chooserOpen} onClose={() => setChooserOpen(false)} />
+      {demoOpen && <DemoRequestModal onClose={() => setDemoOpen(false)} />}
     </header>
   )
 }

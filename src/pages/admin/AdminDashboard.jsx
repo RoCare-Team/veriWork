@@ -94,6 +94,18 @@ function AdminDashboard() {
           </div>
         </div>
 
+        <div className="mb-8">
+          <h3 className="m-0 mb-4 text-sm font-bold uppercase tracking-wide text-slate-500">Leads</h3>
+          <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+            <StatCard
+              label="New Demo Requests"
+              value={stats.demoRequestsNew ?? 0}
+              accent="amber"
+              to="/admin/demo-requests"
+            />
+          </div>
+        </div>
+
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm md:p-8">
             <h3 className="m-0 text-lg font-bold text-slate-900">Employee Management</h3>

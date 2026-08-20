@@ -21,29 +21,31 @@ function MiniCheck({ className = 'h-3.5 w-3.5' }) {
   )
 }
 
+// `min-w-0` at every level lets the card shrink inside its grid track — without
+// it the card's min-content width props the whole hero open on a phone.
 function PartyCard({ initials, name, role, rows, avatarClass, active }) {
   return (
     <div
-      className={`rounded-2xl border p-3.5 transition-all duration-300 ${
+      className={`min-w-0 rounded-2xl border p-3 transition-all duration-300 sm:p-3.5 ${
         active
           ? 'border-[#1e3a8a]/40 bg-[#1e3a8a]/[0.06] shadow-md shadow-blue-900/10'
           : 'border-slate-200 bg-white'
       }`}
     >
       <div className="mb-3 flex items-center gap-2.5">
-        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold text-white ${avatarClass}`}>
+        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold text-white sm:h-10 sm:w-10 ${avatarClass}`}>
           {initials}
         </span>
         <div className="min-w-0">
           <p className="m-0 truncate text-sm font-bold text-slate-900">{name}</p>
-          <p className="m-0 text-[11px] font-medium text-slate-500">{role}</p>
+          <p className="m-0 truncate text-[11px] font-medium text-slate-500">{role}</p>
         </div>
       </div>
       <div className="space-y-1.5">
         {rows.map((r) => (
-          <div key={r.k} className="flex items-center justify-between rounded-lg bg-white px-2.5 py-1.5 text-[11px] ring-1 ring-slate-100">
-            <span className="text-slate-500">{r.k}</span>
-            <span className={`font-bold ${r.tone === 'green' ? 'text-emerald-600' : 'text-[#1e3a8a]'}`}>{r.v}</span>
+          <div key={r.k} className="flex items-center justify-between gap-1.5 rounded-lg bg-white px-2.5 py-1.5 text-[11px] ring-1 ring-slate-100">
+            <span className="min-w-0 truncate text-slate-500">{r.k}</span>
+            <span className={`shrink-0 font-bold ${r.tone === 'green' ? 'text-emerald-600' : 'text-[#1e3a8a]'}`}>{r.v}</span>
           </div>
         ))}
       </div>
@@ -74,9 +76,9 @@ function TrustConnectionVisual() {
 
       <div className="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-[#1e3a8a]/15 via-transparent to-[#1e3a8a]/20 blur-3xl" />
 
-      <div className="relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-white/90 p-6 shadow-2xl shadow-slate-300/25 backdrop-blur-sm md:p-8">
+      <div className="relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-white/90 p-4 shadow-2xl shadow-slate-300/25 backdrop-blur-sm sm:p-6 md:p-8">
         {/* Header — kept on the left so the floating badge never overlaps it. */}
-        <div className="mb-5 flex items-center gap-2.5">
+        <div className="mb-5 flex flex-wrap items-center gap-2.5">
           <span className="rounded-full bg-[#1e3a8a]/8 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#1e3a8a]">
             Employer ↔ Professional
           </span>
@@ -90,7 +92,10 @@ function TrustConnectionVisual() {
         </div>
 
         {/* The relationship: two parties + a verified-trust bridge between them */}
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 md:gap-3">
+        {/* Phones stack the two parties so neither name has to truncate; from sm
+            up they sit side by side. minmax(0,…) rather than a bare 1fr, which
+            refuses to shrink below its content and overflowed the hero. */}
+        <div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-3">
           <PartyCard
             initials="PS"
             name="Priya Sharma"
@@ -104,15 +109,16 @@ function TrustConnectionVisual() {
           />
 
           {/* Trust bridge */}
-          <div className="flex flex-col items-center gap-1.5 px-0.5">
+          {/* Stacked on a phone the bridge is a horizontal strip between the two
+              cards, so the icon and its label sit side by side there. */}
+          <div className="flex flex-row items-center justify-center gap-2 sm:flex-col sm:gap-1.5">
             <div className={`hidden h-1 w-8 rounded-full md:block ${secured ? 'pl-wire-ok' : 'pl-wire'}`} />
             <span
-              className={`flex items-center justify-center rounded-2xl border transition-all duration-300 ${
+              className={`flex h-11 w-11 items-center justify-center rounded-2xl border transition-all duration-300 sm:h-[3.25rem] sm:w-[3.25rem] ${
                 secured ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-[#1e3a8a]/20 bg-[#1e3a8a]/5 text-[#1e3a8a]'
               }`}
-              style={{ height: '3.25rem', width: '3.25rem' }}
             >
-              {secured ? <MiniCheck className="h-6 w-6" /> : <ShieldCheckIcon className="h-6 w-6" />}
+              {secured ? <MiniCheck className="h-5 w-5 sm:h-6 sm:w-6" /> : <ShieldCheckIcon className="h-5 w-5 sm:h-6 sm:w-6" />}
             </span>
             <div className={`hidden h-1 w-8 rounded-full md:block ${secured ? 'pl-wire-ok' : 'pl-wire'}`} />
             <p className={`m-0 text-center text-[9px] font-bold uppercase tracking-widest ${secured ? 'text-emerald-600' : 'text-slate-400'}`}>

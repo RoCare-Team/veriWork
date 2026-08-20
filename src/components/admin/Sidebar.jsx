@@ -48,6 +48,16 @@ const NAV = [
     ),
   },
   {
+    to: '/admin/demo-requests',
+    label: 'Demo requests',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="2.5" y="3.5" width="15" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M8 8.2v3.1l2.8-1.55L8 8.2ZM6.5 16.5h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
     to: '/admin/employees',
     label: 'Employees',
     icon: (

@@ -54,3 +54,8 @@ export function uploadPublicVerificationDocument(token, file) {
     auth: false,
   })
 }
+
+/** "Book a demo" from the landing page — lands in the admin console as a lead. */
+export function submitDemoRequest(body) {
+  return api(API.PUBLIC.DEMO_REQUEST, { method: 'POST', body, auth: false })
+}

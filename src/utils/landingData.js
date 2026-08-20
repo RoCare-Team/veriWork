@@ -2,7 +2,8 @@ import { CONTACT_LINKS } from './contactInfo'
 
 export const LANDING_NAV = [
   { label: 'Features', href: '#features' },
-  { label: 'Demo', href: '#demo' },
+  // Opens the "Book a demo" modal instead of jumping to a section.
+  { label: 'Demo', action: 'demo' },
   { label: 'How it works', href: '#how-it-works' },
   { label: 'Security', href: '#security' },
   { label: 'Portals', href: '#portals' },

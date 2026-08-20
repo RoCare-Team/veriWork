@@ -58,16 +58,19 @@ function LandingPortals() {
                   ))}
                 </ul>
 
+                {/* `flex-1` only from sm up: in the stacked (column) layout it
+                    would set flex-basis on the HEIGHT, overriding min-h and
+                    squashing the buttons to their text height. */}
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Link
                     to={portal.to}
-                    className="inline-flex h-12 flex-1 items-center justify-center rounded-2xl bg-[#1e3a8a] text-sm font-semibold text-white no-underline transition hover:bg-[#172554]"
+                    className="inline-flex min-h-12 w-full items-center justify-center rounded-2xl bg-[#1e3a8a] px-5 py-3 text-center text-sm font-semibold leading-tight text-white no-underline shadow-lg shadow-blue-900/20 transition hover:bg-[#172554] sm:w-auto sm:flex-1"
                   >
                     {portal.cta}
                   </Link>
                   <Link
                     to={portal.secondaryTo}
-                    className="inline-flex h-12 flex-1 items-center justify-center rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-800 no-underline transition hover:bg-slate-50"
+                    className="inline-flex min-h-12 w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 text-center text-sm font-semibold leading-tight text-slate-800 no-underline shadow-sm transition hover:border-slate-300 hover:bg-slate-50 sm:w-auto sm:flex-1"
                   >
                     {portal.secondaryCta}
                   </Link>

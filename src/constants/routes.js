@@ -30,6 +30,8 @@ export const API = {
     AADHAAR_REQUEST_REVIEW: (id) => `/admin/aadhaar-requests/${id}/review`,
     VERIFICATION_REQUESTS: '/admin/verification-requests',
     VERIFICATION_REQUEST_RESEND: (id) => `/admin/verification-requests/${id}/resend`,
+    DEMO_REQUESTS: '/admin/demo-requests',
+    DEMO_REQUEST: (id) => `/admin/demo-requests/${id}`,
   },
 
   EMPLOYEE: {
@@ -69,6 +71,7 @@ export const API = {
   },
 
   PUBLIC: {
+    DEMO_REQUEST: '/public/demo-requests',
     PROFILE: (slug) => `/public/profile/${encodeURIComponent(slug)}`,
     PROFILE_ACCESS: (slug) => `/public/profile/${encodeURIComponent(slug)}/request-access`,
     EMPLOYEE_INVITATION: (token) => `/public/employee-invitation/${encodeURIComponent(token)}`,
