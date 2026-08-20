@@ -1,0 +1,16 @@
+# PagerLook — https://www.pagerlook.com
+# Marketing landing page is indexable; everything behind auth is not.
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /employee/
+Disallow: /enterprise/
+Disallow: /company/
+Disallow: /u/
+Disallow: /join/
+Disallow: /verify-employment/
+Disallow: /forgot-password
+Disallow: /reset-password
+
+Sitemap: https://www.pagerlook.com/sitemap.xml
