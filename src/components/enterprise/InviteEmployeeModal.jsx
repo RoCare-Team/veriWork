@@ -23,6 +23,20 @@ function EmployeeInitial({ name, photoUrl }) {
   )
 }
 
+/**
+ * Split what the company typed into the field it belongs in, so switching from
+ * a fruitless search to the registration-link form never asks them to retype
+ * the address they just searched for.
+ */
+function classifyQuery(raw) {
+  const query = raw.trim()
+  if (!query) return {}
+  if (query.includes('@')) return { email: query.toLowerCase() }
+  const digits = query.replace(/\D/g, '')
+  if (digits.length >= 10) return { mobile: digits.slice(-10) }
+  return {}
+}
+
 function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
   const { toast } = useToast()
   const [tab, setTab] = useState('search')
@@ -44,7 +58,9 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
   const [linkResult, setLinkResult] = useState(null)
   const [copied, setCopied] = useState(false)
 
-  // A "complete" identifier: full email, a PagerLook ID (has a dash), or a 10-digit mobile.
+  // The backend resolves an exact identifier only — a full email, a complete
+  // PagerLook ID, or a full 10-digit mobile. Partial text is never matched, so
+  // there is no point querying until one of those is on screen.
   const queryDigits = debouncedQuery.replace(/\D/g, '')
   const looksComplete =
     (debouncedQuery.includes('@') && debouncedQuery.includes('.')) ||
@@ -57,6 +73,7 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
     enabled: tab === 'search' && looksComplete && !selectedEmployee,
   })
   const results = searchData?.data?.employees || searchData?.employees || []
+  const searchedAndEmpty = looksComplete && !searching && results.length === 0
 
   const roleValid = department.trim() && designation.trim()
 
@@ -64,7 +81,9 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
     mutationFn: (body) => inviteEmployee(body),
     onError: (err) => {
       if (err?.status === 409) {
-        toast('Pending invitation already exists for this employee', 'error')
+        // The server distinguishes "already invited" from "already on your
+        // team" — pass its wording through rather than flattening both.
+        toast(err.message || 'Pending invitation already exists for this employee', 'error')
         return
       }
       toast(err.message || 'Failed to send invitation', 'error')
@@ -79,12 +98,16 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
     return Object.keys(next).length === 0
   }
 
-  // Registered employee → invitation lands in their portal
+  // Registered employee → invitation lands in their portal and their inbox.
   const handleSendToRegistered = () => {
     if (!selectedEmployee || !validateRole()) return
     inviteMutation.mutate(
       {
         employeeName: selectedEmployee.name || 'Employee',
+        // The picked user id is authoritative — it cannot be mistyped the way a
+        // hand-entered ID can. The PagerLook ID rides along so the invitation
+        // record carries it too.
+        employeeUserId: selectedEmployee.employeeId,
         ...(selectedEmployee.veriworkId ? { employeePagerlookId: selectedEmployee.veriworkId } : {}),
         department: department.trim(),
         designation: designation.trim(),
@@ -92,12 +115,26 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
       {
         onSuccess: (res) => {
           const data = res?.data || res
-          toast(`Invitation sent to ${selectedEmployee.name}. They'll accept it from their portal.`, 'success')
+          toast(
+            data?.notifiedEmail
+              ? `Invitation sent to ${selectedEmployee.name} at ${data.notifiedEmail}. It's also waiting in their portal.`
+              : `Invitation sent to ${selectedEmployee.name}. They'll accept it from their portal.`,
+            'success',
+          )
           onSuccess?.(data)
           onClose()
         },
       },
     )
+  }
+
+  /** No PagerLook account matched — carry the search over to the link form. */
+  const switchToLinkInvite = () => {
+    const { email: typedEmail, mobile: typedMobile } = classifyQuery(searchQuery)
+    if (typedEmail && !email) setEmail(typedEmail)
+    if (typedMobile && !mobile) setMobile(typedMobile)
+    setFieldErrors({})
+    setTab('link')
   }
 
   // New employee → generate a shareable registration link
@@ -125,8 +162,14 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
           const data = res?.data || res
           setLinkResult(data)
           if (data.caseType === 'registered') {
-            // The person turned out to be registered — invite landed in their portal.
-            toast('This person is already on PagerLook — invitation sent to their portal.', 'success')
+            // The mobile or email turned out to belong to an existing account,
+            // so the invite went to their portal instead of minting a link.
+            toast(
+              data.notifiedEmail
+                ? `This person is already on PagerLook — invitation sent to ${data.notifiedEmail}.`
+                : 'This person is already on PagerLook — invitation sent to their portal.',
+              'success',
+            )
             onSuccess?.(data)
             onClose()
             return
@@ -199,8 +242,11 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
           <div className="mt-5 flex flex-col gap-4">
             {!selectedEmployee ? (
               <div>
-                <label className="text-sm font-semibold text-slate-700">Search by PagerLook ID, mobile, email or name</label>
+                <label className="text-sm font-semibold text-slate-700" htmlFor="invite-search">
+                  Search by PagerLook ID, mobile or email
+                </label>
                 <input
+                  id="invite-search"
                   type="text"
                   autoFocus
                   value={searchQuery}
@@ -210,14 +256,33 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
                 />
                 {searchQuery.trim() && !looksComplete && (
                   <p className="m-0 mt-2 text-xs text-slate-400">
-                    Enter the full mobile number, complete PagerLook ID, or email to find the exact person.
+                    Enter the full mobile number, complete PagerLook ID, or email — we match the
+                    exact person, never a partial name.
                   </p>
                 )}
                 {looksComplete && searching && <p className="m-0 mt-2 text-xs text-slate-400">Searching…</p>}
-                {looksComplete && !searching && results.length === 0 && (
-                  <p className="m-0 mt-2 text-xs text-slate-500">
-                    No registered employee matches that. Use “Invite by link” to invite someone new.
-                  </p>
+
+                {/* Not on PagerLook → carry on into a link invite instead of
+                    making them start over in the other tab. */}
+                {searchedAndEmpty && (
+                  <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                    <p className="m-0 text-sm font-semibold text-amber-900">
+                      No PagerLook account matches that
+                    </p>
+                    <p className="m-0 mt-1 text-xs text-amber-800">
+                      Send them a registration link instead — your company name is filled in for
+                      them, and they join your team automatically once they finish signing up.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      fullWidth={false}
+                      className="mt-3"
+                      onClick={switchToLinkInvite}
+                    >
+                      Send a registration link
+                    </Button>
+                  </div>
                 )}
                 {results.length > 0 && (
                   <ul className="m-0 mt-2 max-h-56 list-none space-y-1 overflow-y-auto p-0">
@@ -226,7 +291,8 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
                         <button
                           type="button"
                           onClick={() => setSelectedEmployee(emp)}
-                          className="flex w-full items-center gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2.5 text-left hover:border-[#1e3a8a] hover:bg-blue-50/40"
+                          disabled={emp.alreadyInvited}
+                          className="flex w-full items-center gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2.5 text-left hover:border-[#1e3a8a] hover:bg-blue-50/40 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-slate-100 disabled:hover:bg-white"
                         >
                           <EmployeeInitial name={emp.name} photoUrl={emp.photoUrl} />
                           <div className="min-w-0 flex-1">
@@ -240,6 +306,11 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
                               {[emp.veriworkId, emp.maskedMobile, emp.maskedEmail].filter(Boolean).join(' · ')}
                             </p>
                           </div>
+                          {emp.alreadyInvited && (
+                            <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-500">
+                              Already invited
+                            </span>
+                          )}
                         </button>
                       </li>
                     ))}
@@ -292,6 +363,10 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
                   error={Boolean(fieldErrors.designation)}
                   errorText={fieldErrors.designation}
                 />
+                <p className="m-0 text-xs text-slate-500">
+                  {selectedEmployee.name} gets an email and an invitation in their PagerLook portal.
+                  They join your team once they accept.
+                </p>
                 <div className="mt-2 flex gap-3">
                   <Button type="button" variant="secondary" className="flex-1" onClick={onClose} disabled={inviteMutation.isPending}>
                     Cancel
@@ -314,8 +389,9 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
                   Invite link ready{linkResult.emailMock ? ' (dev mode)' : ''}
                 </p>
                 <p className="m-0 mt-1 text-xs text-slate-500">
-                  Share this with {employeeName || 'the employee'}. They register through it and join
-                  {department ? ` ${department}` : ' your team'} automatically.
+                  Share this with {employeeName || 'the employee'}. Your company name is already
+                  filled in on their signup, and they join
+                  {department ? ` ${department}` : ' your team'} automatically once setup is done.
                 </p>
                 <div className="mt-3 flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2">
                   <span className="min-w-0 flex-1 truncate text-xs text-slate-600">{linkResult.registrationLink}</span>
@@ -400,6 +476,10 @@ function InviteEmployeeModal({ onClose, onSuccess, defaultDepartment = '' }) {
                   error={Boolean(fieldErrors.designation)}
                   errorText={fieldErrors.designation}
                 />
+                <p className="m-0 text-xs text-slate-500">
+                  If this mobile or email already has a PagerLook account, we skip the link and send
+                  the invitation straight to their portal instead.
+                </p>
                 <div className="mt-2 flex gap-3">
                   <Button type="button" variant="secondary" className="flex-1" onClick={onClose} disabled={inviteMutation.isPending}>
                     Cancel

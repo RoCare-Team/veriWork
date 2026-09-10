@@ -69,7 +69,7 @@ function AdminEmployees() {
 
   const [pendingDelete, setPendingDelete] = useState(null)
   const queryClient = useQueryClient()
-  const toast = useToast()
+  const { toast } = useToast()
 
   const { data: list = [], isLoading, error, refetch, isFetching } = useQuery({
     queryKey: adminKeys.employees(status, query),

@@ -44,7 +44,7 @@ function AdminEmployeeDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const toast = useToast()
+  const { toast } = useToast()
   const [confirmingDelete, setConfirmingDelete] = useState(false)
 
   const { data: employee, isLoading, error } = useQuery({
