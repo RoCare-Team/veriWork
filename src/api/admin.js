@@ -96,6 +96,30 @@ export async function fetchAdminEmployee(id) {
   return normalizeAdminEmployee(data)
 }
 
+// The offline demo admin has no server behind it, so anything that writes has
+// to say so plainly rather than appearing to succeed.
+const DEV_ADMIN_WRITE_UNAVAILABLE =
+  'This needs a real admin account — the offline demo admin cannot change live records.'
+
+/**
+ * Deactivate or restore an employee — reversible. Blocks login immediately and
+ * revokes their sessions, but keeps every verification record companies hold.
+ */
+export function setAdminEmployeeStatus(id, isActive) {
+  if (isDevAdminSession()) return Promise.reject(new Error(DEV_ADMIN_WRITE_UNAVAILABLE))
+  return api(API.ADMIN.EMPLOYEE_STATUS(id), { method: 'PATCH', body: { isActive } })
+}
+
+/**
+ * Permanently erase an employee and everything held about them. Irreversible.
+ * `confirm` must be the employee's own name or PagerLook ID — the server checks
+ * it, so a mistyped confirmation fails rather than deleting the wrong person.
+ */
+export function deleteAdminEmployee(id, confirm) {
+  if (isDevAdminSession()) return Promise.reject(new Error(DEV_ADMIN_WRITE_UNAVAILABLE))
+  return api(API.ADMIN.EMPLOYEE(id), { method: 'DELETE', body: { confirm } })
+}
+
 // The offline dev-admin session has no server behind it, and Aadhaar review
 // needs the real uploaded card images — so say that plainly instead of
 // rendering an empty queue that looks like "nothing to review".

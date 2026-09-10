@@ -1,9 +1,16 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import AdminLayout from '../../layouts/AdminLayout'
 import Loader from '../../components/common/Loader'
-import { adminKeys, fetchAdminEmployees } from '../../api/admin'
+import DeleteEmployeeModal from '../../components/admin/DeleteEmployeeModal'
+import {
+  adminKeys,
+  deleteAdminEmployee,
+  fetchAdminEmployees,
+  setAdminEmployeeStatus,
+} from '../../api/admin'
+import { useToast } from '../../context/ToastContext'
 import { formatDate } from '../../utils/formatters'
 import { mediaUrl } from '../../lib/mediaUrl'
 
@@ -14,7 +21,12 @@ const STATUS_TABS = [
   { key: 'verified', label: 'Verified' },
 ]
 
-function StatusBadge({ complete, verified }) {
+function StatusBadge({ complete, verified, active }) {
+  // A deactivated account outranks every other badge — "Verified" on a login
+  // that no longer works would be actively misleading.
+  if (!active) {
+    return <span className="rounded-full bg-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-600">Deactivated</span>
+  }
   if (verified) {
     return <span className="rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">Verified</span>
   }
@@ -55,11 +67,48 @@ function AdminEmployees() {
     setStatus(nextStatus)
   }, [searchParams])
 
+  const [pendingDelete, setPendingDelete] = useState(null)
+  const queryClient = useQueryClient()
+  const toast = useToast()
+
   const { data: list = [], isLoading, error, refetch, isFetching } = useQuery({
     queryKey: adminKeys.employees(status, query),
     queryFn: () => fetchAdminEmployees({ status, q: query }),
     refetchOnWindowFocus: true,
   })
+
+  // Both mutations invalidate every employees view, not just this filter — a
+  // deleted employee must not linger in another tab's cached list.
+  const invalidateEmployees = () =>
+    queryClient.invalidateQueries({ queryKey: ['admin', 'employees'] })
+
+  const statusMutation = useMutation({
+    mutationFn: ({ id, isActive }) => setAdminEmployeeStatus(id, isActive),
+    onSuccess: (_, vars) => {
+      invalidateEmployees()
+      toast(
+        vars.isActive ? 'Employee reactivated' : 'Employee deactivated — they can no longer log in',
+        vars.isActive ? 'success' : 'info',
+      )
+    },
+    onError: (err) => toast(err.message || 'Could not update the employee', 'error'),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: ({ id, confirm }) => deleteAdminEmployee(id, confirm),
+    onSuccess: (_, vars) => {
+      invalidateEmployees()
+      setPendingDelete(null)
+      toast(`${vars.name} was permanently deleted`, 'success')
+    },
+    onError: (err) => toast(err.message || 'Could not delete the employee', 'error'),
+  })
+
+  // Only the row being acted on greys out, so one slow delete does not freeze
+  // the whole table.
+  const isRowBusy = (id) =>
+    (statusMutation.isPending && statusMutation.variables?.id === id) ||
+    (deleteMutation.isPending && deleteMutation.variables?.id === id)
 
   const summary = useMemo(() => ({
     total: list.length,
@@ -194,16 +243,40 @@ function AdminEmployees() {
                       <td className="px-5 py-4 font-mono text-xs text-slate-700">{employee.veriworkId}</td>
                       <td className="px-5 py-4 font-semibold text-[#1e3a8a]">{employee.employeeScore}</td>
                       <td className="px-5 py-4">
-                        <StatusBadge complete={employee.profileSetupComplete} verified={employee.isVerified} />
+                        <StatusBadge
+                          complete={employee.profileSetupComplete}
+                          verified={employee.isVerified}
+                          active={employee.isActive}
+                        />
                       </td>
                       <td className="px-5 py-4 text-slate-600">{formatDate(employee.createdAt)}</td>
                       <td className="px-5 py-4">
-                        <Link
-                          to={`/admin/employees/${employee.id}`}
-                          className="text-sm font-semibold text-[#1e3a8a] no-underline hover:underline"
-                        >
-                          View
-                        </Link>
+                        <div className="flex items-center gap-3 whitespace-nowrap">
+                          <Link
+                            to={`/admin/employees/${employee.id}`}
+                            className="text-sm font-semibold text-[#1e3a8a] no-underline hover:underline"
+                          >
+                            View
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              statusMutation.mutate({ id: employee.id, isActive: !employee.isActive })
+                            }
+                            disabled={isRowBusy(employee.id)}
+                            className="text-sm font-semibold text-slate-500 hover:text-slate-800 disabled:opacity-50"
+                          >
+                            {employee.isActive ? 'Deactivate' : 'Restore'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setPendingDelete(employee)}
+                            disabled={isRowBusy(employee.id)}
+                            className="text-sm font-semibold text-red-600 hover:text-red-700 disabled:opacity-50"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -213,6 +286,22 @@ function AdminEmployees() {
           </div>
         </div>
       </div>
+
+      {pendingDelete && (
+        <DeleteEmployeeModal
+          key={pendingDelete.id}
+          employee={pendingDelete}
+          busy={deleteMutation.isPending}
+          onClose={() => setPendingDelete(null)}
+          onConfirm={(confirm) =>
+            deleteMutation.mutate({
+              id: pendingDelete.id,
+              name: pendingDelete.name,
+              confirm,
+            })
+          }
+        />
+      )}
     </AdminLayout>
   )
 }

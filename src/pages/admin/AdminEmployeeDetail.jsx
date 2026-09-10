@@ -1,8 +1,17 @@
-import { Link, useParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import AdminLayout from '../../layouts/AdminLayout'
 import Loader from '../../components/common/Loader'
-import { adminKeys, fetchAdminEmployee } from '../../api/admin'
+import Button from '../../components/common/Button'
+import DeleteEmployeeModal from '../../components/admin/DeleteEmployeeModal'
+import {
+  adminKeys,
+  deleteAdminEmployee,
+  fetchAdminEmployee,
+  setAdminEmployeeStatus,
+} from '../../api/admin'
+import { useToast } from '../../context/ToastContext'
 import { formatDate } from '../../utils/formatters'
 import { mediaUrl } from '../../lib/mediaUrl'
 
@@ -33,11 +42,41 @@ function EducationBlock({ title, rows }) {
 
 function AdminEmployeeDetail() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const toast = useToast()
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
 
   const { data: employee, isLoading, error } = useQuery({
     queryKey: adminKeys.employee(id),
     queryFn: () => fetchAdminEmployee(id),
     enabled: Boolean(id),
+  })
+
+  const statusMutation = useMutation({
+    mutationFn: (isActive) => setAdminEmployeeStatus(id, isActive),
+    onSuccess: (_, isActive) => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.employee(id) })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'employees'] })
+      toast(
+        isActive ? 'Employee reactivated' : 'Employee deactivated — they can no longer log in',
+        isActive ? 'success' : 'info',
+      )
+    },
+    onError: (err) => toast(err.message || 'Could not update the employee', 'error'),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (confirm) => deleteAdminEmployee(id, confirm),
+    onSuccess: () => {
+      // The record this page renders no longer exists, so drop it from the
+      // cache and leave before React Query can refetch a 404.
+      queryClient.removeQueries({ queryKey: adminKeys.employee(id) })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'employees'] })
+      toast('Employee permanently deleted', 'success')
+      navigate('/admin/employees', { replace: true })
+    },
+    onError: (err) => toast(err.message || 'Could not delete the employee', 'error'),
   })
 
   if (isLoading) return <Loader variant="fullPage" label="Loading employee..." />
@@ -86,6 +125,9 @@ function AdminEmployeeDetail() {
               <span className="rounded-full bg-[#1e3a8a]/10 px-3 py-1 text-sm font-bold text-[#1e3a8a]">
                 Score {employee.employeeScore}
               </span>
+              {!employee.isActive && (
+                <span className="rounded-full bg-slate-200 px-3 py-1 text-sm font-semibold text-slate-600">Deactivated</span>
+              )}
               {employee.isVerified && (
                 <span className="rounded-full bg-green-50 px-3 py-1 text-sm font-semibold text-green-700">Verified</span>
               )}
@@ -95,6 +137,40 @@ function AdminEmployeeDetail() {
             </div>
           </div>
         </div>
+
+        <section className="mt-6 rounded-3xl border border-red-100 bg-red-50/40 p-6 shadow-sm">
+          <h3 className="m-0 text-lg font-bold text-slate-900">Account actions</h3>
+          <p className="m-0 mt-1 max-w-2xl text-sm text-slate-600">
+            {employee.isActive
+              ? 'Deactivating blocks login and ends their sessions immediately, but keeps every verification record companies rely on. Deleting erases the account and all of it — permanently.'
+              : 'This account is deactivated and cannot log in. Restore it to give access back, or delete it permanently to erase everything the platform holds.'}
+          </p>
+
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+            <Button
+              type="button"
+              variant="secondary"
+              fullWidth={false}
+              onClick={() => statusMutation.mutate(!employee.isActive)}
+              disabled={statusMutation.isPending || deleteMutation.isPending}
+            >
+              {statusMutation.isPending
+                ? 'Saving…'
+                : employee.isActive
+                  ? 'Deactivate account'
+                  : 'Restore account'}
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              fullWidth={false}
+              onClick={() => setConfirmingDelete(true)}
+              disabled={statusMutation.isPending || deleteMutation.isPending}
+            >
+              Delete permanently
+            </Button>
+          </div>
+        </section>
 
         <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
           <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
@@ -215,6 +291,15 @@ function AdminEmployeeDetail() {
           )}
         </div>
       </div>
+
+      {confirmingDelete && (
+        <DeleteEmployeeModal
+          employee={employee}
+          busy={deleteMutation.isPending}
+          onClose={() => setConfirmingDelete(false)}
+          onConfirm={(confirm) => deleteMutation.mutate(confirm)}
+        />
+      )}
     </AdminLayout>
   )
 }

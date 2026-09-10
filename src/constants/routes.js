@@ -25,6 +25,8 @@ export const API = {
     COMPANY_MESSAGES: (id) => `/admin/companies/${id}/messages`,
     EMPLOYEES: '/admin/employees',
     EMPLOYEE: (id) => `/admin/employees/${id}`,
+    // Reversible deactivate/restore; the permanent purge is a DELETE on EMPLOYEE.
+    EMPLOYEE_STATUS: (id) => `/admin/employees/${id}/status`,
     AADHAAR_REQUESTS: '/admin/aadhaar-requests',
     AADHAAR_REQUEST: (id) => `/admin/aadhaar-requests/${id}`,
     AADHAAR_REQUEST_REVIEW: (id) => `/admin/aadhaar-requests/${id}/review`,
