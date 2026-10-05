@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/digilocker/callback",
+      "destination": "https://api.pagerlook.com/api/digilocker/callback"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
