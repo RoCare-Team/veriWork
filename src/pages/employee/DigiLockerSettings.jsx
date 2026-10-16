@@ -87,6 +87,20 @@ function DigiLockerSettings() {
                 <span className="font-semibold text-emerald-700">Connected</span>
                 {connection.connectedAt && ` since ${new Date(connection.connectedAt).toLocaleDateString()}`}
               </p>
+              {connection.identity?.name && (
+                <dl className="m-0 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+                  <dt className="text-slate-500">Name</dt>
+                  <dd className="m-0 text-slate-800">{connection.identity.name}</dd>
+                  {connection.identity.dob && (
+                    <>
+                      <dt className="text-slate-500">Date of birth</dt>
+                      <dd className="m-0 text-slate-800">{connection.identity.dob}</dd>
+                    </>
+                  )}
+                  <dt className="text-slate-500">Aadhaar linked</dt>
+                  <dd className="m-0 text-slate-800">{connection.identity.eaadhaarLinked ? 'Yes' : 'No'}</dd>
+                </dl>
+              )}
               <Button
                 type="button"
                 variant="secondary"
