@@ -219,8 +219,9 @@ export function fetchDigiLockerConnection() {
 }
 
 // Returns { authorizationUrl } — the browser is sent there to give consent.
-export function startDigiLockerConnect() {
-  return api(API.DIGILOCKER.CONNECT, { method: 'POST' })
+// purpose 'aadhaar' runs e-Aadhaar KYC on return; 'settings' only links the account.
+export function startDigiLockerConnect(purpose = 'aadhaar') {
+  return api(API.DIGILOCKER.CONNECT, { method: 'POST', body: { purpose } })
 }
 
 export function disconnectDigiLocker() {

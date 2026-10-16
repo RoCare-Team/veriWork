@@ -38,7 +38,7 @@ function DigiLockerSettings() {
   })
 
   const connect = useMutation({
-    mutationFn: startDigiLockerConnect,
+    mutationFn: () => startDigiLockerConnect('settings'),
     onSuccess: (data) => {
       window.location.assign(data.authorizationUrl)
     },
