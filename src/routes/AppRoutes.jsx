@@ -53,6 +53,7 @@ import EmployeeAccessConsent from '../pages/employee/EmployeeAccessConsent'
 import EmployeeSettings from '../pages/employee/EmployeeSettings'
 import EmailSettings from '../pages/employee/EmailSettings'
 import PrivacySecurity from '../pages/employee/PrivacySecurity'
+import DigiLockerSettings from '../pages/employee/DigiLockerSettings'
 import Support from '../pages/employee/Support'
 import {
   AdminGuestGuard,
@@ -172,6 +173,7 @@ function AppRoutes() {
           <Route path="/employee/settings" element={<EmployeeSettings />} />
           <Route path="/employee/settings/email" element={<EmailSettings />} />
           <Route path="/employee/settings/privacy" element={<PrivacySecurity />} />
+          <Route path="/employee/settings/digilocker" element={<DigiLockerSettings />} />
           <Route path="/employee/settings/support" element={<Support />} />
         </Route>
 

@@ -72,6 +72,11 @@ export const API = {
     SMTP_TEST: '/employee/settings/smtp/test',
   },
 
+  DIGILOCKER: {
+    CONNECT: '/digilocker/connect',
+    CONNECTION: '/digilocker/connection',
+  },
+
   PUBLIC: {
     DEMO_REQUEST: '/public/demo-requests',
     PROFILE: (slug) => `/public/profile/${encodeURIComponent(slug)}`,

@@ -15,6 +15,7 @@ export const employeeKeys = {
   accessRequests: ['employee', 'access-requests'],
   endorsements: ['employee', 'endorsements'],
   smtpSettings: ['employee', 'smtp-settings'],
+  digilocker: ['employee', 'digilocker'],
 }
 
 export function fetchProfile() {
@@ -211,4 +212,17 @@ export function updateEmployeeSmtpSettings(body) {
 
 export function sendEmployeeSmtpTest(body = {}) {
   return api(API.EMPLOYEE.SMTP_TEST, { method: 'POST', body })
+}
+
+export function fetchDigiLockerConnection() {
+  return api(API.DIGILOCKER.CONNECTION)
+}
+
+// Returns { authorizationUrl } — the browser is sent there to give consent.
+export function startDigiLockerConnect() {
+  return api(API.DIGILOCKER.CONNECT, { method: 'POST' })
+}
+
+export function disconnectDigiLocker() {
+  return api(API.DIGILOCKER.CONNECTION, { method: 'DELETE' })
 }

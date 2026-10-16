@@ -149,6 +149,7 @@ function EmployeeSettings() {
           <SettingsRow icon={<UserIcon />} title="Personal Information" subtitle="Name, Email, Phone" to="/employee/professional-id" />
           <SettingsRow icon={<MailIcon />} title="Email & Verification Sending" subtitle="SMTP mailbox for self-verification" to="/employee/settings/email" />
           <SettingsRow icon={<LockIcon />} title="Privacy & Security" subtitle="Consent, 2FA, Sessions" to="/employee/settings/privacy" />
+          <SettingsRow icon={<LockIcon />} title="DigiLocker" subtitle="Link government-issued documents" to="/employee/settings/digilocker" />
         </div>
       </section>
 

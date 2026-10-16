@@ -102,13 +102,21 @@ function BiometricLiveness() {
           <div className="flex gap-3 rounded-2xl border border-green-200 bg-green-50 p-5">
             <ShieldCheckIcon className="mt-0.5 h-6 w-6 shrink-0 text-green-600" />
             <div>
-              <p className="m-0 text-base font-bold text-green-900">Face matched</p>
-              <p className="m-0 mt-1 text-sm text-green-800">
-                Your live selfie matched the photo on your Aadhaar card at{' '}
-                <strong>{result.similarity}%</strong> similarity (
-                {result.threshold}% required)
-                {result.livenessPassed ? ' and the liveness check passed.' : '.'}
+              <p className="m-0 text-base font-bold text-green-900">
+                {result.provider === 'capture' ? 'Face captured' : 'Face matched'}
               </p>
+              {result.provider === 'capture' ? (
+                <p className="m-0 mt-1 text-sm text-green-800">
+                  Your live selfie has been saved securely. Your face check is complete.
+                </p>
+              ) : (
+                <p className="m-0 mt-1 text-sm text-green-800">
+                  Your live selfie matched the photo on your Aadhaar card at{' '}
+                  <strong>{result.similarity}%</strong> similarity (
+                  {result.threshold}% required)
+                  {result.livenessPassed ? ' and the liveness check passed.' : '.'}
+                </p>
+              )}
             </div>
           </div>
           <Button type="button" onClick={() => navigate('/employee/score')}>
