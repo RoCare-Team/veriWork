@@ -4,12 +4,20 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import EmployeeLayout from '../../layouts/EmployeeLayout'
 import EmployeePageHeader from '../../components/employee/PageHeader'
 import Button from '../../components/common/Button'
+import Input from '../../components/common/Input'
+import Select from '../../components/common/Select'
 import Loader from '../../components/common/Loader'
 import SecurityFooter from '../../components/employee/SecurityFooter'
 import DigiLockerButton from '../../components/employee/DigiLockerButton'
 import { LockIcon, CheckCircleIcon, InfoIcon } from '../../components/common/Icons'
 import VerificationStepBar, { VerificationBackLink } from '../../components/employee/VerificationStepBar'
-import { employeeKeys, fetchAadhaarSubmission, startDigiLockerConnect } from '../../api/employee'
+import {
+  applyAadhaarDetails,
+  employeeKeys,
+  fetchAadhaarSubmission,
+  startDigiLockerConnect,
+  updateProfile,
+} from '../../api/employee'
 import { useAuth } from '../../context/AuthContext'
 import { getCompletedJourneySteps } from '../../utils/employeeJourney'
 import { formatDate } from '../../utils/formatters'
@@ -81,6 +89,162 @@ function MatchReport({ submission }) {
   )
 }
 
+const GENDER_OPTIONS = [
+  { value: 'male', label: 'Male' },
+  { value: 'female', label: 'Female' },
+  { value: 'other', label: 'Other' },
+  { value: 'prefer_not_to_say', label: 'Prefer not to say' },
+]
+
+/**
+ * Mismatch resolution — the employee picks which values to continue with:
+ *  A. Aadhaar's values (copied onto the profile → verified immediately), or
+ *  B. their own, edited inline; every save is re-matched against the Aadhaar
+ *     data already fetched, so the table above updates without a new login.
+ */
+function ResolveMismatch({ submission, profile, onProfileUpdated }) {
+  const queryClient = useQueryClient()
+  const [editing, setEditing] = useState(false)
+  const [form, setForm] = useState({ name: '', dateOfBirth: '', gender: '' })
+  const [error, setError] = useState('')
+
+  const failed = (submission.checks || []).filter((c) => !c.matched)
+
+  const refresh = (nextProfile) => {
+    onProfileUpdated(nextProfile)
+    queryClient.invalidateQueries({ queryKey: employeeKeys.aadhaarSubmission })
+    queryClient.invalidateQueries({ queryKey: employeeKeys.verification })
+    queryClient.invalidateQueries({ queryKey: employeeKeys.profile })
+    queryClient.invalidateQueries({ queryKey: employeeKeys.score })
+  }
+
+  const applyAadhaar = useMutation({
+    mutationFn: applyAadhaarDetails,
+    onSuccess: (data) => {
+      setError('')
+      queryClient.setQueryData(employeeKeys.aadhaarSubmission, data.submission)
+      refresh(data.profile)
+    },
+    onError: (err) => setError(err.message || 'Could not update your details'),
+  })
+
+  const saveOwn = useMutation({
+    mutationFn: () =>
+      updateProfile({
+        name: form.name.trim(),
+        ...(form.dateOfBirth ? { dateOfBirth: form.dateOfBirth } : {}),
+        ...(form.gender ? { gender: form.gender } : {}),
+      }),
+    onSuccess: (data) => {
+      setError('')
+      setEditing(false)
+      refresh(data)
+    },
+    onError: (err) => setError(err.message || 'Could not save your details'),
+  })
+
+  const startEditing = () => {
+    setForm({
+      name: profile?.name || '',
+      dateOfBirth: profile?.dateOfBirth || '',
+      gender: profile?.gender || '',
+    })
+    setError('')
+    setEditing(true)
+  }
+
+  const busy = applyAadhaar.isPending || saveOwn.isPending
+
+  return (
+    <div className="space-y-4">
+      {error && (
+        <p className="m-0 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+      )}
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* Option A — Aadhaar is the source of truth */}
+        <div className="flex flex-col rounded-2xl border-2 border-[#1e3a8a]/20 bg-white p-5 shadow-sm">
+          <p className="m-0 text-sm font-bold text-slate-900">Continue with Aadhaar details</p>
+          <p className="m-0 mt-1 text-xs text-slate-500">Recommended — verified instantly</p>
+          <ul className="m-0 mt-3 flex-1 list-none space-y-1.5 p-0 text-sm">
+            {failed.map((c) => (
+              <li key={c.field} className="text-slate-600">
+                <span className="text-slate-500">{FIELD_LABELS[c.field] || c.field}:</span>{' '}
+                <span className="line-through opacity-60">{c.expected || '—'}</span>{' '}
+                → <span className="font-semibold text-slate-900">{c.actual || '—'}</span>
+              </li>
+            ))}
+          </ul>
+          <Button type="button" className="mt-4" disabled={busy} onClick={() => applyAadhaar.mutate()}>
+            {applyAadhaar.isPending ? 'Updating...' : 'Use Aadhaar details'}
+          </Button>
+        </div>
+
+        {/* Option B — keep/correct their own values; re-matched on save */}
+        <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="m-0 text-sm font-bold text-slate-900">Continue with my details</p>
+          <p className="m-0 mt-1 text-xs text-slate-500">
+            Correct them below — they are re-checked against Aadhaar as soon as you save.
+          </p>
+
+          {editing ? (
+            <form
+              className="mt-3 space-y-3"
+              onSubmit={(e) => {
+                e.preventDefault()
+                if (form.name.trim().length < 2) {
+                  setError('Enter your full name')
+                  return
+                }
+                saveOwn.mutate()
+              }}
+            >
+              <Input
+                id="resolveName"
+                label="Full name"
+                value={form.name}
+                onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+              />
+              <Input
+                id="resolveDob"
+                label="Date of birth"
+                type="date"
+                value={form.dateOfBirth}
+                onChange={(e) => setForm((prev) => ({ ...prev, dateOfBirth: e.target.value }))}
+              />
+              <Select
+                id="resolveGender"
+                label="Gender"
+                placeholder="Select gender"
+                options={GENDER_OPTIONS}
+                value={form.gender}
+                onChange={(e) => setForm((prev) => ({ ...prev, gender: e.target.value }))}
+              />
+              <div className="flex gap-3">
+                <Button type="submit" disabled={busy}>
+                  {saveOwn.isPending ? 'Saving...' : 'Save & re-check'}
+                </Button>
+                <Button type="button" variant="ghost" disabled={busy} onClick={() => setEditing(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <Button type="button" variant="secondary" className="mt-auto" disabled={busy} onClick={startEditing}>
+              Edit my details
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <p className="m-0 text-xs text-slate-500">
+        Aadhaar stays unverified until your profile matches it. You can also skip this for now and
+        come back later from the verification hub.
+      </p>
+    </div>
+  )
+}
+
 function AadhaarVerification() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -119,7 +283,6 @@ function AadhaarVerification() {
       ...profile,
       aadhaarVerified: verified,
       digilockerUsed: verified || profile.digilockerUsed,
-      biometricVerified: verified ? profile.biometricVerified : false,
     })
   }, [profile, submission, updateProfileState])
 
@@ -133,7 +296,10 @@ function AadhaarVerification() {
   const status = submission?.status || 'not_submitted'
   // Aadhaar is matched against the saved profile, so it has to exist first.
   const profileIncomplete = profile?.profileSetupComplete === false
-  const canVerify = !profileIncomplete && (status === 'not_submitted' || status === 'rejected')
+  // A DigiLocker mismatch is resolved in place (ResolveMismatch) — no new login needed.
+  const canVerify =
+    !profileIncomplete &&
+    (status === 'not_submitted' || (status === 'rejected' && submission?.method !== 'digilocker'))
 
   const subtitle =
     {
@@ -220,10 +386,16 @@ function AadhaarVerification() {
               >
                 {submission.rejectionReason || 'Update your profile to match Aadhaar and verify again.'}
               </StatusBanner>
-              {submission.method === 'digilocker' && <MatchReport submission={submission} />}
-              <Button type="button" variant="secondary" onClick={() => navigate('/employee/profile-setup')}>
-                Fix profile details
-              </Button>
+              {submission.method === 'digilocker' && (
+                <>
+                  <MatchReport submission={submission} />
+                  <ResolveMismatch
+                    submission={submission}
+                    profile={profile}
+                    onProfileUpdated={(next) => updateProfileState({ ...profile, ...next })}
+                  />
+                </>
+              )}
             </>
           )}
 

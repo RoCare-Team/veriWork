@@ -214,6 +214,12 @@ export function sendEmployeeSmtpTest(body = {}) {
   return api(API.EMPLOYEE.SMTP_TEST, { method: 'POST', body })
 }
 
+// Aadhaar mismatch → copy the Aadhaar name/DOB/gender onto the profile.
+// Returns { submission, profile }.
+export function applyAadhaarDetails() {
+  return api(`${API.EMPLOYEE.VERIFICATION_AADHAAR}/use-aadhaar-details`, { method: 'POST' })
+}
+
 export function fetchDigiLockerConnection() {
   return api(API.DIGILOCKER.CONNECTION)
 }
